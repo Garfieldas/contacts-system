@@ -1,6 +1,9 @@
 <template>
-  <h1 class="text-3xl text-blue-900">Contacts</h1>
+<NavBar />
+<router-view>
+</router-view>
 </template>
 
 <script setup lang="ts">
+import NavBar from './components/Layout/NavBar.vue';
 </script>
