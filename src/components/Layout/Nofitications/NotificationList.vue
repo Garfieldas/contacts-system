@@ -10,8 +10,4 @@ import Notification from './Notification.vue';
 import { useNotificationStore } from '@/stores/notificationstore';
 const store = useNotificationStore();
 const selectId = (id: string) => store.removeNotification(id);
-store.addSuccessNotification('hi')
-store.addSuccessNotification('hi')
-store.addSuccessNotification('hi')
-store.addSuccessNotification('hi')
 </script>
