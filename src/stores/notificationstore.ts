@@ -5,19 +5,38 @@ import type { Notification } from "@/types/notificationType";
 
 export const useNotificationStore = defineStore('notifications', () => {
   const notifications = ref<Notification[]>([]);
-  const timeouts = new Map();
-
   const _notifications = readonly(notifications);
+  let removalInterval: ReturnType<typeof setInterval> | null = null;
+  const delay = 5000;
+
+  const startRemoval = () => {
+    if(removalInterval) return;
+
+    removalInterval = setInterval(() => {
+      if(notifications.value.length > 0) {
+        const oldestNotification = notifications.value[0];
+        removeNotification(oldestNotification.id!);
+      }
+      else {
+        stopRemoveInterval();
+      }
+    }, delay)
+  };
+
+  const stopRemoveInterval = () => {
+    if(removalInterval){
+      clearInterval(removalInterval);
+      removalInterval = null;
+    }
+  }
 
   const addNotification = (message: string, type: string) => {
     const id = uuidv4();
     const notification = { id, message, type } as Notification;
     notifications.value.push(notification);
-    const timeout = setTimeout(() => {
-      removeNotification(id);
-    }, 5000);
-
-    timeouts.set(id, timeout);
+    if(notifications.value.length === 1){
+      startRemoval();
+    }
   };
 
   const addSuccessNotification = (message: string) => {
@@ -30,10 +49,8 @@ export const useNotificationStore = defineStore('notifications', () => {
 
   const removeNotification = (id: string) => {
     notifications.value = notifications.value.filter((item) => item.id !== id);
-    const timeout = timeouts.get(id);
-    if (timeout) {
-      clearTimeout(timeout);
-      timeouts.delete(id);
+    if(notifications.value.length === 0){
+      stopRemoveInterval();
     }
   };
 
