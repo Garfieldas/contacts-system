@@ -17,11 +17,6 @@ const router = createRouter({
           name: 'contact-details',
           component: () => import('@/views/ContactDetails.vue'),
           props: true
-        },
-        {
-          path: 'contacts/management',
-          name: 'contacts-management',
-          component: () => import('@/views/ContactsManagement.vue')
         }
       ]
     },
@@ -31,18 +26,40 @@ const router = createRouter({
       component: () => import('@/views/LoginView.vue')
     },
     {
+      path: '/password-reset',
+      name: 'password-reset',
+      component: () => import('@/views/PasswordReset.vue')
+    },
+    {
       path: '/companies',
+      name: 'companies-management',
+      component: () => import('@/views/CompaniesManagement.vue')
+    },
+    {
+      path: '/structure',
+      name: 'company-structure',
+      component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
       children: [
         {
-          path: 'management',
-          name: 'companies-management',
-          component: () => import('@/views/CompaniesManagement.vue')
+          path: 'offices',
+          name: 'offices',
+          component: () => import('@/views/CompanyStructure/OfficesView.vue')
         },
         {
-          path: 'structure',
-          name: 'companies-structure',
-          component: () => import('@/views/CompanyStructureManagement.vue')
-        }
+          path: 'departments',
+          name: 'departments',
+          component: () => import('@/views/CompanyStructure/DepartmentsView.vue')
+        },
+        {
+          path: 'divisions',
+          name: 'divisions',
+          component: () => import('@/views/CompanyStructure/DivisionsView.vue')
+        },
+        {
+          path: 'groups',
+          name: 'groups',
+          component: () => import('@/views/CompanyStructure/GroupsView.vue')
+        },
       ]
     },
     {
