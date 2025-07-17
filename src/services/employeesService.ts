@@ -1,8 +1,9 @@
 import { axiosInstance } from "./axiosService";
 
-export const getEmployees = async () => {
+export const getEmployees = async (params?: string) => {
+    const url = params ? `/employees/records${params}` : '/employees/records'
     try {
-        const response = await axiosInstance.get('/employees/records');
+        const response = await axiosInstance.get(url);
         const data = response.data
         return data;
     }

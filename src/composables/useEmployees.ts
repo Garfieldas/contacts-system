@@ -12,7 +12,7 @@ export const useEmployees = () => {
     
     const fetchRequest = async () => {
         try {
-            const response = await getEmployees();
+            const response = await getEmployees('?expand=office_id');
             employees.value = response.items;
             page.value = response.page;
             perPage.value = response.perPage;
