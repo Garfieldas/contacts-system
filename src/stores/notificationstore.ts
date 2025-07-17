@@ -7,29 +7,27 @@ export const useNotificationStore = defineStore('notifications', () => {
     const notifications = ref<Notification[]>([]);
     const _notifications = readonly(notifications);
 
-    const addSuccessNotification = (message: string) => {
+    const addNotification = (message: string, type: string) => {
         const id = uuidv4();
-        const type = 'success';
-        const notification = {id, type, message} as Notification;
-        notifications.value.push(notification)
+        const notification = { id, message, type } as Notification;
+        notifications.value.push(notification);
         setTimeout(() => {
-            notifications.value = notifications.value.filter((item) => item.id !== id);
-        }, 3000)
+            notifications.value = notifications.value.filter((item) => item.id !== id)
+        }, 5000)
+    }
+
+
+    const addSuccessNotification = (message: string) => {
+        addNotification(message, 'success');
     }
 
     const addErrorNotification = (message: string) => {
-        const id = uuidv4();
-        const type = 'error';
-        const notification = {id, type, message} as Notification;
-        notifications.value.push(notification);
-        setTimeout(() => {
-            notifications.value = notifications.value.filter((item) => item.id !== id);
-        }, 3000)
+        addNotification(message, 'error');
     }
 
     const removeNotification = (id: string) => {
         notifications.value = notifications.value.filter((item) => item.id !== id);
     }
-    
+
     return { _notifications, addSuccessNotification, addErrorNotification, removeNotification }
 })
