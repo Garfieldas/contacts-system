@@ -1,36 +1,33 @@
-import { getEmployees } from "@/services/employeesService";
-import { onMounted, ref } from "vue";
+import { getCompanies } from "@/services/companiesService";
 import { useNotificationStore } from "@/stores/notificationstore";
+import { ref, onMounted } from "vue";
 
-export const useEmployees = () => {
-    const employees = ref([]);
+export const useCompanies = () => {
+    const companies = ref([]);
     const page = ref();
     const perPage = ref();
     const totalItems = ref();
     const totalPages = ref();
     const store = useNotificationStore();
-    
-    const fetchRequest = async (params? : string) => {
-        const url = params? `${params}` : '';
+
+    const fetchCompanies = async () => {
         try {
-            const response = await getEmployees(url);
-            employees.value = response.items;
+            const response = await getCompanies();
+            companies.value = response.items;
             page.value = response.page;
             perPage.value = response.perPage;
             totalItems.value = response.totalItems;
             totalPages.value = response.totalPages;
-            store.addSuccessNotification('Employees fetched successfully!');
         }
         catch (error: any) {
             store.addErrorNotification(error);
         }
     }
     onMounted(() => {
-        fetchRequest('?expand=office_id');
+        fetchCompanies();
     })
-
     return {
-        employees, page, perPage,
-        totalItems, totalPages, fetchRequest
+        companies, page, perPage,
+        totalItems, totalPages
     }
 }

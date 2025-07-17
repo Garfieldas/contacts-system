@@ -3,22 +3,25 @@
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Įmonė:</label>
             <select
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white">
-                <option>Filtruoti įmonės...</option>
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white"
+                v-model="company">
+                <option v-for="company in companies" :value="company.id">{{ company.name }}</option>
             </select>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Ofisas:</label>
             <select
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white">
-                <option>Filtruoti adresus...</option>
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white"
+                v-model="selectedOffice">
+                <option v-for="office in officess" :value="office.id">{{ office.name }}</option>
             </select>
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Padalinys:</label>
             <select
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white">
-                <option>Filtruoti padalinius...</option>
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white"
+                v-model="selectedDivision">
+                <option v-for="division in divisions" :value="division.id">{{ division.name }}</option>
             </select>
         </div>
         <div>
@@ -37,3 +40,9 @@
         </div>
     </div>
 </template>
+<script setup lang="ts">
+const props = defineProps(['companies', 'officess', 'divisions']);
+const company = defineModel('company');
+const selectedOffice = defineModel('selectedOffice');
+const selectedDivision = defineModel('selectedDivision');
+</script>

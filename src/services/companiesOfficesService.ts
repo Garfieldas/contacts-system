@@ -1,7 +1,7 @@
 import { axiosInstance } from "./axiosService";
 
-export const getDivisions = async(params?: string) => {
-    const url = params ? `/divisions/records/${params}` : '/divisions/records'
+export const getCompaniesOffices = async(params?: string) => {
+    const url = params ? `/companies_offices/records/${params}` : '/companies_offices/records'
     try {
     const response = await axiosInstance.get(url);
     const data = response.data;
