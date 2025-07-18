@@ -35,16 +35,18 @@
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Grupė:</label>
             <select
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white">
-                <option>Filtruoti grupės...</option>
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1F3F77] focus:border-[#1F3F77] outline-none text-sm bg-white"
+                v-model="selectedGroup">
+                <option v-for="group in groups" :value="group.id">{{ group.name }}</option>
             </select>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-const props = defineProps(['companies', 'officess', 'divisions', 'departments']);
+const props = defineProps(['companies', 'officess', 'divisions', 'departments', 'groups']);
 const company = defineModel('company');
 const selectedOffice = defineModel('selectedOffice');
 const selectedDivision = defineModel('selectedDivision');
 const selectedDepartment = defineModel('selectedDepartment');
+const selectedGroup = defineModel('selectedGroup')
 </script>
