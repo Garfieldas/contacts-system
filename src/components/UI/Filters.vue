@@ -48,5 +48,5 @@ const company = defineModel('company');
 const selectedOffice = defineModel('selectedOffice');
 const selectedDivision = defineModel('selectedDivision');
 const selectedDepartment = defineModel('selectedDepartment');
-const selectedGroup = defineModel('selectedGroup')
+const selectedGroup = defineModel('selectedGroup');
 </script>
