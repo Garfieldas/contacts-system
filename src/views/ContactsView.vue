@@ -1,6 +1,8 @@
 <template>
     <BaseLayout>
-        <SearchBar />
+        <SearchBar>
+          <DisplayButton @toggle="toggleComponent" :currentDisplay/>
+        </SearchBar>
         <Filters :companies="companies" v-model:company="selectedCompany" 
         :officess="fetchedOffices"
         v-model:selected-office="selectedOffice"
@@ -8,18 +10,20 @@
         v-model:selected-division="selectedDivision"
         :departments="fetchedDepartments" v-model:selected-department="selectedDepartment"
         :groups="fetchedGroups" v-model:selected-group="selectedGroup"/>
-        <ContactList :employees="employees"/>
+        <component :is="currentDisplay" :employees="employees"/>
         <Pagination />
     </BaseLayout>
 </template>
 <script setup lang="ts">
 import BaseLayout from '@/components/Layout/BaseLayout.vue';
 import Pagination from '@/components/Layout/Pagination.vue';
-import ContactList from '@/components/UI/Contacts/ContactList.vue';
+import ContactTable from '@/components/UI/Contacts/ContactTable.vue';
 import Filters from '@/components/UI/Filters.vue';
 import SearchBar from '@/components/UI/SearchBar.vue';
+import DisplayButton from '@/components/UI/Contacts/DisplayButton.vue';
 import { useEmployees } from '@/composables/useEmployees';
 import { useFilters } from '@/composables/useFilters';
+import { useDisplay } from '@/composables/useDisplay';
 const { employees, fetchRequest } = useEmployees();
 const {
   companies,
@@ -33,4 +37,5 @@ const {
   fetchedDepartments,
   fetchedGroups
 } = useFilters(fetchRequest);
+const { currentDisplay, toggleComponent } = useDisplay();
 </script>

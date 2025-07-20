@@ -10,12 +10,7 @@
             </svg>
         </div>
         <div class="flex flex-row">
-            <button class="text-white px-2 py-3 rounded-md flex items-center">
-                <img src="../../assets/icons/FilterButton1.png" class="w-20 h-18">
-            </button>
-            <button class="text-white px-2 py-3 rounded-md flex items-center">
-                <img src="../../assets/icons/FilterButton2.png" class="w-20 h-18">
-            </button>
+            <slot></slot>
         </div>
     </div>
     <div class="text-sm text-gray-600">
