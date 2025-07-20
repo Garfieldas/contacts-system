@@ -24,10 +24,24 @@ const selectedGroup = ref();
 
 watch(selectedCompany, async() => {
     fetchRequest(`?filter=company_id="${selectedCompany.value}"&expand=office_id`);
+    selectedOffice.value = null;
+    fetchedOffices.value = [];
+    fetchedDivisions.value = [];
+    selectedDivision.value = null;
+    fetchedDepartments.value = [];
+    selectedDepartment.value = null
+    fetchedGroups.value = [];
+    selectedGroup.value = null;
     await fetchOffices(`?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
     fetchedOffices.value = (offices.value as any[]).map(item => item.expand.office_id);
 });
 watch(selectedOffice, async() => {
+    fetchedDivisions.value = [];
+    selectedDivision.value = null;
+    fetchedDepartments.value = [];
+    selectedDepartment.value = null
+    fetchedGroups.value = [];
+    selectedGroup.value = null;
     const filter = `company_id="${selectedCompany.value}" && office_id="${selectedOffice.value}"`;
     fetchRequest(`?filter=${encodeURIComponent(filter)}&expand=office_id`);
 
@@ -35,6 +49,10 @@ watch(selectedOffice, async() => {
     fetchedDivisions.value = (divisions.value as any[]).map(item => item.expand.division_id)
 });
 watch(selectedDivision, async() => {
+    fetchedDepartments.value = [];
+    selectedDepartment.value = null
+    fetchedGroups.value = [];
+    selectedGroup.value = null;
     const filter = `company_id="${selectedCompany.value}" && office_id="${selectedOffice.value}" && division_id="${selectedDivision.value}"`;
     fetchRequest(`?filter=${encodeURIComponent(filter)}&expand=office_id`);
 
@@ -42,6 +60,8 @@ watch(selectedDivision, async() => {
     fetchedDepartments.value = (departments.value as any[]).map(item => item.expand.department_id);
 });
 watch(selectedDepartment, async () => {
+    fetchedGroups.value = [];
+    selectedGroup.value = null;
     const filter = `company_id="${selectedCompany.value}" && office_id="${selectedOffice.value}" && division_id="${selectedDivision.value}" && department_id="${selectedDepartment.value}"`;
     fetchRequest(`?filter=${encodeURIComponent(filter)}&expand=office_id`);
 
