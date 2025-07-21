@@ -37,6 +37,6 @@ const {
   fetchedDivisions,
   fetchedDepartments,
   fetchedGroups
-} = useFilters(fetchRequest);
+} = useFilters(fetchRequest, perPage, page);
 const { currentDisplay, toggleComponent } = useDisplay();
 </script>

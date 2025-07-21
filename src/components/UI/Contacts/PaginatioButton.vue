@@ -38,7 +38,7 @@ const toggleDropdown = () => {
 
 const selectValue = (value: string) => {
   if (value === 'ALL'){
-    perPage.value = null;
+    perPage.value = '';
     toggleDropdown();
     return;
   }
