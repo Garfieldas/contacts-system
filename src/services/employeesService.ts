@@ -11,3 +11,9 @@ export const getEmployees = async (params?: string) => {
         throw error;
     }
 }
+
+export const getPhotoUrl = (recordId: string, filename: string) => {
+    const baseUrl = import.meta.env.VITE_FILE_URL
+    let url = `${baseUrl}/employees/${recordId}/${filename}`;
+    return url;
+}
