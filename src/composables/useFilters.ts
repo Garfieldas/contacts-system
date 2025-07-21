@@ -27,6 +27,7 @@ export function useFilters(fetchRequest: (query: string) => void, perPage: Ref<N
   const selectedGroup = ref();
   const isResetting = ref(false);
   const searchTerm = ref('');
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   const filterQuee = computed(() => {
     const filters: string[] = [];
@@ -47,6 +48,11 @@ export function useFilters(fetchRequest: (query: string) => void, perPage: Ref<N
       filters.push(`group_id="${selectedGroup.value}"`);
     }
 
+    if(searchTerm.value) {
+      const term = searchTerm.value;
+      filters.push(`(name?~"${term}" || surname?~"${term}" || email?~"${term}" || phone_number?~"${term}" || position?~"${term}")`);
+    }
+
     let query = '';
     if (filters.length > 0) {
       query = `&filter=${encodeURIComponent(filters.join(' && '))}&expand=office_id`;
@@ -65,7 +71,14 @@ export function useFilters(fetchRequest: (query: string) => void, perPage: Ref<N
   });
 
   watch(searchTerm, () => {
-    console.log(searchTerm.value)
+    if(isResetting.value) return;
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+    debounceTimer = setTimeout(() => {
+      page.value = 1;
+      fetchRequest(filterQuee.value)
+    }, 500)
   })
 
   watch(selectedCompany, async () => {
