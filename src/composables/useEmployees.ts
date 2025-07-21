@@ -9,6 +9,7 @@ export const useEmployees = () => {
     const totalItems = ref();
     const totalPages = ref();
     const store = useNotificationStore();
+    const isFirstLoad = ref(false);
     
     const fetchRequest = async (params? : string) => {
         const url = params? `${params}` : '';
@@ -19,7 +20,10 @@ export const useEmployees = () => {
             perPage.value = response.perPage;
             totalItems.value = response.totalItems;
             totalPages.value = response.totalPages;
-            store.addSuccessNotification('Employees fetched successfully!');
+            if (isFirstLoad.value === false){
+                store.addSuccessNotification('Employees fetched successfully!');
+                isFirstLoad.value = true;
+            }
         }
         catch (error: any) {
             store.addErrorNotification(error);
