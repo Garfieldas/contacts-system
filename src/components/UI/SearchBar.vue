@@ -14,9 +14,10 @@
         </div>
     </div>
     <div class="text-sm text-gray-600">
-        Iš viso rasta: <span class="font-semibold text-[#1F3F77]">152 kontaktų</span>
+        Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
     </div>
 </template>
 <script setup lang="ts">
-const searchTerm = defineModel('searchTerm')
+const searchTerm = defineModel('searchTerm');
+const totalItems = defineModel('totalItems');
 </script>
