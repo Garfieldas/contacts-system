@@ -1,5 +1,5 @@
 import { getEmployees } from "@/services/employeesService";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { useNotificationStore } from "@/stores/notificationstore";
 
 export const useEmployees = () => {
@@ -29,13 +29,6 @@ export const useEmployees = () => {
         }
     }
     onMounted(() => {
-        fetchRequest('&expand=office_id');
-    })
-
-    watch(page, () => {
-        fetchRequest('&expand=office_id');
-    })
-    watch(perPage, () => {
         fetchRequest('&expand=office_id');
     })
 
