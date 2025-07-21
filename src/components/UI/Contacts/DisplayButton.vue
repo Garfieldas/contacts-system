@@ -10,5 +10,4 @@
 </template>
 <script setup lang="ts">
 const props = defineProps(['currentDisplay']);
-console.log(props.currentDisplay.__name)
 </script>

@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import BaseLayout from '@/components/Layout/BaseLayout.vue';
 import Pagination from '@/components/Layout/Pagination.vue';
-import ContactTable from '@/components/UI/Contacts/ContactTable.vue';
 import Filters from '@/components/UI/Filters.vue';
 import SearchBar from '@/components/UI/SearchBar.vue';
 import DisplayButton from '@/components/UI/Contacts/DisplayButton.vue';

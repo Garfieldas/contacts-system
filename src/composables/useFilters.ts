@@ -10,24 +10,26 @@ import type { Department, expandDepartment } from '@/types/departmentType';
 import type { Group, expandGroup } from '@/types/groupType';
 
 export function useFilters(fetchRequest: (query: string) => void) {
-const { companies } = useCompanies();
-const { offices, fetchOffices } = useOffices();
-const { divisions, fetchDivisions } = useDivisions();
-const { departments, fetchDepartments } = useDepartments();
-const { groups, fetchGroups } = useGroups();
+  const { companies } = useCompanies();
+  const { offices, fetchOffices } = useOffices();
+  const { divisions, fetchDivisions } = useDivisions();
+  const { departments, fetchDepartments } = useDepartments();
+  const { groups, fetchGroups } = useGroups();
 
-const selectedCompany = ref();
-const fetchedOffices = ref<Office[]>([]);
-const selectedOffice = ref();
-const fetchedDivisions= ref<Division[]>([]);
-const selectedDivision = ref();
-const fetchedDepartments = ref<Department[]>([]);
-const selectedDepartment = ref();
-const fetchedGroups= ref<Group[]>([]);
-const selectedGroup = ref();
+  const selectedCompany = ref();
+  const fetchedOffices = ref<Office[]>([]);
+  const selectedOffice = ref();
+  const fetchedDivisions = ref<Division[]>([]);
+  const selectedDivision = ref();
+  const fetchedDepartments = ref<Department[]>([]);
+  const selectedDepartment = ref();
+  const fetchedGroups = ref<Group[]>([]);
+  const selectedGroup = ref();
+  const isResetting = ref(false);
 
-watch(selectedCompany, async() => {
-    fetchRequest(`?filter=company_id="${selectedCompany.value}"&expand=office_id`);
+  watch(selectedCompany, async() => {
+    if (isResetting.value) return;
+    isResetting.value = true;
     selectedOffice.value = null;
     fetchedOffices.value = [];
     fetchedDivisions.value = [];
@@ -36,46 +38,71 @@ watch(selectedCompany, async() => {
     selectedDepartment.value = null
     fetchedGroups.value = [];
     selectedGroup.value = null;
+    isResetting.value = false;
+    
     await fetchOffices(`?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
     fetchedOffices.value = (offices.value as expandOffice[]).map(item => item.expand.office_id);
-});
-watch(selectedOffice, async() => {
+    fetchRequest(`&filter=company_id="${selectedCompany.value}"&expand=office_id`);
+  });
+
+  watch(selectedOffice, async() => {
+    if (isResetting.value) return; 
+    
+    isResetting.value = true;
     fetchedDivisions.value = [];
     selectedDivision.value = null;
     fetchedDepartments.value = [];
     selectedDepartment.value = null
     fetchedGroups.value = [];
     selectedGroup.value = null;
+    isResetting.value = false;
+    
     const filter = `company_id="${selectedCompany.value}" && office_id="${selectedOffice.value}"`;
-    fetchRequest(`?filter=${encodeURIComponent(filter)}&expand=office_id`);
+    fetchRequest(`&filter=${encodeURIComponent(filter)}&expand=office_id`);
 
     await fetchDivisions(`?filter=office_id="${selectedOffice.value}"&expand=division_id&fields=expand.division_id`);
     fetchedDivisions.value = (divisions.value as expandDivision[]).map(item => item.expand.division_id)
-});
-watch(selectedDivision, async() => {
+  });
+
+  watch(selectedDivision, async() => {
+    if (isResetting.value) return;
+    
+    isResetting.value = true;
     fetchedDepartments.value = [];
     selectedDepartment.value = null
     fetchedGroups.value = [];
     selectedGroup.value = null;
+    isResetting.value = false;
+    
     const filter = `company_id="${selectedCompany.value}" && office_id="${selectedOffice.value}" && division_id="${selectedDivision.value}"`;
-    fetchRequest(`?filter=${encodeURIComponent(filter)}&expand=office_id`);
+    fetchRequest(`&filter=${encodeURIComponent(filter)}&expand=office_id`);
 
     await fetchDepartments(`?filter=division_id="${selectedDivision.value}"&expand=department_id&fields=expand.department_id`);
     fetchedDepartments.value = (departments.value as expandDepartment[]).map(item => item.expand.department_id);
-});
-watch(selectedDepartment, async () => {
+  });
+
+  watch(selectedDepartment, async () => {
+    if (isResetting.value) return;
+    
+    isResetting.value = true;
     fetchedGroups.value = [];
     selectedGroup.value = null;
+    isResetting.value = false;
+    
     const filter = `company_id="${selectedCompany.value}" && office_id="${selectedOffice.value}" && division_id="${selectedDivision.value}" && department_id="${selectedDepartment.value}"`;
-    fetchRequest(`?filter=${encodeURIComponent(filter)}&expand=office_id`);
+    fetchRequest(`&filter=${encodeURIComponent(filter)}&expand=office_id`);
 
     await fetchGroups(`?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
     fetchedGroups.value = (groups.value as expandGroup[]).map(item => item.expand.group_id);
-});
-watch(selectedGroup, () => {
+  });
+
+  watch(selectedGroup, () => {
+    if (isResetting.value) return;
+    
     const filter = `company_id="${selectedCompany.value}" && office_id="${selectedOffice.value}" && division_id="${selectedDivision.value}" && department_id="${selectedDepartment.value}" && group_id="${selectedGroup.value}"`;
-    fetchRequest(`?filter=${encodeURIComponent(filter)}&expand=office_id`);
-})
+    fetchRequest(`&filter=${encodeURIComponent(filter)}&expand=office_id`);
+  })
+
   return {
     companies,
     selectedCompany,
