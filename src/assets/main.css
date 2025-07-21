@@ -3,3 +3,6 @@
 button {
     cursor: pointer;
 }
+.dropdown {
+    margin-bottom: 0.1rem;
+}

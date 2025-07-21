@@ -1,6 +1,7 @@
 <template>
     <BaseLayout>
         <SearchBar>
+          <PaginatioButton />
           <DisplayButton @toggle="toggleComponent" :currentDisplay/>
         </SearchBar>
         <Filters :companies="companies" v-model:company="selectedCompany" 
@@ -11,7 +12,7 @@
         :departments="fetchedDepartments" v-model:selected-department="selectedDepartment"
         :groups="fetchedGroups" v-model:selected-group="selectedGroup"/>
         <component :is="currentDisplay" :employees="employees"/>
-        <Pagination />
+        <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     </BaseLayout>
 </template>
 <script setup lang="ts">
@@ -20,10 +21,11 @@ import Pagination from '@/components/Layout/Pagination.vue';
 import Filters from '@/components/UI/Filters.vue';
 import SearchBar from '@/components/UI/SearchBar.vue';
 import DisplayButton from '@/components/UI/Contacts/DisplayButton.vue';
+import PaginatioButton from '@/components/UI/Contacts/PaginatioButton.vue';
 import { useEmployees } from '@/composables/useEmployees';
 import { useFilters } from '@/composables/useFilters';
 import { useDisplay } from '@/composables/useDisplay';
-const { employees, fetchRequest } = useEmployees();
+const { employees, page, totalPages, fetchRequest } = useEmployees();
 const {
   companies,
   selectedCompany,
