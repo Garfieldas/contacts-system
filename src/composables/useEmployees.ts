@@ -13,9 +13,6 @@ export const useEmployees = () => {
     
     const fetchRequest = async (params? : string) => {
         let url = params? `?page=${page.value}&perPage=${perPage.value}${params}` :`?page=${page.value}&perPage=${perPage.value}`;
-        if(!perPage.value){
-            url = '?expand=office_id';
-        }
         try {
             const response = await getEmployees(url);
             employees.value = response.items;
