@@ -16,6 +16,7 @@
           v-for="option in options"
           :key="option"
           class="text-center bg-[#0054A6] cursor-pointer dropdown"
+          @click="selectValue(option)"
         >
           {{ option }}
         </li>
@@ -29,9 +30,20 @@ import { ref } from 'vue';
 
 const isOpen = ref(false);
 const options = ['5', '10', '25', '50', '100', 'ALL'];
+const perPage = defineModel('perPage')
 
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
+
+const selectValue = (value: string) => {
+  if (value === 'ALL'){
+    perPage.value = null;
+    toggleDropdown();
+    return;
+  }
+  perPage.value = value;
+  toggleDropdown();
+}
 
 </script>

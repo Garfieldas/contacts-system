@@ -5,19 +5,21 @@ import { useNotificationStore } from "@/stores/notificationstore";
 export const useEmployees = () => {
     const employees = ref([]);
     const page = ref(1);
-    const perPage = ref(5);
+    const perPage = ref(25);
     const totalItems = ref();
     const totalPages = ref();
     const store = useNotificationStore();
     const isFirstLoad = ref(false);
     
     const fetchRequest = async (params? : string) => {
-        const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` :`?page=${page.value}&perPage=${perPage.value}`;
+        let url = params? `?page=${page.value}&perPage=${perPage.value}${params}` :`?page=${page.value}&perPage=${perPage.value}`;
+        if(!perPage.value){
+            url = '?expand=office_id';
+        }
         try {
             const response = await getEmployees(url);
             employees.value = response.items;
             page.value = response.page;
-            perPage.value = response.perPage;
             totalItems.value = response.totalItems;
             totalPages.value = response.totalPages;
             if (isFirstLoad.value === false){
@@ -34,6 +36,9 @@ export const useEmployees = () => {
     })
 
     watch(page, () => {
+        fetchRequest('&expand=office_id');
+    })
+    watch(perPage, () => {
         fetchRequest('&expand=office_id');
     })
 

@@ -1,7 +1,7 @@
 <template>
     <BaseLayout>
         <SearchBar>
-          <PaginatioButton />
+          <PaginatioButton v-model:per-page="perPage" />
           <DisplayButton @toggle="toggleComponent" :currentDisplay/>
         </SearchBar>
         <Filters :companies="companies" v-model:company="selectedCompany" 
@@ -25,7 +25,7 @@ import PaginatioButton from '@/components/UI/Contacts/PaginatioButton.vue';
 import { useEmployees } from '@/composables/useEmployees';
 import { useFilters } from '@/composables/useFilters';
 import { useDisplay } from '@/composables/useDisplay';
-const { employees, page, totalPages, fetchRequest } = useEmployees();
+const { employees, page, totalPages, perPage, fetchRequest } = useEmployees();
 const {
   companies,
   selectedCompany,
