@@ -1,6 +1,6 @@
 <template>
     <BaseLayout>
-        <SearchBar>
+        <SearchBar v-model:search-term="searchTerm">
           <PaginatioButton v-model:per-page="perPage" />
           <DisplayButton @toggle="toggleComponent" :currentDisplay/>
         </SearchBar>
@@ -36,7 +36,8 @@ const {
   fetchedOffices,
   fetchedDivisions,
   fetchedDepartments,
-  fetchedGroups
+  fetchedGroups,
+  searchTerm
 } = useFilters(fetchRequest, perPage, page);
 const { currentDisplay, toggleComponent } = useDisplay();
 </script>

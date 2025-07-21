@@ -26,6 +26,7 @@ export function useFilters(fetchRequest: (query: string) => void, perPage: Ref<N
   const fetchedGroups = ref<Group[]>([]);
   const selectedGroup = ref();
   const isResetting = ref(false);
+  const searchTerm = ref('');
 
   const filterQuee = computed(() => {
     const filters: string[] = [];
@@ -61,6 +62,10 @@ export function useFilters(fetchRequest: (query: string) => void, perPage: Ref<N
       page.value = 1;
     }
     fetchRequest(filterQuee.value);
+  });
+
+  watch(searchTerm, () => {
+    console.log(searchTerm.value)
   })
 
   watch(selectedCompany, async () => {
@@ -154,5 +159,6 @@ export function useFilters(fetchRequest: (query: string) => void, perPage: Ref<N
     fetchedDivisions,
     fetchedDepartments,
     fetchedGroups,
+    searchTerm
   };
 }
