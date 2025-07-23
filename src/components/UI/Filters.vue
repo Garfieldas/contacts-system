@@ -102,7 +102,7 @@ watch(selectedDivision, async () => {
     displayDepartment.value = (departments.value as expandDepartment[]).map(item => item.expand.department_id);
 });
 
-watch(selectedDivision, async () => {
+watch(selectedDepartment, async () => {
     await fetchGroups(`?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
     displayGroup.value = (groups.value as expandGroup[]).map(item => item.expand.group_id);
 });
