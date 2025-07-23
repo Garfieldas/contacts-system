@@ -1,9 +1,10 @@
 import { getCompanies } from "@/services/companiesService";
 import { useNotificationStore } from "@/stores/notificationstore";
 import { ref } from "vue";
+import type { Company } from "@/types/companyType";
 
 export const useCompanies = () => {
-    const companies = ref([]);
+    const companies = ref<Company[]>([]);
     const store = useNotificationStore();
 
     const fetchCompanies = async () => {
