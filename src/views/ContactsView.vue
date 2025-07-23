@@ -35,7 +35,13 @@ const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
 }
 
-const getCompany = (value: number) => company.value = value;
+const getCompany = (value: number) => {
+  if(!company.value){
+    fetchRequest('&expand=office_id')
+  }
+  company.value = value;
+  fetchRequest(`&filter=company_id="${company.value}"&expand=office_id`)
+}
 
 onMounted(() => {
   fetchRequest('&expand=office_id')
