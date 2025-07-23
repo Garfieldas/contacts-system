@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout>
+  <BaseLayout title="Kontaktų sistema">
     <SearchBar
       v-model:search-term="searchTerm"
       v-model:total-items="totalItems"
