@@ -28,10 +28,6 @@ export const useEmployees = () => {
             store.addErrorNotification(error);
         }
     }
-    onMounted(() => {
-        fetchRequest('&expand=office_id');
-    })
-
     return {
         employees, page, perPage,
         totalItems, totalPages, fetchRequest

@@ -9,8 +9,11 @@
         <div class="px-6 py-3 bg-[#0F2A5A] text-center min-w-[120px]">
             <span class="text-sm font-medium">PRAEITAS PUSLAPIS</span>
         </div>
-        <div class="px-6 py-3 bg-white text-[#1F3F77] font-semibold min-w-[60px] text-center">
+        <div class="px-6 py-3 bg-white text-[#1F3F77] font-semibold min-w-[60px] text-center" v-if="totalPages">
             {{ page }} / {{ totalPages }}
+        </div>
+        <div class="px-6 py-3 bg-white text-[#1F3F77] font-semibold min-w-[60px] text-center" v-else>
+            1 / 1
         </div>
         <div class="px-6 py-3 bg-[#0F2A5A] text-center min-w-[120px]">
             <span class="text-sm font-medium">KITAS PUSLAPIS</span>
