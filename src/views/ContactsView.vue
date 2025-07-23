@@ -4,7 +4,7 @@
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
     </SearchBar>
-    <Filters @select-company="getCompany"/>
+    <Filters @filter-changed="handleFilters"/>
     <div v-if="employees.length === 0" class="flex flex-col items-center justify-center w-full py-16 px-4 bg-gray-50 rounded-xl shadow-inner text-center">
       <img src="../assets/icons/zero-results.svg" alt="No Results" class="w-24 h-24 mb-6 opacity-60"/>
       <h1 class="text-2xl font-semibold text-gray-700 mb-2">Nerasta jokių kontaktų</h1>
@@ -35,12 +35,8 @@ const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
 }
 
-const getCompany = (value: number) => {
-  if(!company.value){
-    fetchRequest('&expand=office_id')
-  }
-  company.value = value;
-  fetchRequest(`&filter=company_id="${company.value}"&expand=office_id`)
+const handleFilters = (filters: Object) => {
+  console.log(filters);
 }
 
 onMounted(() => {
