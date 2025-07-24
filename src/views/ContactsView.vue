@@ -76,23 +76,27 @@ const handleFilters = (newFilters: {
   filters.group = newFilters.group;
 }
 
-watch(filtersQuee, (newQuery) => {
-  fetchRequest(newQuery);
+watch(page, () => {
+  fetchRequest(filtersQuee.value);
 });
 
-watch([page, perPage, totalPages], ([currentPageValue, currentPerPage, totalPagesValue]) => {
-  if(currentPerPage !== perPage.value) {
+watch(perPage, () => {
+  page.value = 1;
+  fetchRequest(filtersQuee.value);
+});
+
+watch(filtersQuee, () => {
+  page.value = 1;
+  fetchRequest(filtersQuee.value);
+});
+
+watch(totalPages, (newTotalPages) => {
+  if (page.value > newTotalPages && newTotalPages > 0) {
+    page.value = newTotalPages;
+  } else if (newTotalPages === 0 && page.value !== 1) {
     page.value = 1;
   }
-  if (currentPageValue > totalPagesValue && totalPagesValue > 0) {
-    page.value = totalPagesValue;
-    fetchRequest(filtersQuee.value);
-  }
-  else if (totalPagesValue === 0 && currentPageValue !== 1) {
-    page.value = 1;
-    fetchRequest(filtersQuee.value);
-  }
-},)
+});
 
 onMounted(() => {
   fetchRequest('&expand=office_id')
