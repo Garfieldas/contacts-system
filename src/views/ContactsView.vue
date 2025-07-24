@@ -1,9 +1,6 @@
 <template>
   <BaseLayout title="Kontaktų sistema">
-    <SearchBar
-      v-model:search-term="searchTerm"
-      v-model:total-items="totalItems"
-    >
+      <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam">
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
     </SearchBar>
