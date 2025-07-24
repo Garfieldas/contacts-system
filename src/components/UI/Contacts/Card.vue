@@ -9,18 +9,18 @@
                 <img v-else="employee.photo" :src="employeePhotoUrl" :alt="`Employee photo of ${employee.name} ${employee.surname}`" class="w-full h-full object-cover rounded-full">
             </div>
             <div>
-                <h3 class="font-semibold text-gray-900 text-base">{{ employee.name }} {{ employee.surname }}</h3>
+                <h3 class="font-semibold text-gray-900 text-base">{{ employee.name.slice(0, 20) }} {{ employee.surname.slice(0, 20) }}</h3>
                 <p class="text-sm text-gray-600">{{ employee.position }}</p>
             </div>
         </div>
         <div class="space-y-2 text-sm">
             <div class="flex items-center text-gray-700">
                 <span class="font-medium w-24 text-gray-500">Telefonas nr:</span>
-                <span>{{ employee.phone_number }}</span>
+                <span>{{ employee.phone_number.slice(0, 20) }}</span>
             </div>
             <div class="flex items-center text-gray-700">
                 <span class="font-medium w-24 text-gray-500">El. paštas:</span>
-                <span class="text-[#1F3F77]">{{ employee.email }}</span>
+                <span class="text-[#1F3F77]">{{ employee.email.slice(0, 30) }}</span>
             </div>
             <div class="flex items-start text-gray-700">
                 <span class="font-medium w-24 text-gray-500">Adresas:</span>

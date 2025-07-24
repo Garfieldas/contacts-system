@@ -14,20 +14,20 @@ axiosInstance.interceptors.response.use(
 
     if (error.response) {
       if (error.response.status === 401) {
-        errorMessage = 'Failed to authorize. Please log in again.';
+        errorMessage = 'Nepavyko prisijungti. Pabandykite dar kartą prisijungti.';
       } else if (error.response.status === 404) {
-        errorMessage = 'Resource not found.';
+        errorMessage = 'Nepavyko nieko rasti';
       } else if (error.response.status === 500) {
-        errorMessage = 'Server error. Please try again later.';
+        errorMessage = 'Serverio klaida. Prašome pabandykite dar kartą vėliau.';
       } else if (error.response.status === 400) {
-        errorMessage = error.response.data?.message || 'Bad request. Please check your input.';
+        errorMessage ='Patikrinkite suvestus duomenis ir bandykite dar kartą.';
       } else {
-        errorMessage = `Error: ${error.response.status} - ${error.response.statusText || 'Something went wrong.'}`;
+        errorMessage = 'Atsiprašome, bet susidūrėme su problema. Prašome pabandykite dar kartą vėliau';
       }
     } else if (error.request) {
-      errorMessage = 'Network error. Please check your internet connection.';
+      errorMessage = 'Deja, atrodo, kad jūsų įrenginys šiuo metu neturi interneto ryšio.';
     } else {
-      errorMessage = error.message;
+      errorMessage = 'Atsiprašome, bet susidūrėme su problema. Prašome pabandykite dar kartą vėliau';
     }
     
     return Promise.reject(errorMessage);

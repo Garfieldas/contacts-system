@@ -4,10 +4,6 @@ import { getDivisionsDepartments } from "@/services/divisionsDepartmentsService"
 
 export const useDepartments = () => {
     const departments = ref([]);
-    const page = ref();
-    const perPage = ref();
-    const totalItems = ref();
-    const totalPages = ref();
     const store = useNotificationStore();
 
     const fetchDepartments = async (params? : string) => {
@@ -15,10 +11,6 @@ export const useDepartments = () => {
         try {
             const response = await getDivisionsDepartments(url);
             departments.value = response.items;
-            page.value = response.page;
-            perPage.value = response.perPage;
-            totalItems.value = response.totalItems;
-            totalPages.value = response.totalPages;
         }
         catch (error: any) {
             store.addErrorNotification(error);
@@ -26,7 +18,6 @@ export const useDepartments = () => {
     }
 
     return {
-        departments, page, perPage,
-        totalItems, totalPages, fetchDepartments
+        departments, fetchDepartments
     }
 }

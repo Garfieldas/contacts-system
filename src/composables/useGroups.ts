@@ -4,10 +4,6 @@ import { getDepartmentsGroups } from "@/services/departmentsGroupsService";
 
 export const useGroups = () => {
     const groups = ref([]);
-    const page = ref();
-    const perPage = ref();
-    const totalItems = ref();
-    const totalPages = ref();
     const store = useNotificationStore();
 
     const fetchGroups = async (params? : string) => {
@@ -15,10 +11,6 @@ export const useGroups = () => {
         try {
             const response = await getDepartmentsGroups(url);
             groups.value = response.items;
-            page.value = response.page;
-            perPage.value = response.perPage;
-            totalItems.value = response.totalItems;
-            totalPages.value = response.totalPages;
         }
         catch (error: any) {
             store.addErrorNotification(error);
@@ -26,7 +18,6 @@ export const useGroups = () => {
     }
 
     return {
-        groups, page, perPage,
-        totalItems, totalPages, fetchGroups
+        groups, fetchGroups
     }
 }

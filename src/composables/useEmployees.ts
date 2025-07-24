@@ -16,7 +16,6 @@ export const useEmployees = () => {
         try {
             const response = await getEmployees(url);
             employees.value = response.items;
-            page.value = response.page;
             totalItems.value = response.totalItems;
             totalPages.value = response.totalPages;
             if (isFirstLoad.value === false){
@@ -28,10 +27,6 @@ export const useEmployees = () => {
             store.addErrorNotification(error);
         }
     }
-    onMounted(() => {
-        fetchRequest('&expand=office_id');
-    })
-
     return {
         employees, page, perPage,
         totalItems, totalPages, fetchRequest
