@@ -1,9 +1,13 @@
 <template>
   <BaseLayout>
-    <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam">
+    <div class="flex flex-row items-center mb-6">
+    <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
-    </SearchBar>
+    </div>
+    <div class="text-sm text-gray-600">
+        Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
+    </div>
     <Filters @filter-changed="handleFilters"/>
     <div v-if="employees.length === 0" class="flex flex-col items-center justify-center w-full py-16 px-4 bg-gray-50 rounded-xl shadow-inner text-center">
       <img src="../assets/icons/zero-results.svg" alt="No Results" class="w-24 h-24 mb-6 opacity-60"/>
@@ -105,7 +109,7 @@ watch(searchParam, () => {
   debounceTimer = setTimeout(() => {
     page.value = 1;
     fetchRequest(filtersQuee.value);
-  })
+  }, 300)
 });
 
 watch(totalPages, (newTotalPages) => {
