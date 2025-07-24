@@ -43,32 +43,24 @@ const filters = reactive<{
 }>({});
 
 const filtersQuee = computed(() => {
-  const query: string[] = [];
-  if (filters.company) {
-    query.push(`company_id="${filters.company}"`)
-  }
-  if (filters.office) {
-    query.push(`office_id="${filters.office}"`)
-  }
-  if (filters.division) {
-    query.push(`division_id="${filters.division}"`)
-  }
-  if (filters.department) {
-    query.push(`department_id="${filters.department}"`)
-  }
-  if (filters.group) {
-    query.push(`group_id="${filters.group}"`)
-  }
-  let url = '';
-  if (query.length > 0){
-    url = `&filter=${encodeURIComponent(query.join(' && '))}&expand=office_id`;
-  }
-  else {
-    url = '&expand=office_id';
-  }
-  console.log(query)
-  return url;
-})
+  const filterMap = {
+    company: 'company_id',
+    office: 'office_id',
+    division: 'division_id',
+    department: 'department_id',
+    group: 'group_id',
+  };
+
+  const query = Object.entries(filterMap)
+    .filter(([key]) => filters[key as keyof typeof filters])
+    .map(([key, field]) => `${field}="${filters[key as keyof typeof filters]}"`);
+
+  const filterPart = query.length > 0
+    ? `&filter=${encodeURIComponent(query.join(' && '))}`
+    : '';
+
+  return `${filterPart}&expand=office_id`;
+});
 
 const handleFilters = (newFilters: {
   company?: string,
