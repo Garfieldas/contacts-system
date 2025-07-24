@@ -87,6 +87,10 @@ const handleCompanyChange = async () => {
     selectedDivision.value = '';
     selectedDepartment.value = '';
     selectedGroup.value = '';
+    offices.value = [];
+    divisions.value = [];
+    departments.value = [];
+    groups.value = [];
     emitFilters();
 
     if (selectedCompany.value) {
@@ -104,6 +108,10 @@ const handleOfficeChange = async () => {
     selectedDivision.value = '';
     selectedDepartment.value = '';
     selectedGroup.value = '';
+    divisions.value = [];
+    departments.value = [];
+    groups.value = [];
+    emitFilters();
     emitFilters();
 
     if (selectedOffice.value) {
@@ -119,6 +127,9 @@ const handleOfficeChange = async () => {
 const handleDivisionChange = async () => {
     selectedDepartment.value = '';
     selectedGroup.value = '';
+    departments.value = [];
+    groups.value = [];
+    emitFilters();
     emitFilters();
 
     if (selectedDivision.value) {
@@ -132,6 +143,8 @@ const handleDivisionChange = async () => {
 
 const handleDepartmentChange = async () => {
     selectedGroup.value = '';
+    groups.value = [];
+    emitFilters();
     emitFilters();
 
     if (selectedDepartment.value) {

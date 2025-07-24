@@ -19,7 +19,7 @@ export const useEmployees = () => {
             totalItems.value = response.totalItems;
             totalPages.value = response.totalPages;
             if (isFirstLoad.value === false){
-                store.addSuccessNotification('Employees fetched successfully!');
+                store.addSuccessNotification('Kontaktai gauti sėkmingai!');
                 isFirstLoad.value = true;
             }
         }
