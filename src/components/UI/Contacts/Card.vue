@@ -1,5 +1,6 @@
 <template>
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <router-link :to="{name: 'contact-details', params: {id: employee.id}}">
         <div class="flex items-center mb-4">
             <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mr-4">
                 <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" v-if="!employee.photo">
@@ -27,6 +28,7 @@
                 <span>{{ employee.expand.office_id.name }}</span>
             </div>
         </div>
+        </router-link>
     </div>
 </template>
 <script setup lang="ts">

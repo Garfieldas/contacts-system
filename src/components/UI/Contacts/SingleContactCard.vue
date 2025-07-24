@@ -7,7 +7,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-900 text-2xl">Vardas Pavardė</h3>
+                    <h3 class="font-semibold text-gray-900 text-2xl">{{ employee.name }}</h3>
                     <p class="text-lg text-gray-600">Pozicija: pozicijos_pavadinimas</p>
                 </div>
             </div>
@@ -55,3 +55,6 @@
             </div>
         </div>
 </template>
+<script setup lang="ts">
+const props = defineProps(['employee']);
+</script>
