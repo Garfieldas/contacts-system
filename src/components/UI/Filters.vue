@@ -96,6 +96,7 @@ watch(selectedCompany, async () => {
     selectedDepartment.value = '';
     selectedGroup.value = '';
     disableWatch.value = false;
+    emitFilters();
     await fetchOffices(`?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
     displayOffice.value = (offices.value as expandOffice[]).map((item) => item.expand.office_id)
 });
@@ -107,6 +108,7 @@ watch(selectedOffice, async () => {
     selectedDepartment.value = '';
     selectedGroup.value = '';
     disableWatch.value = false;
+    emitFilters();
     await fetchDivisions(`?filter=office_id="${selectedOffice.value}"&expand=division_id&fields=expand.division_id`);
     displayDivision.value = (divisions.value as expandDivision[]).map(item => item.expand.division_id)
 });
@@ -117,6 +119,7 @@ watch(selectedDivision, async () => {
     selectedDepartment.value = '';
     selectedGroup.value = '';
     disableWatch.value = false;
+    emitFilters();
     await fetchDepartments(`?filter=division_id="${selectedDivision.value}"&expand=department_id&fields=expand.department_id`);
     displayDepartment.value = (departments.value as expandDepartment[]).map(item => item.expand.department_id);
 });
@@ -126,6 +129,7 @@ watch(selectedDepartment, async () => {
     disableWatch.value = true;
     selectedGroup.value = '';
     disableWatch.value = false;
+    emitFilters();
     await fetchGroups(`?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
     displayGroup.value = (groups.value as expandGroup[]).map(item => item.expand.group_id);
 });

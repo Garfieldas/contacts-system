@@ -24,7 +24,7 @@ import SearchBar from "@/components/UI/SearchBar.vue";
 import DisplayButton from "@/components/UI/Contacts/DisplayButton.vue";
 import PaginatioButton from "@/components/UI/Contacts/PaginatioButton.vue";
 import { useEmployees } from "@/composables/useEmployees";
-import { onMounted, shallowRef, reactive, computed, watchEffect } from "vue";
+import { onMounted, shallowRef, reactive, computed, watch } from "vue";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
@@ -77,27 +77,16 @@ const handleFilters = (newFilters: {
   department?: string,
   group?: string,
 }) => {
-  if(newFilters.company) {
-    filters.company = newFilters.company;
-    fetchRequest(filtersQuee.value)
-  }
-  if(newFilters.office) {
-    filters.office = newFilters.office;
-    fetchRequest(filtersQuee.value)
-  }
-  if(newFilters.division) {
-    filters.division = newFilters.division;
-    fetchRequest(filtersQuee.value)
-  }
-  if(newFilters.department) {
-    filters.department = newFilters.department;
-    fetchRequest(filtersQuee.value)
-  }
-  if(newFilters.group) {
-    filters.group = newFilters.group;
-    fetchRequest(filtersQuee.value)
-  }
+  filters.company = newFilters.company;
+  filters.office = newFilters.office;
+  filters.division = newFilters.division;
+  filters.department = newFilters.department;
+  filters.group = newFilters.group;
 }
+
+watch(filtersQuee, (newQuery) => {
+  fetchRequest(newQuery);
+})
 
 onMounted(() => {
   fetchRequest('&expand=office_id')
