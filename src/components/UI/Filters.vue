@@ -76,6 +76,7 @@ const displayOffice = ref();
 const displayDivision = ref();
 const displayDepartment = ref();
 const displayGroup = ref();
+const disableWatch = ref(false);
 
 const emitFilters = () => {
     emits('filterChanged', {
@@ -88,21 +89,43 @@ const emitFilters = () => {
 }
 
 watch(selectedCompany, async () => {
+    if(disableWatch.value) return;
+    disableWatch.value = true;
+    selectedOffice.value = '';
+    selectedDivision.value = '';
+    selectedDepartment.value = '';
+    selectedGroup.value = '';
+    disableWatch.value = false;
     await fetchOffices(`?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
     displayOffice.value = (offices.value as expandOffice[]).map((item) => item.expand.office_id)
 });
 
 watch(selectedOffice, async () => {
+    if(disableWatch.value) return;
+    disableWatch.value = true;
+    selectedDivision.value = '';
+    selectedDepartment.value = '';
+    selectedGroup.value = '';
+    disableWatch.value = false;
     await fetchDivisions(`?filter=office_id="${selectedOffice.value}"&expand=division_id&fields=expand.division_id`);
     displayDivision.value = (divisions.value as expandDivision[]).map(item => item.expand.division_id)
 });
 
 watch(selectedDivision, async () => {
+    if(disableWatch.value) return;
+    disableWatch.value = true;
+    selectedDepartment.value = '';
+    selectedGroup.value = '';
+    disableWatch.value = false;
     await fetchDepartments(`?filter=division_id="${selectedDivision.value}"&expand=department_id&fields=expand.department_id`);
     displayDepartment.value = (departments.value as expandDepartment[]).map(item => item.expand.department_id);
 });
 
 watch(selectedDepartment, async () => {
+    if(disableWatch.value) return;
+    disableWatch.value = true;
+    selectedGroup.value = '';
+    disableWatch.value = false;
     await fetchGroups(`?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
     displayGroup.value = (groups.value as expandGroup[]).map(item => item.expand.group_id);
 });
