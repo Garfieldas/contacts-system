@@ -1,6 +1,6 @@
 <template>
   <BaseLayout>
-    <SearchBar v-model:total-items="totalItems">
+    <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam">
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
     </SearchBar>
@@ -24,7 +24,7 @@ import SearchBar from "@/components/UI/SearchBar.vue";
 import DisplayButton from "@/components/UI/Contacts/DisplayButton.vue";
 import PaginatioButton from "@/components/UI/Contacts/PaginatioButton.vue";
 import { useEmployees } from "@/composables/useEmployees";
-import { onMounted, shallowRef, reactive, computed, watch } from "vue";
+import { onMounted, shallowRef, reactive, computed, watch, ref } from "vue";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
@@ -33,6 +33,9 @@ const currentDisplay = shallowRef(ContactList);
 const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
 }
+
+const searchParam = ref('');
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 const filters = reactive<{
   company?: string;
@@ -51,12 +54,17 @@ const filtersQuee = computed(() => {
     group: 'group_id',
   };
 
-  const query = Object.entries(filterMap)
+  const filterConditions = Object.entries(filterMap)
     .filter(([key]) => filters[key as keyof typeof filters])
     .map(([key, field]) => `${field}="${filters[key as keyof typeof filters]}"`);
 
-  const filterPart = query.length > 0
-    ? `&filter=${encodeURIComponent(query.join(' && '))}`
+  if (searchParam.value) {
+    const searchTerm = `(name?~"${searchParam.value}" || surname?~"${searchParam.value}" || email?~"${searchParam.value}" || phone_number?~"${searchParam.value}" || position?~"${searchParam.value}")`;
+    filterConditions.push(searchTerm);
+  }
+
+  const filterPart = filterConditions.length > 0
+    ? `&filter=${encodeURIComponent(filterConditions.join(' && '))}`
     : '';
 
   return `${filterPart}&expand=office_id`;
@@ -88,6 +96,16 @@ watch(perPage, () => {
 watch(filtersQuee, () => {
   page.value = 1;
   fetchRequest(filtersQuee.value);
+});
+
+watch(searchParam, () => {
+  if(debounceTimer){
+    clearTimeout(debounceTimer);
+  }
+  debounceTimer = setTimeout(() => {
+    page.value = 1;
+    fetchRequest(filtersQuee.value);
+  })
 });
 
 watch(totalPages, (newTotalPages) => {
