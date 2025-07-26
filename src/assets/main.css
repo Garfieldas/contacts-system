@@ -6,3 +6,6 @@ button {
 .dropdown {
     margin-bottom: 0.1rem;
 }
+input {
+    font-family: 'FontAwesome';
+}
