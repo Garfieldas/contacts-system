@@ -1,3 +1,6 @@
 <template>
-    <h1>Login</h1>
+    <LoginForm />
 </template>
+<script setup lang="ts">
+import LoginForm from '@/components/UI/forms/LoginForm.vue';
+</script>

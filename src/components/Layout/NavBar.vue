@@ -1,7 +1,9 @@
 <template>
     <nav class="bg-[#1F3F77] flex flex-row justify-between items-center p-6 text-white font-bold">
-        <img class="w-1/6" src="../../assets/icons/logotipas.png" alt="logotipas">
-        <router-link :to="{name: 'contacts'}" v-if="!isAuth">
+        <router-link class="contents" :to="{name: 'contacts'}">
+        <img class="w-1/6" src="../../assets/icons/logotipas.png" alt="logotipas"/>
+        </router-link>
+        <router-link :to="{name: 'login'}" v-if="!isAuth">
         <a href="#">Prisijungti</a>
         </router-link>
         <div class="flex flex-row justify-between w-full ml-20" v-if="isAuth">
