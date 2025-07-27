@@ -45,13 +45,13 @@ const showPassword = () => {
 const loginSchema = z.object({
     email: z.string()
         .trim()
-        .email('Must be a valid email')
-        .min(12, 'Email is required (minimum 12 characters)')
-        .max(30, 'Email must be a maximum of 30 characters'),
+        .email('El.paštad privalo būti validus')
+        .min(12, 'El.paštas privalomas (12 simbolių)')
+        .max(30, 'El.paštas negali viršyti 30 simbolių'),
     password: z.string()
         .trim()
-        .min(4, 'Password is required (minimum 4 characters)')
-        .max(30, 'Password must be a maximum of 30 characters')
+        .min(4, 'Slaptažodis privalomas (4 simboliai)')
+        .max(30, 'Slaptažodis privalo neviršyti 30 simbolių')
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
