@@ -3,9 +3,18 @@
 button {
     cursor: pointer;
 }
+
 .dropdown {
     margin-bottom: 0.1rem;
 }
+
 input {
     font-family: 'FontAwesome';
+}
+
+.error-message {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+    display: block;
 }

@@ -6,17 +6,22 @@
         </div>
         <div class="flex flex-col">
             <label for="email">Elekotrinis paštas:</label>
-            <input class="bg-gray-200 p-3 input-icon-email" type="email" id="email"
-             placeholder="&#xf0e0; Įveskite el.pašto adresą..." required/>
+            <input class="bg-gray-200 p-3 input-icon-email" 
+            v-model="email"
+             type="email" id="email"
+             placeholder="&#xf0e0; Įveskite el.pašto adresą..."/>
+            <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
         </div>
         <div class="flex flex-col">
             <label for="password">Slaptažodis:</label>
             <div class="relative"> <input class="bg-gray-200 p-3 input-icon-email w-full pr-10" :type="hidePassword ? 'password' : 'text'" id="password"
-                 placeholder="&#xf023; Įveskite slaptažodį..." required/>
+                 placeholder="&#xf023; Įveskite slaptažodį..." required
+                 v-model="password"/>
                 <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600">
                     <i :class="hidePassword ? 'fa fa-eye' : 'fa fa-eye-slash'" @click="showPassword"></i>
                 </button>
             </div>
+             <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
         </div>
         <router-link :to="{name: 'password-reset'}" class="text-sky-700 font-small">
             Slaptažodžio atkūrimas
@@ -30,8 +35,30 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import * as z from 'zod';
 const hidePassword = ref(true);
 const showPassword = () => {
     hidePassword.value = hidePassword.value ? false : true;
 }
+const loginSchema = z.object({
+    email: z.string()
+        .trim()
+        .email('Must be a valid email')
+        .min(12, 'Email is required (minimum 12 characters)')
+        .max(30, 'Email must be a maximum of 30 characters'),
+    password: z.string()
+        .trim()
+        .min(4, 'Password is required (minimum 4 characters)')
+        .max(30, 'Password must be a maximum of 30 characters')
+});
+
+const { handleSubmit, defineField, errors, resetForm } = useForm({
+    validationSchema: toTypedSchema(loginSchema)
+});
+
+const [email] = defineField('email');
+const [password] = defineField('password');
+
 </script>
