@@ -16,14 +16,21 @@ export const login = async(email: string, password: string) => {
     }
 }
 
-export const refreshToken = async(token: string) => {
+export const refreshToken = async() => {
+    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.post('/users/auth-refresh', {
+        const response = await axiosInstance.post('/users/auth-refresh', {}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
-        return response;
+        const data = response.data.record;
+        const userInfo = { user: data.name, email: data.email,
+             name: data.name, avatar: data.avatar,
+             permissions: data.permissions_id};
+        const newToken = data.record.token;
+        
+        return {userInfo, token: newToken};
     }
     catch (error: any){
         throw error;
