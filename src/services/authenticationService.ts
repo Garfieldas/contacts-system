@@ -21,7 +21,7 @@ export const login = async (email: string, password: string) => {
 
 export const passwordResset = async (email: string) => {
     try {
-        const response = await axiosInstance.post('/users/request-password-reset', email);
+        const response = await axiosInstance.post('/users/request-password-reset', {email});
         console.log(response);
     }
     catch (error: any){
