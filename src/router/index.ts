@@ -1,3 +1,4 @@
+import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -24,23 +25,36 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue'),
-      meta: { hideNavBar: true }
+      meta: { hideNavBar: true },
+
+      beforeEnter: (to, from, next) => {
+        const store = useAuthenticationStore();
+        if(store.isLoggedIn){
+          next({name: 'contacts'})
+        }
+        else {
+          next();
+        }
+      }
     },
     {
       path: '/password-reset',
       name: 'password-reset',
       component: () => import('@/views/PasswordReset.vue'),
-      meta: { hideNavBar: true }
+      meta: { hideNavBar: true, requiresAuth: true }
     },
     {
       path: '/companies',
       name: 'companies-management',
-      component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue')
+      component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
+      meta: { requiresAuth: true }
+
     },
     {
       path: '/structure',
       name: 'company-structure',
       component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: 'offices',
@@ -67,7 +81,8 @@ const router = createRouter({
     {
     path: '/admin',
     name: 'admin',
-    component: () => import('@/views/AdminAccountsManagement.vue')
+    component: () => import('@/views/AdminAccountsManagement.vue'),
+    meta: { requiresAuth: true }
     },
     {
     path: '/not-found',
@@ -79,6 +94,15 @@ const router = createRouter({
     redirect: '/not-found'
     }
   ],
+});
+router.beforeEach((to, from) => {
+  const store = useAuthenticationStore();
+  if (to.meta.requiresAuth && !store.isLoggedIn) {
+    return {
+      path: '/login',
+      query: { redirect: to.fullPath }
+    }
+  }
 })
 
 export default router
