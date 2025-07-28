@@ -74,8 +74,8 @@ const onSubmit = handleSubmit(async (values) => {
     try {
         const response = await login(values.email, values.password);
         const token = response.token
-        const data = response.data;
-        auth.Login(token, data);
+        const userInfo = response.userInfo;
+        auth.Login(token, userInfo);    
         store.addSuccessNotification('Prisijungimas sėkmingas!');
         resetForm();
         router.replace({name: 'contacts'});
