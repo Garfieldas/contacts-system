@@ -3,10 +3,10 @@
         <router-link class="contents" :to="{name: 'contacts'}">
         <img class="w-1/6" src="../../assets/icons/logotipas.png" alt="logotipas"/>
         </router-link>
-        <router-link :to="{name: 'login'}" v-if="!isAuth">
+        <router-link :to="{name: 'login'}" v-if="!store.isLoggedIn">
         <a href="#">Prisijungti</a>
         </router-link>
-        <div class="flex flex-row justify-between w-full ml-20" v-if="isAuth">
+        <div class="flex flex-row justify-between w-full ml-20" v-if="store.isLoggedIn">
         <router-link :to="{name: 'contacts'}">
         <a href="#">Kontaktai</a>
         </router-link>
@@ -20,12 +20,21 @@
         <a href="#">Paskyros</a>
         </router-link>
         </div>
-        <div class="icon w-1/2 flex flex-row justify-end" v-if="isAuth">
-            <img src="../../assets/icons/male-icon.png" alt="icon">
+        <div class="icon w-1/2 flex flex-row justify-end" v-if="store.isLoggedIn">
+            <img :src="UserPhotoUrl" alt="icon" v-if="UserPhotoUrl" class="w-10 bg-gray-100 rounded-full object-cover">
+            <img src="../../assets/icons/male-icon.png" alt="icon" v-else>
         </div>
     </nav>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
-const isAuth = ref(false);
+import { computed } from 'vue';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
+import { getAvatarUrl } from '@/services/authenticationService';
+const store = useAuthenticationStore();
+const UserPhotoUrl = computed(() => {
+    if (store.user && store.user.id && store.user.avatar) {
+        return getAvatarUrl(store.user.id, store.user.avatar);
+    }
+    return '';
+});
 </script>

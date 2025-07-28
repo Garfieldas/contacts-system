@@ -6,13 +6,8 @@ export const login = async (email: string, password: string) => {
     try {
         const response = await axiosInstance.post('/users/auth-with-password', user);
         const data = response.data.record;
-        const userInfo = {
-            user: data.name, email: data.email,
-            name: data.name, avatar: data.avatar,
-            permissions: data.permissions_id
-        };
         const token = response.data.token
-        return { userInfo, token };
+        return { userInfo: data, token };
     }
     catch (error: any) {
         throw error;
@@ -38,15 +33,16 @@ export const refreshToken = async () => {
             }
         })
         const data = response.data.record;
-        const userInfo = {
-            user: data.name, email: data.email,
-            name: data.name, avatar: data.avatar,
-            permissions: data.permissions_id
-        };
         const newToken = response.data.token
-        store.Login(newToken, userInfo);
+        store.Login(newToken, data);
     }
     catch (error: any) {
         throw error;
     }
+}
+
+export const getAvatarUrl = (recordId: string, filename: string) => {
+    const baseUrl = import.meta.env.VITE_FILE_URL
+    let url = `${baseUrl}/_pb_users_auth_/${recordId}/${filename}`;
+    return url;
 }
