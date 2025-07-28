@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white mt-10 px-20 mb-10">
-    <form class="flex flex-col gap-10 p-10">
+    <form class="flex flex-col gap-10 p-10" @submit.prevent="onSubmit">
         <div class="flex flex-col p-10">
         <h1 class="text-5xl font-small">Admin Prisijungimas:</h1>
         </div>
@@ -38,6 +38,7 @@ import { ref } from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
+import { login } from '@/services/authenticationService';
 const hidePassword = ref(true);
 const showPassword = () => {
     hidePassword.value = hidePassword.value ? false : true;
@@ -60,5 +61,15 @@ const { handleSubmit, defineField, errors, resetForm } = useForm({
 
 const [email] = defineField('email');
 const [password] = defineField('password');
+
+const onSubmit = handleSubmit(async (values) => {
+    try {
+        const response = await login(values.email, values.password);
+        console.log(response);
+    }
+    catch(error: any){
+        console.log(error);
+    }
+})
 
 </script>
