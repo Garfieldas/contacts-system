@@ -29,7 +29,7 @@
         <div class="flex flex-col">
             <button class="bg-[#0054A6] text-white font-medium p-2.5 rounded-sm">Prisijungti</button>
         </div>
-        <div class="py-40"></div>
+        <div class="py-10"></div>
     </form>
     </div>
 </template>
@@ -39,10 +39,18 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 import { login } from '@/services/authenticationService';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
+import { useNotificationStore } from '@/stores/notificationstore';
+import { useRouter } from 'vue-router';
+
 const hidePassword = ref(true);
 const showPassword = () => {
     hidePassword.value = hidePassword.value ? false : true;
 }
+const auth = useAuthenticationStore();
+const store = useNotificationStore();
+const router = useRouter();
+
 const loginSchema = z.object({
     email: z.string()
         .trim()
@@ -65,10 +73,15 @@ const [password] = defineField('password');
 const onSubmit = handleSubmit(async (values) => {
     try {
         const response = await login(values.email, values.password);
-        console.log(response);
+        const token = response.token
+        const data = response.data;
+        auth.Login(token, data);
+        store.addSuccessNotification('Prisijungimas sėkmingas!');
+        resetForm();
+        router.replace({name: 'contacts'});
     }
     catch(error: any){
-        console.log(error);
+        store.addErrorNotification(error);
     }
 })
 
