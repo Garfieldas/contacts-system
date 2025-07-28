@@ -5,7 +5,7 @@
         <h1 class="text-5xl font-small">Admin Prisijungimas:</h1>
         </div>
         <div class="flex flex-col">
-            <label for="email">Elekotrinis paštas:</label>
+            <label for="email">Elektroninis paštas:</label>
             <input class="bg-gray-200 p-3 input-icon-email" 
             v-model="email"
              type="email" id="email"
