@@ -15,3 +15,17 @@ export const login = async(email: string, password: string) => {
         throw error;
     }
 }
+
+export const refreshToken = async(token: string) => {
+    try {
+        const response = await axiosInstance.post('/users/auth-refresh', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        return response;
+    }
+    catch (error: any){
+        throw error;
+    }
+}
