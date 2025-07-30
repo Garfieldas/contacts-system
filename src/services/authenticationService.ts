@@ -47,12 +47,14 @@ export const getAvatarUrl = (recordId: string, filename: string) => {
     return url;
 }
 
-export const updatePassword = async (id: string, password: string) => {
+export const updatePassword = async (id: string, password: string, password2: string) => {
+    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.patch(`/users/records/${id}`, {password});
-        const data = response.data.record;
-        const token = response.data.token
-        return { userInfo: data, token };
+        await axiosInstance.patch(`/users/records/${id}`, {password, passwordConfirm: password2}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
     catch (error: any){
         throw error;
