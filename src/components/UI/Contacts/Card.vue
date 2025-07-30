@@ -32,6 +32,10 @@
                 <span class="font-medium w-24 text-gray-500">Adresas:</span>
                 <span>{{ employee.expand.office_id.name }}</span>
             </div>
+            <div class="flex flex-row justify-start" v-if="hideButtons">
+                <button><img src="../../../assets/icons/Edit button.png" alt="edit"></button>
+                <button><img src="../../../assets/icons/Delete button.png" alt="edit"></button>
+            </div>
         </div>
     </div>
 </template>
@@ -39,6 +43,7 @@
 import { computed, ref } from 'vue';
 const props = defineProps(['employee']);
 import { getPhotoUrl } from '@/services/employeesService';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
 const employeePhotoUrl = computed(() => {
     if (props.employee && props.employee.id && props.employee.photo) {
         return getPhotoUrl(props.employee.id, props.employee.photo);
@@ -47,8 +52,15 @@ const employeePhotoUrl = computed(() => {
 });
 const hideEmail = ref(true);
 const arrow = ref('▼');
+const auth = useAuthenticationStore();
 const toggleEmail = () => {
     hideEmail.value = !hideEmail.value
     arrow.value = hideEmail.value ? '▼' : '▲'
 }
+const hideButtons = computed(() => {
+    if (auth.isLoggedIn && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+        return true
+    }
+    return false;
+})
 </script>
