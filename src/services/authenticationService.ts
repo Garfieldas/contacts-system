@@ -62,8 +62,13 @@ export const updatePassword = async (id: string, password: string, password2: st
 }
 
 export const getUserPermissions = async (id: string) => {
+    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.get(`/user_permissions/records/${id}`);
+        const response = await axiosInstance.get(`/user_permissions/records/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return response;
     }
     catch (error: any){
