@@ -24,10 +24,12 @@
             <img :src="UserPhotoUrl" alt="icon" v-if="UserPhotoUrl" class="w-10 bg-gray-100 rounded-full object-cover" @click="toggleDropDown">
             <img src="../../assets/icons/male-icon.png" alt="icon" v-else @click="toggleDropDown">
     <div class="absolute top-18 left-83 mt-3 bg-white rounded-md shadow-lg min-w-[180px] py-2 z-10 font-normal text-black" :class="{'hidden': hideDropDown}">
+        <router-link :to="{name: 'change-user-password'}">
         <a class="relative block px-4 py-2 text-sm hover:bg-gray-100 whitespace-nowrap group" href="#">
             Pakeisti slaptažodį
             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs">▼</span>
         </a>
+        </router-link>
         <a class="block px-4 py-2 text-sm hover:bg-gray-100 whitespace-nowrap" @click="Logout">
             Atsijungti
         </a>

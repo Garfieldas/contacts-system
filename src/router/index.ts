@@ -44,6 +44,12 @@ const router = createRouter({
       meta: { hideNavBar: true }
     },
     {
+      path: '/change-user-password',
+      name: 'change-user-password',
+      component: () => import('@/views/ChangeUserPassword.vue'),
+      meta: { hideNavBar: true, requiresAuth: true}
+    },
+    {
       path: '/companies',
       name: 'companies-management',
       component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
