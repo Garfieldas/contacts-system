@@ -69,7 +69,19 @@ export const getUserPermissions = async (id: string) => {
                 Authorization: `Bearer ${token}`
             }
         });
-        return response;
+        const user_actions = {
+            delete_companies: response.data.delete_companies,
+            delete_employees: response.data.delete_employees,
+            delete_offices: response.data.delete_offices,
+            delete_permissions: response.data.delete_permissions,
+            delete_structure: response.data.delete_structure,
+            edit_companies: response.data.edit_companies,
+            edit_employees: response.data.edit_employees,
+            edit_offices: response.data.edit_offices,
+            edit_permissions: response.data.edit_permissions,
+            edit_structure: response.data.edit_structure,
+        }
+        return user_actions;
     }
     catch (error: any){
         throw error;
