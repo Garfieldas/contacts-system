@@ -11,7 +11,7 @@
         <router-link :to="{name: 'companies-management'}">
         <a href="#">Įmonės</a>
         </router-link>
-        <router-link :to="{name: 'companies-structure'}">
+        <router-link :to="{name: 'company-structure'}">
         <a href="#">Struktūra</a>
         </router-link>
         <router-link :to="{name: 'admin'}">

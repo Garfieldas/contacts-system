@@ -6,3 +6,6 @@ button {
 .dropdown {
     margin-bottom: 0.1rem;
 }
+.no-select {
+    user-select: none;
+}
