@@ -41,7 +41,7 @@ const router = createRouter({
       path: '/password-reset',
       name: 'password-reset',
       component: () => import('@/views/PasswordReset.vue'),
-      meta: { hideNavBar: true, requiresAuth: true }
+      meta: { hideNavBar: true }
     },
     {
       path: '/companies',
