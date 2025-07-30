@@ -16,11 +16,15 @@
         <div class="space-y-2 text-sm">
             <div class="flex items-center text-gray-700">
                 <span class="font-medium w-24 text-gray-500">Telefonas nr:</span>
-                <span>{{ employee.phone_number.slice(0, 20) }}</span>
+                <span v-if="employee.phone_number">{{ employee.phone_number.slice(0, 20) }}</span>
+                <span v-else>Nėra informacijos</span>
             </div>
             <div class="flex items-center text-gray-700">
                 <span class="font-medium w-24 text-gray-500">El. paštas:</span>
-                <span class="text-[#1F3F77]">{{ employee.email.slice(0, 30) }}</span>
+                <span class="text-[#1F3F77] cursor-pointer" v-if="employee.email.length > 30"
+                    @click="toggleEmail" :class="{'break-all': !hideEmail}"
+                    >{{ hideEmail ? employee.email.slice(0, 30) : employee.email}}▼</span>
+                <span class="text-[#1F3F77]" v-else>{{ employee.email }}</span>
             </div>
             <div class="flex items-start text-gray-700">
                 <span class="font-medium w-24 text-gray-500">Adresas:</span>
@@ -30,7 +34,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 const props = defineProps(['employee']);
 import { getPhotoUrl } from '@/services/employeesService';
 const employeePhotoUrl = computed(() => {
@@ -39,4 +43,8 @@ const employeePhotoUrl = computed(() => {
     }
     return '';
 });
+const hideEmail = ref(true);
+const toggleEmail = () => {
+    hideEmail.value = hideEmail.value ? false: true
+}
 </script>
