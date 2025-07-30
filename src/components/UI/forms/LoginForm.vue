@@ -14,7 +14,7 @@
         </div>
         <div class="flex flex-col">
             <label for="password">Slaptažodis:</label>
-            <div class="relative"> <input class="bg-gray-200 p-3 input-icon-email w-full pr-10" :type="hidePassword ? 'password' : 'text'" id="password"
+            <div class="relative"> <input class="bg-gray-200 p-3 w-full pr-10" :type="hidePassword ? 'password' : 'text'" id="password"
                  placeholder="&#xf023; Įveskite slaptažodį..." required
                  v-model="password"/>
                 <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600">
