@@ -14,6 +14,7 @@
                 <p class="text-sm text-gray-600">{{ employee.position }}</p>
             </div>
         </div>
+        </router-link>
         <div class="space-y-2 text-sm">
             <div class="flex items-center text-gray-700">
                 <span class="font-medium w-24 text-gray-500">Telefonas nr:</span>
@@ -32,7 +33,6 @@
                 <span>{{ employee.expand.office_id.name }}</span>
             </div>
         </div>
-        </router-link>
     </div>
 </template>
 <script setup lang="ts">
