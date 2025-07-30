@@ -13,7 +13,7 @@
                 <img v-else="employee.photo" :src="employeePhotoUrl" :alt="`Employee photo of ${employee.name} ${employee.surname}`" class="w-full h-full object-cover rounded-full">
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-900 text-2xl">{{ employee.name }} {{ employee.surname }}</h3>
+                    <h3 class="font-semibold text-gray-900 text-2xl">{{ employee.name.slice(0, 20) }} {{ employee.surname.slice(0, 20) }}</h3>
                     <p class="text-lg text-gray-600">Pozicija: {{ employee.position }}</p>
                 </div>
             </div>
@@ -24,11 +24,14 @@
                     <div class="space-y-2">
                         <div class="flex">
                             <span class="font-medium text-gray-500 w-28 flex-shrink-0">Elektroninis paštas:</span>
-                            <a href="mailto:example@teltonika.lt" class="text-[#1F3F77] hover:underline">{{ employee.email }}</a>
+                            <a class="text-[#1F3F77] hover:underline cursor-pointer no-select" :class="{'break-all': !hideEmail}"
+                            v-if="employee.email.length > 30" @click="toggleEmail">
+                            {{ hideEmail ? employee.email.slice(0, 30) : employee.email}} {{ arrow }}</a>
                         </div>
                         <div class="flex">
                             <span class="font-medium text-gray-500 w-28 flex-shrink-0">Telefono numeris:</span>
-                            <span>{{ employee.phone_number }}</span>
+                            <span v-if="employee.phone_number">{{ employee.phone_number.slice(0, 20) }}</span>
+                            <span v-else>Nėra informacijos</span>
                         </div>
                     </div>
                 </div>
@@ -64,7 +67,7 @@
         </div>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 const props = defineProps(['employee']);
 import { getPhotoUrl } from '@/services/employeesService';
 const employeePhotoUrl = computed(() => {
@@ -73,4 +76,10 @@ const employeePhotoUrl = computed(() => {
     }
     return '';
 });
+const hideEmail = ref(true);
+const arrow = ref('▼');
+const toggleEmail = () => {
+    hideEmail.value = !hideEmail.value;
+    arrow.value = hideEmail.value ? '▼' : '▲'
+}
 </script>
