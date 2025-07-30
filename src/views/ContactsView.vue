@@ -49,7 +49,7 @@ const filters = reactive<{
   group?: string;
 }>({});
 
-const filtersQuee = computed(() => {
+const baseFilterQuery = computed(() => {
   const filterMap = {
     company: 'company_id',
     office: 'office_id',
@@ -62,16 +62,20 @@ const filtersQuee = computed(() => {
     .filter(([key]) => filters[key as keyof typeof filters])
     .map(([key, field]) => `${field}="${filters[key as keyof typeof filters]}"`);
 
-  if (searchParam.value) {
-    const searchTerm = `(name?~"${searchParam.value}" || surname?~"${searchParam.value}" || email?~"${searchParam.value}" || phone_number?~"${searchParam.value}" || position?~"${searchParam.value}")`;
-    filterConditions.push(searchTerm);
-  }
-
-  const filterPart = filterConditions.length > 0
+  return filterConditions.length > 0
     ? `&filter=${encodeURIComponent(filterConditions.join(' && '))}`
     : '';
+});
 
-  return `${filterPart}&expand=office_id`;
+const fullQuery = computed(() => {
+  let query = baseFilterQuery.value;
+
+  if (searchParam.value) {
+    const searchTerm = `(name?~"${searchParam.value}" || surname?~"${searchParam.value}" || email?~"${searchParam.value}" || phone_number?~"${searchParam.value}" || position?~"${searchParam.value}")`;
+    query += (query.includes('&filter=') ? ' && ' : '&filter=') + encodeURIComponent(searchTerm);
+  }
+
+  return `${query}&expand=office_id`;
 });
 
 const handleFilters = (newFilters: {
@@ -81,35 +85,28 @@ const handleFilters = (newFilters: {
   department?: string,
   group?: string,
 }) => {
-  filters.company = newFilters.company;
-  filters.office = newFilters.office;
-  filters.division = newFilters.division;
-  filters.department = newFilters.department;
-  filters.group = newFilters.group;
+  Object.assign(filters, newFilters);
+  page.value = 1;
+  fetchRequest(fullQuery.value);
 }
 
 watch(page, () => {
-  fetchRequest(filtersQuee.value);
+  fetchRequest(fullQuery.value);
 });
 
 watch(perPage, () => {
   page.value = 1;
-  fetchRequest(filtersQuee.value);
-});
-
-watch(filtersQuee, () => {
-  page.value = 1;
-  fetchRequest(filtersQuee.value);
+  fetchRequest(fullQuery.value);
 });
 
 watch(searchParam, () => {
-  if(debounceTimer){
+  if (debounceTimer) {
     clearTimeout(debounceTimer);
   }
-  debounceTimer = setTimeout(() => {
+    debounceTimer = setTimeout(() => {
     page.value = 1;
-    fetchRequest(filtersQuee.value);
-  }, 300)
+    fetchRequest(fullQuery.value);
+  }, 800);
 });
 
 watch(totalPages, (newTotalPages) => {
@@ -121,7 +118,7 @@ watch(totalPages, (newTotalPages) => {
 });
 
 onMounted(() => {
-  fetchRequest('&expand=office_id')
+  fetchRequest(fullQuery.value);
 })
 
 </script>
