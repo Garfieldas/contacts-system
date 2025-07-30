@@ -33,7 +33,7 @@ const router = createRouter({
     {
       path: '/companies',
       name: 'companies-management',
-      component: () => import('@/views/CompaniesManagement.vue')
+      component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue')
     },
     {
       path: '/structure',
