@@ -46,3 +46,15 @@ export const getAvatarUrl = (recordId: string, filename: string) => {
     let url = `${baseUrl}/_pb_users_auth_/${recordId}/${filename}`;
     return url;
 }
+
+export const updatePassword = async (id: string, password: string) => {
+    try {
+        const response = await axiosInstance.patch(`/users/records/${id}`, {password});
+        const data = response.data.record;
+        const token = response.data.token
+        return { userInfo: data, token };
+    }
+    catch (error: any){
+        throw error;
+    }
+}
