@@ -60,3 +60,13 @@ export const updatePassword = async (id: string, password: string, password2: st
         throw error;
     }
 }
+
+export const getUserPermissions = async (id: string) => {
+    try {
+        const response = await axiosInstance.get(`/user_permissions/records/${id}`);
+        return response;
+    }
+    catch (error: any){
+        throw error;
+    }
+}
