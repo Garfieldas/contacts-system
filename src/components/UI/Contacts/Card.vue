@@ -23,7 +23,7 @@
                 <span class="font-medium w-24 text-gray-500">El. paštas:</span>
                 <span class="text-[#1F3F77] cursor-pointer" v-if="employee.email.length > 30"
                     @click="toggleEmail" :class="{'break-all': !hideEmail}"
-                    >{{ hideEmail ? employee.email.slice(0, 30) : employee.email}}▼</span>
+                    >{{ hideEmail ? employee.email.slice(0, 30) : employee.email}} {{ arrow }}</span>
                 <span class="text-[#1F3F77]" v-else>{{ employee.email }}</span>
             </div>
             <div class="flex items-start text-gray-700">
@@ -44,7 +44,9 @@ const employeePhotoUrl = computed(() => {
     return '';
 });
 const hideEmail = ref(true);
+const arrow = ref('▼');
 const toggleEmail = () => {
-    hideEmail.value = hideEmail.value ? false: true
+    hideEmail.value = !hideEmail.value
+    arrow.value = hideEmail.value ? '▼' : '▲'
 }
 </script>
