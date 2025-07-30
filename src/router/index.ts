@@ -68,9 +68,13 @@ const router = createRouter({
     component: () => import('@/views/AdminAccountsManagement.vue')
     },
     {
-      path: '/:pathMatch(.*)',
-      name: 'not-found',
-      component: () => import('@/views/Error404.vue')
+    path: '/not-found',
+    name: 'not-found',
+    component: () => import('@/views/Error404.vue')
+    },
+    {
+    path: '/:pathMatch(.*)*',
+    redirect: '/not-found'
     }
   ],
 })
