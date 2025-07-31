@@ -72,6 +72,7 @@
             <option value="" selected>Pasirinkite ofisą...</option>
             <option v-for="office in displayOffice" :value="office.id">{{ office.name }}</option>
             </select>
+             <div v-if="errors.selectedOffice" class="error-message">{{ errors.selectedOffice }}</div>
         </div>
 
         <div class="mb-4">
@@ -83,6 +84,7 @@
             <option value="" selected>Pasirinkite skyrių...</option>
             <option v-for="division in displayDivision" :value="division.id">{{ division.name }}</option>
             </select>
+             <div v-if="errors.selectedDivision" class="error-message">{{ errors.selectedDivision }}</div>
         </div>
 
         <div class="mb-4">
@@ -94,6 +96,7 @@
             <option value="" selected>Pasirinkite padalinį...</option>
             <option v-for="department in displayDepartment" :value="department.id">{{ department.name }}</option>
             </select>
+             <div v-if="errors.selectedDepartment" class="error-message">{{ errors.selectedDepartment }}</div>
         </div>
 
         <div class="mb-6">
@@ -105,6 +108,7 @@
             <option value="" selected>Pasirinkite grupę...</option>
             <option v-for="group in displayGroup" :value="group.id">{{ group.name }}</option>
             </select>
+             <div v-if="errors.selectedGroup" class="error-message">{{ errors.selectedGroup }}</div>
         </div>
 
         <div class="flex items-center space-x-4 mb-8">
@@ -233,7 +237,7 @@ const createSchema = z.object({
       .trim()
       .min(1, 'Pozicija privaloma')
       .min(4, 'Pozicija privalo būti bent 4 simbolių')
-      .min(20, 'Pozicija privalo neviršyti 20 simbolių'),
+      .max(20, 'Pozicija privalo neviršyti 20 simbolių'),
 
     email: z.string()
       .trim()
