@@ -1,4 +1,5 @@
 <template>
+  <form @submit.prevent="">
     <h2 class="text-3xl font-normal mb-6">Pridėti kontaktą:</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -59,6 +60,7 @@
             <option value="" selected>Pasirinkite įmonę...</option>
             <option v-for="company in companies" :value="company.id">{{ company.name }}</option>
             </select>
+             <div v-if="errors.selectedCompany" class="error-message">{{ errors.selectedCompany }}</div>
         </div>
 
         <div class="mb-4">
@@ -119,6 +121,7 @@
         PRIDĖTI
       </button>
     </div> 
+  </form>
 </template>
 
 <script setup lang="ts">
