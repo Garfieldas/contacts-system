@@ -7,19 +7,25 @@
         <div class="mb-4">
           <label for="firstName" class="block text-sm font-normal text-gray-700">Vardas:</label>
           <input type="text" id="firstName" placeholder="Įveskite vardą..."
-                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none
+                  focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model.trim="name"/>
+             <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
         </div>
 
         <div class="mb-4">
           <label for="lastName" class="block text-sm font-normal text-gray-700">Pavardė:</label>
           <input type="text" id="lastName" placeholder="Įveskite pavardę..."
-                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none
+                  focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model.trim="surname" />
+             <div v-if="errors.surname" class="error-message">{{ errors.surname }}</div>
         </div>
 
         <div class="mb-6">
           <label for="position" class="block text-sm font-normal text-gray-700">Pozicija:</label>
           <input type="text" id="position" placeholder="Įveskite poziciją..."
-                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none
+                  focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model.trim="position" />
+             <div v-if="errors.position" class="error-message">{{ errors.position }}</div>
         </div>
 
         <h3 class="text-lg font-medium mb-4">Kontaktinė informacija:</h3>
@@ -27,13 +33,17 @@
           <div class="mb-4">
           <label for="email" class="block text-sm font-normal text-gray-700">Elektroninis paštas:</label>
           <input type="email" id="email" placeholder="&#xf0e0; Įveskite el.paštą..."
-                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none
+                  focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model.trim="email" />
+             <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
         </div>
 
           <div class="mb-4">
           <label for="phone_number" class="block text-sm font-normal text-gray-700">Telefono numeris:</label>
           <input type="text" id="phone_number" placeholder="&#xf098; Įveskite telefono numerį..."
-                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+                 class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none
+                  focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model.trim="phone_number" />
+             <div v-if="errors.phone_number" class="error-message">{{ errors.phone_number }}</div>
         </div>  
       </div>
 
@@ -122,6 +132,9 @@ import type { expandDivision } from '@/types/divisionType';
 import type { expandDepartment } from '@/types/departmentType';
 import type { expandGroup } from '@/types/groupType';
 import { onMounted, ref } from 'vue';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import * as z from 'zod';
 
 const { companies, fetchCompanies } = useCompanies();
 const { offices, fetchOffices } = useOffices();
@@ -205,6 +218,57 @@ const handleDepartmentChange = async () => {
         displayGroup.value = [];
     }
 };
+
+const createSchema = z.object({
+    name: z.string()
+      .trim()
+      .min(1, 'Vardas privalomas')
+      .min(3, 'Vardas privalo būti bent 3 simbolių')
+      .max(20, 'Vardas privalo neviršyti 20 simbolių'),
+
+    surname: z.string()
+      .trim()
+      .min(1, 'Pavardė privaloma')
+      .min(4, 'Pavardė privalo būti bent 6 simbolių')
+      .max(20, 'Pavardė privalo neviršyti 20 simbolių'),
+    
+    position: z.string()
+      .trim()
+      .min(1, 'Pozicija privaloma')
+      .min(4, 'Pozicija privalo būti bent 4 simbolių')
+      .min(20, 'Pozicija privalo neviršyti 20 simbolių'),
+
+    email: z.string()
+      .trim()
+      .min(1, 'El.paštas privalomas')
+      .email('El.paštas privalo būti valydus')
+      .min(12, 'El.paštas privalo būti bent 12 simbolių')
+      .max(30, 'El.paštas negali viršyti 30 simbolių'),
+
+    phone_number: z.string()
+      .trim()
+      .max(20, 'Telefono numeris negali viršyti 20 simbolių')
+})
+
+const { handleSubmit, defineField, errors, resetForm } = useForm({
+    validationSchema: toTypedSchema(createSchema),
+
+    initialValues: {
+        name: '',
+        surname: '',
+        position: '',
+        email: '',
+        phone_number: ''
+    }
+});
+
+const [name] = defineField('name');
+const [surname] = defineField('surname');
+const [position] = defineField('position');
+const [email] = defineField('email');
+const [phone_number] = defineField('phone_number');
+
+
 onMounted(() => {
   fetchCompanies();
 })
