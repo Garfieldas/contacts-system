@@ -142,12 +142,6 @@ const { divisions, fetchDivisions } = useDivisions();
 const { departments, fetchDepartments } = useDepartments();
 const { groups, fetchGroups } = useGroups();
 
-const selectedCompany = ref('');
-const selectedOffice = ref('');
-const selectedDivision = ref('');
-const selectedDepartment = ref('');
-const selectedGroup = ref('');
-
 const displayOffice = ref();
 const displayDivision = ref();
 const displayDepartment = ref();
@@ -247,7 +241,13 @@ const createSchema = z.object({
 
     phone_number: z.string()
       .trim()
-      .max(20, 'Telefono numeris negali viršyti 20 simbolių')
+      .max(20, 'Telefono numeris negali viršyti 20 simbolių'),
+
+    selectedCompany: z.string().min(1, 'Įmonė privaloma'),
+    selectedOffice: z.string().min(1, 'Ofisas privalomas'),
+    selectedDivision: z.string().min(1, 'Skyrius privalomas'),
+    selectedDepartment: z.string().min(1, 'Padalinys privalomas'),
+    selectedGroup: z.string().min(1, 'Grupė privaloma'),
 })
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
@@ -258,7 +258,12 @@ const { handleSubmit, defineField, errors, resetForm } = useForm({
         surname: '',
         position: '',
         email: '',
-        phone_number: ''
+        phone_number: '',
+        selectedCompany: '',
+        selectedOffice: '',
+        selectedDivision: '',
+        selectedDepartment: '',
+        selectedGroup: ''
     }
 });
 
@@ -267,7 +272,11 @@ const [surname] = defineField('surname');
 const [position] = defineField('position');
 const [email] = defineField('email');
 const [phone_number] = defineField('phone_number');
-
+const [selectedCompany] = defineField('selectedCompany');
+const [selectedOffice] = defineField('selectedOffice');
+const [selectedDivision] = defineField('selectedDivision');
+const [selectedDepartment] = defineField('selectedDepartment');
+const [selectedGroup] = defineField('selectedGroup');
 
 onMounted(() => {
   fetchCompanies();
