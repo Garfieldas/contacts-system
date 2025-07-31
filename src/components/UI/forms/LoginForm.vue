@@ -54,17 +54,24 @@ const router = useRouter();
 const loginSchema = z.object({
     email: z.string()
         .trim()
-        .email('El.paštad privalo būti validus')
-        .min(12, 'El.paštas privalomas (12 simbolių)')
+        .min(1, 'El.paštas privalomas')
+        .email('El.paštas privalo būti validus')
+        .min(12, 'El.paštas privalo būti bent 12 simbolių')
         .max(30, 'El.paštas negali viršyti 30 simbolių'),
     password: z.string()
         .trim()
-        .min(4, 'Slaptažodis privalomas (4 simboliai)')
+        .min(1, 'Slaptažodis yra privalomas')
+        .min(8, 'Slaptažodis privalo būti bent 8 simbolių')
         .max(30, 'Slaptažodis privalo neviršyti 30 simbolių')
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-    validationSchema: toTypedSchema(loginSchema)
+    validationSchema: toTypedSchema(loginSchema),
+
+    initialValues: {
+        email: '',
+        password: ''
+    }
 });
 
 const [email] = defineField('email');

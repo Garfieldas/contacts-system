@@ -1,11 +1,13 @@
 import { getUserPermissions } from "@/services/authenticationService";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 export const useAuthenticationStore = defineStore('auth', () => {
     const isLoggedIn = ref(!!localStorage.getItem('token'));
     const user = ref(JSON.parse(localStorage.getItem('user') || 'null'));
     const user_permissions = ref();
+    const router = useRouter();
 
     const fetchPermissions = async () => {
         if(!user.value) return;
@@ -29,6 +31,7 @@ export const useAuthenticationStore = defineStore('auth', () => {
         isLoggedIn.value = false;
         localStorage.clear();
         user_permissions.value = null;
+        router.replace({name: 'contacts'})
     }
 
     return { isLoggedIn, user, Login, Logout, user_permissions }

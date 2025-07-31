@@ -2,7 +2,7 @@
     <div class="bg-white mt-10 px-20 mb-10">
     <form class="flex flex-col gap-10 p-10" @submit.prevent="onSubmit">
         <div class="flex flex-col p-10">
-        <h1 class="text-5xl font-small">Slaptažodio pakeitimas</h1>
+        <h1 class="text-5xl font-small">Slaptažodžio pakeitimas</h1>
         </div>
         <div class="flex flex-col">
             <label for="password">Naujas slaptažodis:</label>
@@ -59,11 +59,13 @@ const showPassword2 = () => {
 const loginSchema = z.object({
     password: z.string()
         .trim()
-        .min(8, 'Slaptažodis yra privalomas (8 simboliai)')
+        .min(1, 'Slaptažodis privalomas')
+        .min(8, 'Slaptažodis privalo būti bent 8 simbolių')
         .max(30, 'Slaptažodis negali viršyti 30 simbolių'),
     password2: z.string()
         .trim()
-        .min(8, 'Slaptažodžio patvirtinimas privalomas')
+        .min(1, 'Slaptažodžio patvirtinimas yra privalomas')
+        .min(8, 'Slaptažodžio patvirtinimas privalo būti bent 8 simbolių')
         .max(30, 'Patvirtintas slaptažodis negali viršyti 30 simbolių')
 }).refine((data) => data.password === data.password2, {
     message: 'Slaptažodžiai privalo sutapti!',
@@ -71,7 +73,12 @@ const loginSchema = z.object({
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-    validationSchema: toTypedSchema(loginSchema)
+    validationSchema: toTypedSchema(loginSchema),
+
+    initialValues : {
+        password: '',
+        password2: ''
+    }
 });
 
 const [password] = defineField('password');

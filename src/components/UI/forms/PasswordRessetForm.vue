@@ -2,7 +2,7 @@
     <div class="bg-white mt-10 px-20 mb-10">
     <form class="flex flex-col gap-10 p-10" @submit.prevent="onSubmit">
         <div class="flex flex-col p-10">
-        <h1 class="text-5xl font-small">Slaptažodio priminimas</h1>
+        <h1 class="text-5xl font-small">Slaptažodžio priminimas</h1>
         </div>
         <div class="flex flex-col">
             <label for="email">Elektroninis paštas:</label>
@@ -33,13 +33,18 @@ const router = useRouter();
 const loginSchema = z.object({
     email: z.string()
         .trim()
-        .email('El.paštad privalo būti validus')
-        .min(12, 'El.paštas privalomas (12 simbolių)')
+        .min(1, 'El.paštas privalomas')
+        .email('El.paštas privalo būti validus')
+        .min(12, 'El.paštas privalo būti bent 12 simbolių')
         .max(30, 'El.paštas negali viršyti 30 simbolių')
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-    validationSchema: toTypedSchema(loginSchema)
+    validationSchema: toTypedSchema(loginSchema),
+
+    initialValues: {
+        email: ''
+    }
 });
 
 const [email] = defineField('email');
