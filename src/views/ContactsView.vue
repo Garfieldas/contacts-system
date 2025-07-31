@@ -1,4 +1,5 @@
 <template>
+  <BaseModal/>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
@@ -29,6 +30,7 @@ import DisplayButton from "@/components/UI/Contacts/DisplayButton.vue";
 import PaginatioButton from "@/components/UI/Contacts/PaginatioButton.vue";
 import { useEmployees } from "@/composables/useEmployees";
 import { onMounted, shallowRef, reactive, computed, watch, ref } from "vue";
+import BaseModal from "@/components/UI/BaseModal.vue";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
