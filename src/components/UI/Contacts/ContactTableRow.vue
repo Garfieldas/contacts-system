@@ -6,7 +6,7 @@
         <td class="px-6 py-4">{{ employee.position }}</td>
         <td class="px-6 py-4" v-if="employee.phone_number">{{ employee.phone_number.slice(0, 20) }}</td>
         <td class="px-6 py-4" v-else>Nėra informacijos</td>
-        <td class="px-6 py-4 text-[#1F3F77]" v-if="employee.email.length > 30" @click="toggleEmail">
+        <td class="px-6 py-4 text-[#1F3F77] cursor-pointer" v-if="employee.email.length > 30" @click="toggleEmail">
           {{ hideEmail?  employee.email.slice(0, 30) : employee.email }} {{ arrow }}</td>
         <td class="px-6 py-4 text-[#1F3F77]" v-else>{{ employee.email }}</td>
         <td class="px-6 py-4">{{ employee.expand.office_id.name }}</td>
