@@ -44,40 +44,54 @@
           <label for="company" class="block text-sm font-normal text-gray-700">Įmonė:</label>
           <select id="company"
                   class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100
-                   focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-            <option>Pasirinkite įmonę...</option>
+                   focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                   v-model="selectedCompany" @change="handleCompanyChange">
+            <option value="" selected>Pasirinkite įmonę...</option>
+            <option v-for="company in companies" :value="company.id">{{ company.name }}</option>
             </select>
         </div>
 
         <div class="mb-4">
           <label for="office" class="block text-sm font-normal text-gray-700">Offisas:</label>
           <select id="office"
-                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-            <option>Pasirinkite ofisą...</option>
-            </select>
-        </div>
-
-        <div class="mb-4">
-          <label for="department" class="block text-sm font-normal text-gray-700">Padalinys:</label>
-          <select id="department"
-                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-            <option>Pasirinkite padalinį...</option>
+                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100
+                   focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                   v-model="selectedOffice" @change="handleOfficeChange">
+            <option value="" selected>Pasirinkite ofisą...</option>
+            <option v-for="office in displayOffice" :value="office.id">{{ office.name }}</option>
             </select>
         </div>
 
         <div class="mb-4">
           <label for="division" class="block text-sm font-normal text-gray-700">Skyrius:</label>
           <select id="division"
-                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-            <option>Pasirinkite skyrių...</option>
+                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100
+                   focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                   v-model="selectedDivision" @change="handleDivisionChange">
+            <option value="" selected>Pasirinkite skyrių...</option>
+            <option v-for="division in displayDivision" :value="division.id">{{ division.name }}</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+          <label for="department" class="block text-sm font-normal text-gray-700">Padalinys:</label>
+          <select id="department"
+                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100
+                   focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                   v-model="selectedDepartment" @change="handleDepartmentChange">
+            <option value="" selected>Pasirinkite padalinį...</option>
+            <option v-for="department in displayDepartment" :value="department.id">{{ department.name }}</option>
             </select>
         </div>
 
         <div class="mb-6">
           <label for="group" class="block text-sm font-normal text-gray-700">Grupė:</label>
           <select id="group"
-                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-            <option>Pasirinkite grupę...</option>
+                  class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100
+                   focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                   v-model="selectedGroup">
+            <option value="" selected>Pasirinkite grupę...</option>
+            <option v-for="group in displayGroup" :value="group.id">{{ group.name }}</option>
             </select>
         </div>
 
@@ -96,3 +110,102 @@
       </button>
     </div> 
 </template>
+
+<script setup lang="ts">
+import { useCompanies } from '@/composables/useCompanies';
+import { useOffices } from '@/composables/useOffices';
+import { useDivisions } from '@/composables/useDivisions';
+import { useDepartments } from '@/composables/useDepartments';
+import { useGroups } from '@/composables/useGroups';
+import type { expandOffice } from '@/types/officeType';
+import type { expandDivision } from '@/types/divisionType';
+import type { expandDepartment } from '@/types/departmentType';
+import type { expandGroup } from '@/types/groupType';
+import { onMounted, ref } from 'vue';
+
+const { companies, fetchCompanies } = useCompanies();
+const { offices, fetchOffices } = useOffices();
+const { divisions, fetchDivisions } = useDivisions();
+const { departments, fetchDepartments } = useDepartments();
+const { groups, fetchGroups } = useGroups();
+
+const selectedCompany = ref('');
+const selectedOffice = ref('');
+const selectedDivision = ref('');
+const selectedDepartment = ref('');
+const selectedGroup = ref('');
+
+const displayOffice = ref();
+const displayDivision = ref();
+const displayDepartment = ref();
+const displayGroup = ref();
+
+const handleCompanyChange = async () => {
+    selectedOffice.value = '';
+    selectedDivision.value = '';
+    selectedDepartment.value = '';
+    selectedGroup.value = '';
+    offices.value = [];
+    divisions.value = [];
+    departments.value = [];
+    groups.value = [];
+
+    if (selectedCompany.value) {
+        await fetchOffices(`?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
+        displayOffice.value = (offices.value as expandOffice[]).map((item) => item.expand.office_id) || [];
+    } else {
+        displayOffice.value = [];
+        displayDivision.value = [];
+        displayDepartment.value = [];
+        displayGroup.value = [];
+    }
+};
+
+const handleOfficeChange = async () => {
+    selectedDivision.value = '';
+    selectedDepartment.value = '';
+    selectedGroup.value = '';
+    divisions.value = [];
+    departments.value = [];
+    groups.value = [];
+
+    if (selectedOffice.value) {
+        await fetchDivisions(`?filter=office_id="${selectedOffice.value}"&expand=division_id&fields=expand.division_id`);
+        displayDivision.value = (divisions.value as expandDivision[]).map(item => item.expand.division_id) || [];
+    } else {
+        displayDivision.value = [];
+        displayDepartment.value = [];
+        displayGroup.value = [];
+    }
+};
+
+const handleDivisionChange = async () => {
+    selectedDepartment.value = '';
+    selectedGroup.value = '';
+    departments.value = [];
+    groups.value = [];
+
+    if (selectedDivision.value) {
+        await fetchDepartments(`?filter=division_id="${selectedDivision.value}"&expand=department_id&fields=expand.department_id`);
+        displayDepartment.value = (departments.value as expandDepartment[]).map(item => item.expand.department_id) || [];
+    } else {
+        displayDepartment.value = [];
+        displayGroup.value = [];
+    }
+};
+
+const handleDepartmentChange = async () => {
+    selectedGroup.value = '';
+    groups.value = [];
+
+    if (selectedDepartment.value) {
+        await fetchGroups(`?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
+        displayGroup.value = (groups.value as expandGroup[]).map(item => item.expand.group_id) || [];
+    } else {
+        displayGroup.value = [];
+    }
+};
+onMounted(() => {
+  fetchCompanies();
+})
+</script>
