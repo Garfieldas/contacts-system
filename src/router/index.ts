@@ -25,23 +25,13 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue'),
-      meta: { hideNavBar: true },
-
-      beforeEnter: (to, from, next) => {
-        const store = useAuthenticationStore();
-        if(store.isLoggedIn){
-          next({name: 'contacts'})
-        }
-        else {
-          next();
-        }
-      }
+      meta: { hideNavBar: true, guestOnly: true }
     },
     {
       path: '/password-reset',
       name: 'password-reset',
       component: () => import('@/views/PasswordReset.vue'),
-      meta: { hideNavBar: true }
+      meta: { hideNavBar: true, guestOnly: true }
     },
     {
       path: '/change-user-password',
@@ -107,6 +97,15 @@ router.beforeEach((to, from) => {
     return {
       path: '/login',
       query: { redirect: to.fullPath }
+    }
+  }
+})
+
+router.beforeEach((to, from) => {
+  const store = useAuthenticationStore();
+  if (to.meta.guestOnly && store.isLoggedIn) {
+    return {
+      path: '/',
     }
   }
 })

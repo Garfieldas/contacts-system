@@ -8,6 +8,7 @@ export const useAuthenticationStore = defineStore('auth', () => {
     const user_permissions = ref();
 
     const fetchPermissions = async () => {
+        if(!user.value) return;
         const response = await getUserPermissions(user.value.permissions_id);
         user_permissions.value = response;
     }
