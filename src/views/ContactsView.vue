@@ -1,10 +1,13 @@
 <template>
-  <BaseModal/>
+  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
+    <component :is="CreateContactForm" />
+  </BaseModal>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
+      <AddContactButton @add-contact="showModal = true"/>
     </div>
     <div class="text-sm text-gray-600">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
@@ -31,6 +34,8 @@ import PaginatioButton from "@/components/UI/Contacts/PaginatioButton.vue";
 import { useEmployees } from "@/composables/useEmployees";
 import { onMounted, shallowRef, reactive, computed, watch, ref } from "vue";
 import BaseModal from "@/components/UI/BaseModal.vue";
+import CreateContactForm from "@/components/UI/forms/Contacts/CreateContactForm.vue";
+import AddContactButton from "@/components/UI/Contacts/AddContactButton.vue";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
@@ -42,6 +47,11 @@ const toggleComponent = () => {
 
 const searchParam = ref('');
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+const showModal = ref(false);
+const toggleModal = () => {
+  showModal.value = !showModal.value
+}
 
 const filters = reactive<{
   company?: string;
