@@ -236,6 +236,7 @@ import { useOffices } from "@/composables/useOffices";
 import { useDivisions } from "@/composables/useDivisions";
 import { useDepartments } from "@/composables/useDepartments";
 import { useGroups } from "@/composables/useGroups";
+import { useEmployees } from "@/composables/useEmployees";
 import type { expandOffice } from "@/types/officeType";
 import type { expandDivision } from "@/types/divisionType";
 import type { expandDepartment } from "@/types/departmentType";
@@ -252,6 +253,7 @@ const { offices, fetchOffices } = useOffices();
 const { divisions, fetchDivisions } = useDivisions();
 const { departments, fetchDepartments } = useDepartments();
 const { groups, fetchGroups } = useGroups();
+const { employees, fetchRequest } = useEmployees();
 
 const displayOffice = ref();
 const displayDivision = ref();
@@ -272,12 +274,8 @@ const handleCompanyChange = async () => {
   groups.value = [];
 
   if (selectedCompany.value) {
-    await fetchOffices(
-      `?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`
-    );
-    displayOffice.value =
-      (offices.value as expandOffice[]).map((item) => item.expand.office_id) ||
-      [];
+    await fetchOffices(`?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
+    displayOffice.value =(offices.value as expandOffice[]).map((item) => item.expand.office_id) ||[];
   } else {
     displayOffice.value = [];
     displayDivision.value = [];
@@ -295,13 +293,9 @@ const handleOfficeChange = async () => {
   groups.value = [];
 
   if (selectedOffice.value) {
-    await fetchDivisions(
-      `?filter=office_id="${selectedOffice.value}"&expand=division_id&fields=expand.division_id`
-    );
+    await fetchDivisions(`?filter=office_id="${selectedOffice.value}"&expand=division_id&fields=expand.division_id`);
     displayDivision.value =
-      (divisions.value as expandDivision[]).map(
-        (item) => item.expand.division_id
-      ) || [];
+      (divisions.value as expandDivision[]).map((item) => item.expand.division_id) || [];
   } else {
     displayDivision.value = [];
     displayDepartment.value = [];
@@ -316,13 +310,9 @@ const handleDivisionChange = async () => {
   groups.value = [];
 
   if (selectedDivision.value) {
-    await fetchDepartments(
-      `?filter=division_id="${selectedDivision.value}"&expand=department_id&fields=expand.department_id`
-    );
+    await fetchDepartments(`?filter=division_id="${selectedDivision.value}"&expand=department_id&fields=expand.department_id`);
     displayDepartment.value =
-      (departments.value as expandDepartment[]).map(
-        (item) => item.expand.department_id
-      ) || [];
+      (departments.value as expandDepartment[]).map((item) => item.expand.department_id) || [];
   } else {
     displayDepartment.value = [];
     displayGroup.value = [];
@@ -334,11 +324,8 @@ const handleDepartmentChange = async () => {
   groups.value = [];
 
   if (selectedDepartment.value) {
-    await fetchGroups(
-      `?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`
-    );
-    displayGroup.value =
-      (groups.value as expandGroup[]).map((item) => item.expand.group_id) || [];
+    await fetchGroups(`?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
+    displayGroup.value =(groups.value as expandGroup[]).map((item) => item.expand.group_id) || [];
   } else {
     displayGroup.value = [];
   }
@@ -455,28 +442,43 @@ const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
 
 const onSubmit = handleSubmit(async (values) => {
-    try {
-          await createEmployee(
-          values.name,
-          values.surname,
-          values.email,
-          values.position,
-          values.selectedCompany,
-          values.selectedOffice,
-          values.selectedDivision,
-          values.phone_number,
-          values.selectedDepartment,
-          values.selectedGroup,
-          values.selectedAvatar
-        );
-        store.addSuccessNotification('Įrašas sukurtas sėkmingai');
-        resetForm();
-        emits('employee-created');
-    }
-    catch(error: any){
-      store.addErrorNotification(error);
-    }
-})
+  await fetchRequest();
+
+  const existingList = employees.value;
+
+  const found = existingList.find((item: any) =>
+    (item.name === values.name && item.surname === values.surname) ||
+    item.email === values.email
+  );
+
+  if (found) {
+    store.addErrorNotification('Toks kontaktas jau egzistuoja');
+    return;
+  }
+
+  try {
+    await createEmployee(
+      values.name,
+      values.surname,
+      values.email,
+      values.position,
+      values.selectedCompany,
+      values.selectedOffice,
+      values.selectedDivision,
+      values.phone_number,
+      values.selectedDepartment,
+      values.selectedGroup,
+      values.selectedAvatar
+    );
+
+    store.addSuccessNotification('Įrašas sukurtas sėkmingai');
+    resetForm();
+    emits('employee-created');
+  } catch (error: any) {
+    store.addErrorNotification(error);
+  }
+});
+
 
 onMounted(() => {
   fetchCompanies();
