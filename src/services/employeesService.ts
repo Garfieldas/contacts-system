@@ -28,26 +28,30 @@ export const createEmployee = async (
   phone_number?: string,
   department_id?: string,
   group_id?: string,
-  photo?: string
+  photo?: File
 ) => {
-  const employee = {
-    name,
-    surname,
-    email,
-    phone_number,
-    position,
-    company_id,
-    office_id,
-    division_id,
-    department_id,
-    group_id,
-    photo,
-  };
+  const formData = new FormData();
+
+  formData.append("name", name);
+  formData.append("surname", surname);
+  formData.append("email", email);
+  formData.append("position", position);
+  formData.append("company_id", company_id);
+  formData.append("office_id", office_id);
+  formData.append("division_id", division_id);
+
+  if (phone_number) formData.append("phone_number", phone_number);
+  if (department_id) formData.append("department_id", department_id);
+  if (group_id) formData.append("group_id", group_id);
+  if (photo) formData.append("photo", photo);
+
   const token = localStorage.getItem("token");
+
   try {
-    await axiosInstance.post("/employees/records", employee, {
+    await axiosInstance.post("/employees/records", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     });
   } catch (error: any) {

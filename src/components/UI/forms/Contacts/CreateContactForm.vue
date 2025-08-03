@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="">
+  <form @submit.prevent="onSubmit">
     <h2 class="text-3xl font-normal mb-6">Pridėti kontaktą:</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -250,6 +250,8 @@ import { onMounted, ref } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
+import { createEmployee } from "@/services/employeesService";
+import { useNotificationStore } from "@/stores/notificationstore";
 
 const { companies, fetchCompanies } = useCompanies();
 const { offices, fetchOffices } = useOffices();
@@ -262,6 +264,7 @@ const displayDivision = ref();
 const displayDepartment = ref();
 const displayGroup = ref();
 const displayAvatar = ref("Nuotrauka nėra įkėlta");
+const store = useNotificationStore();
 
 const handleCompanyChange = async () => {
   selectedOffice.value = "";
@@ -401,8 +404,9 @@ const createSchema = z.object({
   selectedCompany: z.string().min(1, "Įmonė privaloma"),
   selectedOffice: z.string().min(1, "Ofisas privalomas"),
   selectedDivision: z.string().min(1, "Skyrius privalomas"),
-  selectedDepartment: z.string().min(1, "Padalinys privalomas"),
-  selectedGroup: z.string().min(1, "Grupė privaloma"),
+  selectedDepartment: z.string().optional().or(z.literal("")),
+  selectedGroup: z.string().optional().or(z.literal("")),
+
 
   selectedAvatar: z.any().refine(
     (selectedAvatar: File | null) => {
@@ -454,6 +458,29 @@ const [selectedDivision] = defineField("selectedDivision");
 const [selectedDepartment] = defineField("selectedDepartment");
 const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
+
+const onSubmit = handleSubmit(async (values) => {
+    try {
+          await createEmployee(
+          values.name,
+          values.surname,
+          values.email,
+          values.position,
+          values.selectedCompany,
+          values.selectedOffice,
+          values.selectedDivision,
+          values.phone_number,
+          values.selectedDepartment,
+          values.selectedGroup,
+          values.selectedAvatar
+        );
+        store.addSuccessNotification('Įrašas sukurtas sėkmingai');
+        resetForm();
+    }
+    catch(error: any){
+      store.addErrorNotification(error);
+    }
+})
 
 onMounted(() => {
   fetchCompanies();
