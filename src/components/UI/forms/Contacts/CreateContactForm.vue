@@ -170,9 +170,6 @@
               {{ department.name }}
             </option>
           </select>
-          <div v-if="errors.selectedDepartment" class="error-message">
-            {{ errors.selectedDepartment }}
-          </div>
         </div>
 
         <div class="mb-6">
@@ -189,9 +186,6 @@
               {{ group.name }}
             </option>
           </select>
-          <div v-if="errors.selectedGroup" class="error-message">
-            {{ errors.selectedGroup }}
-          </div>
         </div>
 
         <div class="flex items-center space-x-4 mb-8">
@@ -265,6 +259,7 @@ const displayDepartment = ref();
 const displayGroup = ref();
 const displayAvatar = ref("Nuotrauka nėra įkėlta");
 const store = useNotificationStore();
+const emits = defineEmits(['employee-created']);
 
 const handleCompanyChange = async () => {
   selectedOffice.value = "";
@@ -476,6 +471,7 @@ const onSubmit = handleSubmit(async (values) => {
         );
         store.addSuccessNotification('Įrašas sukurtas sėkmingai');
         resetForm();
+        emits('employee-created');
     }
     catch(error: any){
       store.addErrorNotification(error);

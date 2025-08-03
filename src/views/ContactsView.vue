@@ -1,13 +1,13 @@
 <template>
   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
-    <component :is="CreateContactForm" />
+    <component :is="currentForm" @employee-created="handleSubmit"/>
   </BaseModal>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
-      <AddContactButton @add-contact="showModal = true"/>
+      <AddContactButton @add-contact="toggleModal" @click="switchComponent(CreateContactForm)"/>
     </div>
     <div class="text-sm text-gray-600">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
@@ -40,6 +40,7 @@ import AddContactButton from "@/components/UI/Contacts/AddContactButton.vue";
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
 const currentDisplay = shallowRef(ContactList);
+const currentForm = shallowRef(CreateContactForm);
 
 const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
@@ -52,6 +53,23 @@ const showModal = ref(false);
 const toggleModal = () => {
   showModal.value = !showModal.value
 }
+
+const switchComponent = (component: any) => {
+  currentForm.value = component;
+}
+
+const handleSubmit = () => {
+  showModal.value = false;
+
+  searchParam.value = '';
+  page.value = 1;
+
+  Object.keys(filters).forEach((key) => {
+    filters[key as keyof typeof filters] = '';
+  });
+
+  fetchRequest(fullQuery.value);
+};
 
 const filters = reactive<{
   company?: string;
