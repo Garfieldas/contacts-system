@@ -27,6 +27,9 @@
                             <a class="text-[#1F3F77] hover:underline cursor-pointer no-select" :class="{'break-all': !hideEmail}"
                             v-if="employee.email.length > 30" @click="toggleEmail">
                             {{ hideEmail ? employee.email.slice(0, 30) : employee.email}} {{ arrow }}</a>
+                            <a class="text-[#1F3F77] hover:underline cursor-pointer no-select" v-else>
+                                {{ employee.email }}
+                            </a>
                         </div>
                         <div class="flex">
                             <span class="font-medium text-gray-500 w-28 flex-shrink-0">Telefono numeris:</span>

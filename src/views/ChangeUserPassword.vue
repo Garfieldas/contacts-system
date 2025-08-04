@@ -3,10 +3,10 @@
     <div class="absolute top-20 left-20">
       <GoBackButton />
     </div>
-    <PasswordRessetForm />
-  </div>
+    <UpdatePasswordForm />
+</div>
 </template>
 <script setup lang="ts">
-import PasswordRessetForm from '@/components/UI/forms/PasswordRessetForm.vue';
+import UpdatePasswordForm from '@/components/UI/forms/UpdatePasswordForm.vue';
 import GoBackButton from '@/components/UI/GoBackButton.vue';
 </script>

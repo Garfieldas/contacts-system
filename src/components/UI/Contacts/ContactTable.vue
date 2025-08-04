@@ -8,6 +8,7 @@
         <th class="px-6 py-3 font-medium">Telefono numeris</th>
         <th class="px-6 py-3 font-medium">Elektroninis paštas</th>
         <th class="px-6 py-3 font-medium">Adresas</th>
+        <th class="px-6 py-3 font-medium" v-if="hideRow">Veiksmas</th>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
@@ -17,6 +18,15 @@
 </div>
 </template>
 <script setup lang="ts">
+import { computed } from 'vue';
 import ContactTableRow from './ContactTableRow.vue';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
 const props = defineProps(['employees']);
+const auth = useAuthenticationStore();
+const hideRow = computed(() => {
+    if (auth.isLoggedIn && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+        return true
+    }
+    return false;
+})
 </script>
