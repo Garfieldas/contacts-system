@@ -19,11 +19,17 @@
 </template>
 <script setup lang="ts">
 import { deleteEmployee } from '@/services/employeesService';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 const props = defineProps(['employee']);
 const emits = defineEmits(['employee-deleted', 'cancel-delete'])
 const store = useNotificationStore();
+const auth = useAuthenticationStore();
 const onSubmit = async () => {
+  if (!auth.isLoggedIn && !auth.user_permissions.delete_employees) {
+    store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+    return;
+  }
     try {
         await deleteEmployee(props.employee.id);
         store.addSuccessNotification('Kontaktas sėkmingai pašalintas!');

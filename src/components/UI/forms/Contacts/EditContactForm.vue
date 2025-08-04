@@ -224,7 +224,7 @@
       <button
         class="ps-20 pe-20 py-1 bg-[#0054A6] text-white rounded-xs text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        PRIDĖTI
+        REDAGUOTI
       </button>
     </div>
   </form>
@@ -387,8 +387,18 @@ const createSchema = z.object({
   phone_number: z
     .string()
     .trim()
-    .max(20, "Telefono numeris negali viršyti 20 simbolių")
-    .regex(/^(?:\+370|0)(?:[1-9]\d{7}|(?:[1-9]\d|\(85\))\d{6})$/, "Numeris privalo būti validus"),
+    .max(20, "Telefono numeris negali viršyti 14 simbolių")
+    .optional()
+    .or(z.literal(''))
+    .refine(
+      (value) => {
+        if (!value) {
+          return true;
+        }
+        return /^(?:\+370|0)(?:[1-9]\d{7}|(?:[1-9]\d|\(85\))\d{6})$/.test(value);
+      },
+      "Numeris privalo būti validus"
+    ),
 
   selectedCompany: z.string().min(1, "Įmonė privaloma"),
   selectedOffice: z.string().min(1, "Ofisas privalomas"),
