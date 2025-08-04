@@ -12,7 +12,7 @@
         <td class="px-6 py-4">{{ employee.expand.office_id.name }}</td>
         <td class="px-6 py-4 text-white" v-if="hideButtons">
           <button class="bg-[#0054A6] rounded-2xl px-10 py-1 mr-4" @click="emit('edit-contact', employee)">Redaguoti</button>
-          <button class="bg-[#A61A11] rounded-2xl px-10 py-1" @click="emit('delete-contact')">Ištrinti</button>
+          <button class="bg-[#A61A11] rounded-2xl px-10 py-1" @click="emit('delete-contact', employee)">Ištrinti</button>
         </td>
       </tr>
 </template>
