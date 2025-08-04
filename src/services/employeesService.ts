@@ -101,3 +101,17 @@ export const updateEmployee = async (
     throw error;
   }
 };
+
+export const deleteEmployee = async (id: string) => {
+  const token = localStorage.getItem('token');
+  try {
+      await axiosInstance.delete(`/employees/records/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+  }
+  catch (error: any) {
+    throw error;
+  }
+}
