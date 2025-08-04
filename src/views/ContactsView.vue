@@ -107,7 +107,7 @@ const fullQuery = computed(() => {
     query += (query.includes('&filter=') ? ' && ' : '&filter=') + encodeURIComponent(searchTerm);
   }
 
-  return `${query}&expand=office_id`;
+  return `${query}&expand=company_id,office_id,division_id,departmend_id,group_id`;
 });
 
 const handleFilters = (newFilters: {
