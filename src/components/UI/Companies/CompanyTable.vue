@@ -8,11 +8,12 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-            <CompanyTableRow />
+            <CompanyTableRow v-for="company in companies" :key="company.id" :company="company"/>
         </tbody>
       </table>
     </div>
 </template>
 <script setup lang="ts">
 import CompanyTableRow from './CompanyTableRow.vue';
+const props = defineProps(['companies']);
 </script>

@@ -6,7 +6,7 @@
         </button>
         <h2>Pridėti naują įmonę</h2>
     </div>
-    <CompanyTable />
+    <CompanyTable :companies="companies"/>
     <Pagination />
     </BaseLayout>
 </template>
@@ -14,4 +14,10 @@
 import BaseLayout from '@/components/Layout/BaseLayout.vue';
 import Pagination from '@/components/Layout/Pagination.vue';
 import CompanyTable from '@/components/UI/Companies/CompanyTable.vue';
+import { useCompanies } from '@/composables/useCompanies';
+import { onMounted } from 'vue';
+const { companies, fetchCompanies } = useCompanies();
+onMounted(() => {
+    fetchCompanies();
+})
 </script>
