@@ -2,7 +2,7 @@
   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="auth.isLoggedIn"
   :hide-close-button="currentForm === DeleteContactForm">
     <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
-    @cancel-delete="toggleModal"/>
+    @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
   </BaseModal>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
@@ -52,7 +52,7 @@ import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
 const currentDisplay = shallowRef(ContactList);
-const currentForm = shallowRef(CreateContactForm);
+const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
 const auth = useAuthenticationStore();
 
 const toggleComponent = () => {

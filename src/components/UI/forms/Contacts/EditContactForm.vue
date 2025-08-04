@@ -476,7 +476,7 @@ const onSubmit = handleSubmit(async (values) => {
       values.selectedAvatar
     );
 
-    store.addSuccessNotification('Įrašas atnaujintas sėkmingai');
+    store.addSuccessNotification('Kontaktas atnaujintas sėkmingai!');
     resetForm();
     emits('employee-updated');
   } catch (error: any) {

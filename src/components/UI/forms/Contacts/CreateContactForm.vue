@@ -471,7 +471,7 @@ const onSubmit = handleSubmit(async (values) => {
       values.selectedAvatar
     );
 
-    store.addSuccessNotification('Įrašas sukurtas sėkmingai');
+    store.addSuccessNotification('Kontaktas sukurtas sėkmingai!');
     resetForm();
     emits('employee-created');
   } catch (error: any) {
