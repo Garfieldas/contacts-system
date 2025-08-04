@@ -1,6 +1,8 @@
 <template>
-  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="auth.isLoggedIn">
-    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"/>
+  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="auth.isLoggedIn"
+  :hide-close-button="currentForm === DeleteContactForm">
+    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
+    @cancel-delete="toggleModal"/>
   </BaseModal>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
@@ -19,8 +21,12 @@
       <p class="text-gray-500">Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus.</p>
     </div>
     <component :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
-      handleEdit(employee); switchComponent(EditContactForm);
-    }" v-else/>
+      handleEmit(employee); switchComponent(EditContactForm);
+    }"
+    @delete-contact="(employee) => {
+      handleEmit(employee); switchComponent(DeleteContactForm);
+    }"
+     v-else/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages" />
   </BaseLayout>
 </template>
@@ -41,6 +47,7 @@ import AddContactButton from "@/components/UI/Contacts/AddContactButton.vue";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import EditContactForm from "@/components/UI/forms/Contacts/EditContactForm.vue";
 import type { Employee } from "@/types/employeeType";
+import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.vue";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
@@ -66,7 +73,7 @@ const switchComponent = (component: any) => {
 }
 
 const selectedEmployee = ref();
-const handleEdit = (employee: Employee) => selectedEmployee.value = employee;
+const handleEmit = (employee: Employee) => selectedEmployee.value = employee;
 
 const handleSubmit = () => {
   showModal.value = false;

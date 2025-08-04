@@ -12,7 +12,7 @@
         <td class="px-6 py-4">{{ employee.expand.office_id.name }}</td>
         <td class="px-6 py-4 text-white" v-if="hideButtons">
           <button class="bg-[#0054A6] rounded-2xl px-10 py-1 mr-4" @click="emit('edit-contact', employee)">Redaguoti</button>
-          <button class="bg-[#A61A11] rounded-2xl px-10 py-1">Ištrinti</button>
+          <button class="bg-[#A61A11] rounded-2xl px-10 py-1" @click="emit('delete-contact')">Ištrinti</button>
         </td>
       </tr>
 </template>
@@ -20,7 +20,7 @@
 import { ref, computed } from 'vue';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 const props = defineProps(['employee']);
-const emit = defineEmits(['edit-contact'])
+const emit = defineEmits(['edit-contact', 'delete-contact']);
 const hideEmail = ref(true);
 const arrow = ref('▼');
 const auth = useAuthenticationStore();

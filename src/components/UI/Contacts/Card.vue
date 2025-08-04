@@ -34,7 +34,7 @@
             </div>
             <div class="flex flex-row justify-start" v-if="hideButtons">
                 <button @click="emit('edit-contact', employee)"><img src="../../../assets/icons/Edit button.png" alt="edit"></button>
-                <button><img src="../../../assets/icons/Delete button.png" alt="edit"></button>
+                <button @click="emit('delete-contact', employee)"><img src="../../../assets/icons/Delete button.png" alt="edit"></button>
             </div>
         </div>
     </div>
@@ -44,7 +44,7 @@ import { computed, ref } from 'vue';
 import { getPhotoUrl } from '@/services/employeesService';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 const props = defineProps(['employee']);
-const emit = defineEmits(['edit-contact'])
+const emit = defineEmits(['edit-contact', 'delete-contact']);
 const employeePhotoUrl = computed(() => {
     if (props.employee && props.employee.id && props.employee.photo) {
         return getPhotoUrl(props.employee.id, props.employee.photo);
