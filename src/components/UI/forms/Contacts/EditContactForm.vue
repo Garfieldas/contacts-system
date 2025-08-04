@@ -247,6 +247,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { updateEmployee } from "@/services/employeesService";
 import { useNotificationStore } from "@/stores/notificationstore";
+import { useAuthenticationStore } from "@/stores/authenticationStore";
 
 const { companies, fetchCompanies } = useCompanies();
 const { offices, fetchOffices } = useOffices();
@@ -262,7 +263,8 @@ const displayGroup = ref();
 const displayAvatar = ref("Nuotrauka nėra įkėlta");
 const store = useNotificationStore();
 const emits = defineEmits(['employee-updated']);
-const props = defineProps(['employee'])
+const props = defineProps(['employee']);
+const auth = useAuthenticationStore();
 
 const handleCompanyChange = async () => {
   selectedOffice.value = "";
@@ -355,21 +357,24 @@ const createSchema = z.object({
     .trim()
     .min(1, "Vardas privalomas")
     .min(3, "Vardas privalo būti bent 3 simbolių")
-    .max(20, "Vardas privalo neviršyti 20 simbolių"),
+    .max(20, "Vardas privalo neviršyti 20 simbolių")
+    .regex(/^[a-zA-Z]+$/, "Vardas gali turėti tik raides"),
 
   surname: z
     .string()
     .trim()
     .min(1, "Pavardė privaloma")
     .min(4, "Pavardė privalo būti bent 4 simbolių")
-    .max(20, "Pavardė privalo neviršyti 20 simbolių"),
+    .max(20, "Pavardė privalo neviršyti 20 simbolių")
+    .regex(/^[a-zA-Z]+$/, "Pavardė gali turėti tik raides"),
 
   position: z
     .string()
     .trim()
     .min(1, "Pozicija privaloma")
     .min(3, "Pozicija privalo būti bent 3 simbolių")
-    .max(50, "Pozicija privalo neviršyti 50 simbolių"),
+    .max(50, "Pozicija privalo neviršyti 50 simbolių")
+    .regex(/^[a-zA-Z\s]+$/, "Pozicija gali turėti tik raides"),
 
   email: z
     .string()
@@ -382,7 +387,8 @@ const createSchema = z.object({
   phone_number: z
     .string()
     .trim()
-    .max(20, "Telefono numeris negali viršyti 20 simbolių"),
+    .max(20, "Telefono numeris negali viršyti 20 simbolių")
+    .regex(/^(?:\+370|0)(?:[1-9]\d{7}|(?:[1-9]\d|\(85\))\d{6})$/, "Numeris privalo būti validus"),
 
   selectedCompany: z.string().min(1, "Įmonė privaloma"),
   selectedOffice: z.string().min(1, "Ofisas privalomas"),
@@ -443,6 +449,10 @@ const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
 
 const onSubmit = handleSubmit(async (values) => {
+  if (!auth.isLoggedIn && !auth.user_permissions.edit_employees) {
+    store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+    return;
+  }
   const searchTerm = values.phone_number ? `(email?~"${values.email}") || phone_number?~"${values.phone_number}"` : `(email?~"${values.email}")`;
   await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
 

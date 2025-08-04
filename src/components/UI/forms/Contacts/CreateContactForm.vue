@@ -373,7 +373,7 @@ const createSchema = z.object({
     .min(1, "Pozicija privaloma")
     .min(3, "Pozicija privalo būti bent 3 simbolių")
     .max(50, "Pozicija privalo neviršyti 50 simbolių")
-    .regex(/^[a-zA-Z]+$/, "Pozicija gali turėti tik raides"),
+    .regex(/^[a-zA-Z\s]+$/, "Pozicija gali turėti tik raides"),
 
   email: z
     .string()
