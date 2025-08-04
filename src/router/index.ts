@@ -42,7 +42,7 @@ const router = createRouter({
     {
       path: '/companies',
       name: 'companies-management',
-      component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
+      component: () => import('@/views/CompaniesView.vue'),
       meta: { requiresAuth: true }
 
     },
