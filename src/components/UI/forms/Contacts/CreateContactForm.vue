@@ -448,7 +448,7 @@ const onSubmit = handleSubmit(async (values) => {
   const existingList = employees.value;
 
   const found = existingList.find((item: any) =>
-    item.email === values.email
+    item.email === values.email || item.phone_number === values.phone_number
   );
 
   if (found) {

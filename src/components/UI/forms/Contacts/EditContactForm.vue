@@ -451,7 +451,7 @@ const onSubmit = handleSubmit(async (values) => {
   if (existingList.length > 1) {
 
     const found = existingList.find((item: any) =>
-    item.email === values.email
+    item.email === values.email || item.phone_number === values.phone_number
     );
 
     if (found) {
@@ -496,13 +496,13 @@ watch(()=> props.employee, (newEmployee) => {
   selectedOffice.value = newEmployee.expand.office_id.id;
   handleOfficeChange();
   selectedDivision.value = newEmployee.expand.division_id.id;
-  handleDivisionChange();
   if(newEmployee.expand.department_id) {
+    handleDivisionChange();
     selectedDepartment.value = newEmployee.expand.department_id.id;
-    handleDepartmentChange();
   }
 
   if (newEmployee.expand.group_id) {
+    handleDepartmentChange();
     selectedGroup.value = newEmployee.expand.group_id.id;
   }
   
