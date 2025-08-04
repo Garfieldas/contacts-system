@@ -1,6 +1,6 @@
 <template>
   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="auth.isLoggedIn">
-    <component :is="currentForm" @employee-created="handleSubmit"/>
+    <component :is="currentForm" @employee-created="handleSubmit" :employee="selectedEmployee"/>
   </BaseModal>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
@@ -18,7 +18,9 @@
       <h1 class="text-2xl font-semibold text-gray-700 mb-2">Nerasta jokių kontaktų</h1>
       <p class="text-gray-500">Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus.</p>
     </div>
-    <component :is="currentDisplay" :employees="employees" @edit-contact="switchComponent(EditContactForm)" v-else/>
+    <component :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
+      handleEdit(employee); switchComponent(EditContactForm);
+    }" v-else/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages" />
   </BaseLayout>
 </template>
@@ -38,6 +40,7 @@ import CreateContactForm from "@/components/UI/forms/Contacts/CreateContactForm.
 import AddContactButton from "@/components/UI/Contacts/AddContactButton.vue";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import EditContactForm from "@/components/UI/forms/Contacts/EditContactForm.vue";
+import type { Employee } from "@/types/employeeType";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
@@ -61,6 +64,9 @@ const switchComponent = (component: any) => {
   showModal.value = true;
   currentForm.value = component;
 }
+
+const selectedEmployee = ref();
+const handleEdit = (employee: Employee) => selectedEmployee.value = employee;
 
 const handleSubmit = () => {
   showModal.value = false;
@@ -109,7 +115,7 @@ const fullQuery = computed(() => {
     query += (query.includes('&filter=') ? ' && ' : '&filter=') + encodeURIComponent(searchTerm);
   }
 
-  return `${query}&expand=company_id,office_id,division_id,departmend_id,group_id`;
+  return `${query}&expand=company_id,office_id,division_id,department_id,group_id`;
 });
 
 const handleFilters = (newFilters: {

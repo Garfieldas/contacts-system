@@ -241,7 +241,7 @@ import type { expandOffice } from "@/types/officeType";
 import type { expandDivision } from "@/types/divisionType";
 import type { expandDepartment } from "@/types/departmentType";
 import type { expandGroup } from "@/types/groupType";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
@@ -481,8 +481,27 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-
-onMounted(() => {
+watch(()=> props.employee, (newEmployee) => {
+  name.value = newEmployee.name;
+  surname.value = newEmployee.surname;
+  position.value = newEmployee.position;
+  email.value = newEmployee.email;
+  phone_number.value = newEmployee.phone_number;
   fetchCompanies();
-});
+  selectedCompany.value = newEmployee.expand.company_id.id;
+  handleCompanyChange();
+  selectedOffice.value = newEmployee.expand.office_id.id;
+  handleOfficeChange();
+  selectedDivision.value = newEmployee.expand.division_id.id;
+  handleDivisionChange();
+  if(newEmployee.expand.department_id) {
+    selectedDepartment.value = newEmployee.expand.department_id.id;
+    handleDepartmentChange();
+  }
+
+  if (newEmployee.expand.group_id) {
+    selectedGroup.value = newEmployee.expand.group_id.id;
+  }
+  
+}, {immediate: true})
 </script>
