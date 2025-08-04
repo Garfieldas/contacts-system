@@ -360,15 +360,15 @@ const createSchema = z.object({
     .string()
     .trim()
     .min(1, "Pavardė privaloma")
-    .min(4, "Pavardė privalo būti bent 6 simbolių")
+    .min(4, "Pavardė privalo būti bent 4 simbolių")
     .max(20, "Pavardė privalo neviršyti 20 simbolių"),
 
   position: z
     .string()
     .trim()
     .min(1, "Pozicija privaloma")
-    .min(4, "Pozicija privalo būti bent 4 simbolių")
-    .max(20, "Pozicija privalo neviršyti 20 simbolių"),
+    .min(3, "Pozicija privalo būti bent 3 simbolių")
+    .max(50, "Pozicija privalo neviršyti 50 simbolių"),
 
   email: z
     .string()
