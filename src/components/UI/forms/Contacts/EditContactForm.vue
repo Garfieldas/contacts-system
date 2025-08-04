@@ -241,11 +241,11 @@ import type { expandOffice } from "@/types/officeType";
 import type { expandDivision } from "@/types/divisionType";
 import type { expandDepartment } from "@/types/departmentType";
 import type { expandGroup } from "@/types/groupType";
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import { createEmployee } from "@/services/employeesService";
+import { updateEmployee } from "@/services/employeesService";
 import { useNotificationStore } from "@/stores/notificationstore";
 
 const { companies, fetchCompanies } = useCompanies();
@@ -261,7 +261,7 @@ const displayDepartment = ref();
 const displayGroup = ref();
 const displayAvatar = ref("Nuotrauka nėra įkėlta");
 const store = useNotificationStore();
-const emits = defineEmits(['employee-created']);
+const emits = defineEmits(['employee-updated']);
 const props = defineProps(['employee'])
 
 const handleCompanyChange = async () => {
@@ -443,22 +443,26 @@ const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
 
 const onSubmit = handleSubmit(async (values) => {
-  const searchTerm = `(email?~"${values.email}")`;
+  const searchTerm = values.phone_number ? `(email?~"${values.email}") || phone_number?~"${values.phone_number}"` : `(email?~"${values.email}")`;
   await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
 
   const existingList = employees.value;
 
-  const found = existingList.find((item: any) =>
-    item.email === values.email
-  );
+  if (existingList.length > 1) {
 
-  if (found) {
-    store.addErrorNotification('Toks kontaktas jau egzistuoja');
-    return;
-  }
+    const found = existingList.find((item: any) =>
+    item.email === values.email
+    );
+
+    if (found) {
+      store.addErrorNotification('Toks kontaktas jau egzistuoja');
+      return;
+    }
+}
 
   try {
-    await createEmployee(
+    await updateEmployee(
+      props.employee.id,
       values.name,
       values.surname,
       values.email,
@@ -472,9 +476,9 @@ const onSubmit = handleSubmit(async (values) => {
       values.selectedAvatar
     );
 
-    store.addSuccessNotification('Įrašas sukurtas sėkmingai');
+    store.addSuccessNotification('Įrašas atnaujintas sėkmingai');
     resetForm();
-    emits('employee-created');
+    emits('employee-updated');
   } catch (error: any) {
     store.addErrorNotification(error);
   }

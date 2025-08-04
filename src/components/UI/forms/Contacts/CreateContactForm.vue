@@ -442,7 +442,7 @@ const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
 
 const onSubmit = handleSubmit(async (values) => {
-  const searchTerm = `(email?~"${values.email}")`;
+  const searchTerm = values.phone_number ? `(email?~"${values.email}") || phone_number?~"${values.phone_number}"` : `(email?~"${values.email}")`;
   await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
 
   const existingList = employees.value;

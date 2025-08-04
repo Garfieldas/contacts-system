@@ -1,6 +1,6 @@
 <template>
   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="auth.isLoggedIn">
-    <component :is="currentForm" @employee-created="handleSubmit" :employee="selectedEmployee"/>
+    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"/>
   </BaseModal>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
