@@ -1,3 +1,4 @@
+import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -23,22 +24,33 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/LoginView.vue')
+      component: () => import('@/views/LoginView.vue'),
+      meta: { hideNavBar: true, guestOnly: true }
     },
     {
       path: '/password-reset',
       name: 'password-reset',
-      component: () => import('@/views/PasswordReset.vue')
+      component: () => import('@/views/PasswordReset.vue'),
+      meta: { hideNavBar: true, guestOnly: true }
+    },
+    {
+      path: '/change-user-password',
+      name: 'change-user-password',
+      component: () => import('@/views/ChangeUserPassword.vue'),
+      meta: { hideNavBar: true, requiresAuth: true}
     },
     {
       path: '/companies',
       name: 'companies-management',
-      component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue')
+      component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
+      meta: { requiresAuth: true }
+
     },
     {
       path: '/structure',
       name: 'company-structure',
       component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: 'offices',
@@ -65,7 +77,8 @@ const router = createRouter({
     {
     path: '/admin',
     name: 'admin',
-    component: () => import('@/views/AdminAccountsManagement.vue')
+    component: () => import('@/views/AdminAccountsManagement.vue'),
+    meta: { requiresAuth: true }
     },
     {
     path: '/not-found',
@@ -77,6 +90,24 @@ const router = createRouter({
     redirect: '/not-found'
     }
   ],
+});
+router.beforeEach((to, from) => {
+  const store = useAuthenticationStore();
+  if (to.meta.requiresAuth && !store.isLoggedIn) {
+    return {
+      path: '/login',
+      query: { redirect: to.fullPath }
+    }
+  }
+})
+
+router.beforeEach((to, from) => {
+  const store = useAuthenticationStore();
+  if (to.meta.guestOnly && store.isLoggedIn) {
+    return {
+      path: '/',
+    }
+  }
 })
 
 export default router

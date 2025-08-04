@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed top-25 right-5 flex flex-col gap-4 m-auto w-80">
+    <div class="fixed top-25 right-5 flex flex-col gap-4 m-auto w-80 z-40">
         <Notification v-for="notification in store._notifications" :key="notification.id"
         :notification="notification"
         @remove-message="selectId"/>

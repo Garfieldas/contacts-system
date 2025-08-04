@@ -25,7 +25,7 @@ axiosInstance.interceptors.response.use(
         errorMessage = 'Atsiprašome, bet susidūrėme su problema. Prašome pabandykite dar kartą vėliau';
       }
     } else if (error.request) {
-      errorMessage = 'Deja, atrodo, kad jūsų įrenginys šiuo metu neturi interneto ryšio.';
+      errorMessage = 'Deja, nepavyko užmegzti ryšio su serveriu';
     } else {
       errorMessage = 'Atsiprašome, bet susidūrėme su problema. Prašome pabandykite dar kartą vėliau';
     }
