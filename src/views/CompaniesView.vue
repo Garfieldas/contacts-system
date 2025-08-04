@@ -1,6 +1,17 @@
 <template>
-    <BaseLayout title="Įmonės"></BaseLayout>
+    <BaseLayout title="Įmonės">
+    <div class="flex flex-row items-center mb-6 gap-12">
+        <button>
+        <img src="../assets/icons/Add Contact rounded.png" class="w-15 h-15"/>
+        </button>
+        <h2>Pridėti naują įmonę</h2>
+    </div>
+    <CompanyTable />
+    <Pagination />
+    </BaseLayout>
 </template>
 <script setup lang="ts">
 import BaseLayout from '@/components/Layout/BaseLayout.vue';
+import Pagination from '@/components/Layout/Pagination.vue';
+import CompanyTable from '@/components/UI/Companies/CompanyTable.vue';
 </script>
