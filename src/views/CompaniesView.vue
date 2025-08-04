@@ -7,7 +7,7 @@
         <h2>Pridėti naują įmonę</h2>
     </div>
     <CompanyTable :companies="companies"/>
-    <Pagination />
+    <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     </BaseLayout>
 </template>
 <script setup lang="ts">
@@ -15,8 +15,11 @@ import BaseLayout from '@/components/Layout/BaseLayout.vue';
 import Pagination from '@/components/Layout/Pagination.vue';
 import CompanyTable from '@/components/UI/Companies/CompanyTable.vue';
 import { useCompanies } from '@/composables/useCompanies';
-import { onMounted } from 'vue';
-const { companies, fetchCompanies } = useCompanies();
+import { onMounted, watch } from 'vue';
+const { companies, fetchCompanies, page, totalPages, perPage } = useCompanies();
+watch(page, () => {
+    fetchCompanies();
+})
 onMounted(() => {
     fetchCompanies();
 })
