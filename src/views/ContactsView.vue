@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="auth.isLoggedIn"
+  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
   :hide-close-button="currentForm === DeleteContactForm">
     <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
     @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
@@ -9,7 +9,7 @@
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
-      <AddContactButton @add-contact="switchComponent(CreateContactForm)" v-if="auth.isLoggedIn"/>
+      <AddContactButton @add-contact="switchComponent(CreateContactForm)" v-if="hideActions"/>
     </div>
     <div class="text-sm text-gray-600">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
@@ -54,6 +54,12 @@ const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEm
 const currentDisplay = shallowRef(ContactList);
 const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
 const auth = useAuthenticationStore();
+const hideActions = computed(() => {
+    if (auth.isLoggedIn && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+        return true
+    }
+    return false;
+})
 
 const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
