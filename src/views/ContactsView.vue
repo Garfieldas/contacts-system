@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
+  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="auth.isLoggedIn">
     <component :is="currentForm" @employee-created="handleSubmit"/>
   </BaseModal>
   <BaseLayout>
@@ -7,7 +7,7 @@
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
-      <AddContactButton @add-contact="toggleModal" @click="switchComponent(CreateContactForm)"/>
+      <AddContactButton @add-contact="toggleModal" @click="switchComponent(CreateContactForm)" v-if="auth.isLoggedIn"/>
     </div>
     <div class="text-sm text-gray-600">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
@@ -36,11 +36,13 @@ import { onMounted, shallowRef, reactive, computed, watch, ref } from "vue";
 import BaseModal from "@/components/UI/BaseModal.vue";
 import CreateContactForm from "@/components/UI/forms/Contacts/CreateContactForm.vue";
 import AddContactButton from "@/components/UI/Contacts/AddContactButton.vue";
+import { useAuthenticationStore } from "@/stores/authenticationStore";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
 const currentDisplay = shallowRef(ContactList);
 const currentForm = shallowRef(CreateContactForm);
+const auth = useAuthenticationStore();
 
 const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
