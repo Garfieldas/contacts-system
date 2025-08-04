@@ -6,6 +6,9 @@
         </button>
         <h2>Pridėti naują įmonę</h2>
     </div>
+    <div class="text-sm text-gray-600 mb-15">
+        Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
+    </div>
     <CompanyTable :companies="companies"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     </BaseLayout>
@@ -16,7 +19,7 @@ import Pagination from '@/components/Layout/Pagination.vue';
 import CompanyTable from '@/components/UI/Companies/CompanyTable.vue';
 import { useCompanies } from '@/composables/useCompanies';
 import { onMounted, watch } from 'vue';
-const { companies, fetchCompanies, page, totalPages, perPage } = useCompanies();
+const { companies, fetchCompanies, page, totalPages, totalItems } = useCompanies();
 watch(page, () => {
     fetchCompanies();
 })
