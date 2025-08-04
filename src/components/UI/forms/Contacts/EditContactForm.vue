@@ -443,13 +443,12 @@ const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
 
 const onSubmit = handleSubmit(async (values) => {
-  const searchTerm = `(name?~"${values.name}" || surname?~"${values.surname}" || email?~"${values.email}")`;
+  const searchTerm = `(email?~"${values.email}")`;
   await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
 
   const existingList = employees.value;
 
   const found = existingList.find((item: any) =>
-    (item.name === values.name && item.surname === values.surname) ||
     item.email === values.email
   );
 
