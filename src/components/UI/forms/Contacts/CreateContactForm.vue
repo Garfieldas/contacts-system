@@ -442,7 +442,8 @@ const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
 
 const onSubmit = handleSubmit(async (values) => {
-  await fetchRequest();
+  const searchTerm = `(name?~"${values.name}" || surname?~"${values.surname}" || email?~"${values.email}")`;
+  await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
 
   const existingList = employees.value;
 
