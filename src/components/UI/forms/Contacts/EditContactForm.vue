@@ -213,7 +213,7 @@
           <div v-if="errors.selectedAvatar" class="error-message">
             {{ errors.selectedAvatar }}
           </div>
-          <span class="text-gray-500 text-sm" :class="{'break-all': selectedAvatar}" v-else>{{
+          <span class="text-gray-500 text-sm" :class="{'break-all': selectedAvatar || employee.photo}" v-else>{{
             displayAvatar
           }}</span>
         </div>
@@ -514,6 +514,13 @@ watch(()=> props.employee, (newEmployee) => {
   if (newEmployee.expand.group_id) {
     handleDepartmentChange();
     selectedGroup.value = newEmployee.expand.group_id.id;
+  }
+
+  if (newEmployee.photo) {
+    displayAvatar.value = newEmployee.photo;
+  }
+  else{
+    displayAvatar.value = 'Nuotrauka nėra įkėlta'
   }
   
 }, {immediate: true})
