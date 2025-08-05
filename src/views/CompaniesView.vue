@@ -1,6 +1,6 @@
 <template>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
-        <component :is="currentForm" @company-created="handleSubmit"/>
+        <component :is="currentForm" @company-created="handleSubmit" :company="selectedComapny"/>
     </BaseModal>
     <BaseLayout title="Įmonės">
     <div class="flex flex-row items-center mb-6 gap-12" v-if="hideActions">
@@ -12,7 +12,9 @@
     <div class="text-sm text-gray-600 mb-15">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
     </div>
-    <CompanyTable :companies="companies"/>
+    <CompanyTable :companies="companies" @edit-company="(company) => {
+      handleEmit(company); switchComponent(EditCompanyForm);
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     </BaseLayout>
 </template>
@@ -25,6 +27,8 @@ import BaseModal from '@/components/UI/BaseModal.vue';
 import { useCompanies } from '@/composables/useCompanies';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { computed, onMounted, shallowRef, watch, ref } from 'vue';
+import EditCompanyForm from '@/components/UI/forms/Companies/EditCompanyForm.vue';
+import type { Company } from '@/types/companyType';
 const { companies, fetchCompanies, page, totalPages, totalItems } = useCompanies();
 const auth = useAuthenticationStore();
 const hideActions = computed(() => {
@@ -43,6 +47,8 @@ const switchComponent = (component: any) => {
     currentForm.value = component;
     showModal.value = true;
 }
+const selectedComapny = ref();
+const handleEmit = (company: Company) => selectedComapny.value = company;
 
 const handleSubmit = () => {
     page.value = 1;

@@ -8,12 +8,15 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-            <CompanyTableRow v-for="company in companies" :key="company.id" :company="company"/>
+            <CompanyTableRow v-for="company in companies" :key="company.id" :company="company" @edit-company="onEdit"/>
         </tbody>
       </table>
     </div>
 </template>
 <script setup lang="ts">
+import type { Company } from '@/types/companyType';
 import CompanyTableRow from './CompanyTableRow.vue';
 const props = defineProps(['companies']);
+const emits = defineEmits(['edit-company']);
+const onEdit = (company: Company) => emits('edit-company', company);
 </script>
