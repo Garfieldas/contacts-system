@@ -58,12 +58,12 @@ const onSubmit = handleSubmit(async (values) => {
     await fetchCompanies('&filter=' + encodeURIComponent(searchTerm));
 
     const existingList = companies.value;
-    const found = existingList.find((item: any) => {
+    const found = existingList.find((item: any) => 
         item.name === values.companyName
-    });
+    );
 
     if (found) {
-        store.addErrorNotification('Tokia įmonė jau yra sukurta');
+        store.addErrorNotification('Pakeiskite įmonės pavadinimą!');
         return;
     }
     
