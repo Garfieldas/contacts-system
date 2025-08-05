@@ -8,7 +8,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-            <CompanyTableRow v-for="company in companies" :key="company.id" :company="company" @edit-company="onEdit"/>
+            <CompanyTableRow v-for="company in companies" :key="company.id" :company="company" @edit-company="onEdit" @delete-company="onDelete"/>
         </tbody>
       </table>
     </div>
@@ -17,6 +17,7 @@
 import type { Company } from '@/types/companyType';
 import CompanyTableRow from './CompanyTableRow.vue';
 const props = defineProps(['companies']);
-const emits = defineEmits(['edit-company']);
+const emits = defineEmits(['edit-company', 'delete-company']);
 const onEdit = (company: Company) => emits('edit-company', company);
+const onDelete = (company: Company) => emits('delete-company', company);
 </script>
