@@ -25,3 +25,17 @@ export const createCompany = async (name: string) => {
         throw error;
     }
 }
+
+export const updatedCompany = async (id: string, name: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        await axiosInstance.patch(`/companies/records/${id}`, { name }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+    catch (error: any) {
+        throw error;
+    }
+}
