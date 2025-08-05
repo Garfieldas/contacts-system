@@ -1,6 +1,6 @@
 <template>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
-        <component :is="currentForm" />
+        <component :is="currentForm" @company-created="handleSubmit"/>
     </BaseModal>
     <BaseLayout title="Įmonės">
     <div class="flex flex-row items-center mb-6 gap-12" v-if="hideActions">
@@ -42,6 +42,12 @@ const toggleModal = () => {
 const switchComponent = (component: any) => {
     currentForm.value = component;
     showModal.value = true;
+}
+
+const handleSubmit = () => {
+    page.value = 1;
+    fetchCompanies();
+    showModal.value = false;
 }
 
 watch(page, () => {

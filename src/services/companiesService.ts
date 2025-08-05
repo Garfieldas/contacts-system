@@ -15,7 +15,7 @@ export const getCompanies = async(params?: string) => {
 export const createCompany = async (name: string) => {
     const token = localStorage.getItem('token');
     try {
-        await axiosInstance.post('/companies/records', name, {
+        await axiosInstance.post('/companies/records', { name }, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
