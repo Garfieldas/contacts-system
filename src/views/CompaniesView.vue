@@ -1,6 +1,6 @@
 <template>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
-        <component :is="currentForm" @company-created="handleSubmit" :company="selectedComapny"/>
+        <component :is="currentForm" @company-created="handleSubmit" :company="selectedComapny" @company-updated="handleSubmit"/>
     </BaseModal>
     <BaseLayout title="Įmonės">
     <div class="flex flex-row items-center mb-6 gap-12" v-if="hideActions">

@@ -18,7 +18,7 @@
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import { createCompany } from "@/services/companiesService";
+import { updatedCompany } from "@/services/companiesService";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import { useNotificationStore } from "@/stores/notificationstore";
 import { useCompanies } from "@/composables/useCompanies";
@@ -46,7 +46,7 @@ const [companyName] = defineField("companyName");
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const { companies, fetchCompanies } = useCompanies();
-const emit = defineEmits(['company-created']);
+const emit = defineEmits(['company-updated']);
 const props = defineProps(['company']);
 
 const onSubmit = handleSubmit(async (values) => {
@@ -68,10 +68,10 @@ const onSubmit = handleSubmit(async (values) => {
     }
     
     try {
-        await createCompany(values.companyName);
+        await updatedCompany(props.company.id, values.companyName);
         resetForm();
-        store.addSuccessNotification('Įmonė sėkmingai sukurta!');
-        emit('company-created');
+        store.addSuccessNotification('Įmonė sėkmingai atnaujinta!');
+        emit('company-updated');
     }
     catch (error: any) {
         store.addErrorNotification(error);
