@@ -1,6 +1,6 @@
 <template>
-    <form class="flex flex-col justify-start">
-    <h2 class="p-2 mb-2">Ar tikrai norite ištrinti įmonę?</h2>
+    <form class="flex flex-col justify-start p-2">
+    <h2 class="p-2 mb-2 text-xl">Ar tikrai norite ištrinti įmonę?</h2>
     <div class="flex flex-col p-2 text-gray-500">
         <div class="flex gap-2">
             <span>Įmonės pavadinimas</span>
