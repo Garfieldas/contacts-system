@@ -1,7 +1,10 @@
 <template>
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
+        <component :is="currentForm" />
+    </BaseModal>
     <BaseLayout title="Įmonės">
     <div class="flex flex-row items-center mb-6 gap-12" v-if="hideActions">
-        <button>
+        <button @click="switchComponent(CreateCompanyForm)">
         <img src="../assets/icons/Add Contact rounded.png" class="w-15 h-15"/>
         </button>
         <h2>Pridėti naują įmonę</h2>
@@ -17,9 +20,11 @@
 import BaseLayout from '@/components/Layout/BaseLayout.vue';
 import Pagination from '@/components/Layout/Pagination.vue';
 import CompanyTable from '@/components/UI/Companies/CompanyTable.vue';
+import CreateCompanyForm from '@/components/UI/forms/Companies/CreateCompanyForm.vue';
+import BaseModal from '@/components/UI/BaseModal.vue';
 import { useCompanies } from '@/composables/useCompanies';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted, shallowRef, watch, ref } from 'vue';
 const { companies, fetchCompanies, page, totalPages, totalItems } = useCompanies();
 const auth = useAuthenticationStore();
 const hideActions = computed(() => {
@@ -27,7 +32,17 @@ const hideActions = computed(() => {
         return true;
     }
     return false;
+
 })
+const currentForm = shallowRef(CreateCompanyForm);
+const showModal = ref(false);
+const toggleModal = () => {
+  showModal.value = !showModal.value
+}
+const switchComponent = (component: any) => {
+    currentForm.value = component;
+    showModal.value = true;
+}
 
 watch(page, () => {
     fetchCompanies();
