@@ -5,10 +5,37 @@
         </div>
         <div class="flex flex-col">
             <label class="text-gray-600">Įmonės pavadinimas</label>
-            <input type="text" placeholder="Įveskite įmonės pavadinimą..." class="bg-gray-200 w-80 py-2 p-4"/>
+            <input v-model.trim="companyName" type="text" placeholder="Įveskite įmonės pavadinimą..." class="bg-gray-200 w-80 py-2 p-4"/>
+          <div v-if="errors.companyName" class="error-message">{{ errors.companyName }}</div>
         </div>
         <div class="flex flex-row mt-10">
             <button class="bg-[#0054A6] text-white px-30 py-2 uppercase font-medium hover:bg-sky-400">Pridėti</button>
         </div>
     </form>
 </template>
+<script setup lang="ts">
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import * as z from "zod";
+
+const companySchema = z.object({
+    companyName: z
+    .string()
+    .trim()
+    .min(1, 'Įmonės pavadinimas yra privalomas')
+    .min(3, 'Įmonės pavadinimas privalo būti bent 3 simbolių')
+    .max(30, 'Įmonės pavadinimas negali viršyti 50 simbolių')
+    .regex(/^[a-zA-Z\s]+$/, "Pavadinimas gali turėti tik raides ir tarpus"),
+});
+
+const { handleSubmit, defineField, errors, resetForm } = useForm({
+  validationSchema: toTypedSchema(companySchema),
+
+  initialValues: {
+    companyName: "",
+  },
+});
+
+const [companyName] = defineField("companyName");
+
+</script>
