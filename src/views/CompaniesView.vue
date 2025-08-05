@@ -1,7 +1,8 @@
 <template>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal"
         :hide-close-button="currentForm === DeleteCompanyForm">
-        <component :is="currentForm" @company-created="handleSubmit" :company="selectedComapny" @company-updated="handleSubmit" @cancel-delete="toggleModal"/>
+        <component :is="currentForm" @company-created="handleSubmit" :company="selectedComapny" @company-updated="handleSubmit" @cancel-delete="toggleModal"
+        @company-deleted="handleSubmit"/>
     </BaseModal>
     <BaseLayout title="Įmonės">
     <div class="flex flex-row items-center mb-6 gap-12" v-if="hideActions">

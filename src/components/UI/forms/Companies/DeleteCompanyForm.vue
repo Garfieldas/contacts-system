@@ -1,9 +1,9 @@
 <template>
-    <form class="flex flex-col justify-start p-2">
+    <form class="flex flex-col justify-start p-2" @submit.prevent="onSubmit">
     <h2 class="p-2 mb-2 text-xl">Ar tikrai norite ištrinti įmonę?</h2>
     <div class="flex flex-col p-2 text-gray-500">
         <div class="flex gap-2">
-            <span>Įmonės pavadinimas</span>
+            <span>Įmonės pavadinimas:</span>
             <span>{{ company.name }} </span>
         </div>
     </div>
@@ -16,8 +16,24 @@
 <script setup lang="ts">
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
+import { deleteCompany } from '@/services/companiesService';
 const props = defineProps(['company']);
 const emits = defineEmits(['company-deleted', 'cancel-delete'])
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
+
+const onSubmit = async () => {
+    if(!auth.isLoggedIn && !auth.user_permissions.delete_companies) {
+        store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+        return;
+    }
+    try {
+        await deleteCompany(props.company.id);
+        store.addSuccessNotification('Įmonė sėkmingai pašalinta!');
+        emits('company-deleted');
+    }
+    catch (error: any) {
+        store.addErrorNotification(error);
+    }
+}
 </script>
