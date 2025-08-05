@@ -11,3 +11,17 @@ export const getCompanies = async(params?: string) => {
         throw error;
     }
 }
+
+export const createCompany = async (name: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        await axiosInstance.post('/companies/records', name, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+    catch (error: any) {
+        throw error;
+    }
+}
