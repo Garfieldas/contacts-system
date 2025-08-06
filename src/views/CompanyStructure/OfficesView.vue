@@ -1,16 +1,18 @@
 <template>
     <teleport defer to="#button">
-        <AddButton @click="switchComponent()"/>
+        <AddButton @click="switchComponent(CreateOfficeForm)"/>
     </teleport>
     <OfficesTable :offices="offices"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
+        <component :is="currentForm" />
     </BaseModal>
 </template>
 <script setup lang="ts">
 import Pagination from '@/components/Layout/Pagination.vue';
 import AddButton from '@/components/UI/AddButton.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
+import CreateOfficeForm from '@/components/UI/forms/Offices/CreateOfficeForm.vue';
 import OfficesTable from '@/components/UI/Offices/OfficesTable.vue';
 import { getOffices } from '@/services/officesService';
 import { useNotificationStore } from '@/stores/notificationstore';
@@ -23,12 +25,12 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 
-const currentForm = shallowRef();
+const currentForm = shallowRef(CreateOfficeForm);
 const showModal = ref(false);
 const toggleModal = () => {
   showModal.value = !showModal.value
 }
-const switchComponent = (component?: any) => {
+const switchComponent = (component: any) => {
     showModal.value = true;
     currentForm.value = component;
 }
