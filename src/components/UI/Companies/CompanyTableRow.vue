@@ -19,7 +19,7 @@ const props = defineProps(['company']);
 const emits = defineEmits(['edit-company', 'delete-company']);
 const auth = useAuthenticationStore();
 const hideActions = computed(() => {
-  if(auth.isLoggedIn && auth.user_permissions.edit_companies && auth.user_permissions.delete_companies) {
+  if(auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_companies && auth.user_permissions.delete_companies) {
     return true;
   }
   return false;
