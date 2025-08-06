@@ -7,25 +7,29 @@
         <h2>Pridėti naują struktūrą:</h2>
     </div>
     <div class="flex flex-row text-white gap-2">
-        <RouterLink :to="{name: 'offices'}">
-        <button class="bg-[#0054A6] border-2 border-transparent p-1.5 px-10 rounded-xl
-         hover:bg-white hover:text-[#0054A6] hover:border-[#0054A6]">Ofisai</button>
+        <RouterLink :to="{name: 'offices'}"
+        v-slot="{navigate, isActive}">
+        <button class="bg-[#0054A6] p-1.5 px-10 border-2 rounded-xl" @click="navigate"
+        :class="{'bg-white text-[#0054A6] border-[#0054A6]': isActive}">Ofisai</button>
          </RouterLink>
 
-        <RouterLink :to="{name: 'departments'}">
-        <button class="bg-[#0054A6] border-2 border-transparent p-1.5 px-10 rounded-xl
-        hover:bg-white hover:text-[#0054A6] hover:border-[#0054A6]">Padaliniai</button>
-        </RouterLink>
+        <RouterLink :to="{name: 'departments'}"
+        v-slot="{navigate, isActive}">
+        <button class="bg-[#0054A6] p-1.5 px-10 border-2 rounded-xl" @click="navigate"
+        :class="{'bg-white text-[#0054A6] border-[#0054A6]': isActive}">Padaliniai</button>
+         </RouterLink>
 
-        <RouterLink :to="{name: 'divisions'}">
-        <button class="bg-[#0054A6] border-2 border-transparent p-1.5 px-10 rounded-xl
-        hover:bg-white hover:text-[#0054A6] hover:border-[#0054A6]">Skyriai</button>
-        </RouterLink>
+        <RouterLink :to="{name: 'divisions'}"
+        v-slot="{navigate, isActive}">
+        <button class="bg-[#0054A6] p-1.5 px-10 border-2 rounded-xl" @click="navigate"
+        :class="{'bg-white text-[#0054A6] border-[#0054A6]': isActive}">Skyriai</button>
+         </RouterLink>
         
-        <RouterLink :to="{name: 'groups'}">
-        <button class="bg-[#0054A6] border-2 border-transparent p-1.5 px-10 rounded-xl
-        hover:bg-white hover:text-[#0054A6] hover:border-[#0054A6]">Grupės</button>
-        </RouterLink>
+        <RouterLink :to="{name: 'groups'}"
+        v-slot="{navigate, isActive}">
+        <button class="bg-[#0054A6] p-1.5 px-10 border-2 rounded-xl" @click="navigate"
+        :class="{'bg-white text-[#0054A6] border-[#0054A6]': isActive}">Grupės</button>
+         </RouterLink>
     </div>
     <RouterView></RouterView>
     </BaseLayout>
