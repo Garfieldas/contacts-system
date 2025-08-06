@@ -66,7 +66,7 @@
     </div>
       
       <div>
-        <h3 class="text-lg font-medium mb-4">Įmonės detalės:</h3>
+        <h3 class="text-lg font-medium mb-4">Įmonės:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div
             v-for="(company, index) in companies"
