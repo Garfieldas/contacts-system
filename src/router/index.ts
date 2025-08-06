@@ -51,6 +51,7 @@ const router = createRouter({
       name: 'company-structure',
       component: () => import('@/views/CompanyStructure/CompanyStructureManagement.vue'),
       meta: { requiresAuth: true },
+      redirect: {name: 'offices'},
       children: [
         {
           path: 'offices',
