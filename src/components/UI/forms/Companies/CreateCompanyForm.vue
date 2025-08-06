@@ -30,7 +30,7 @@ const companySchema = z.object({
         .min(1, 'Įmonės pavadinimas yra privalomas')
         .min(3, 'Įmonės pavadinimas privalo būti bent 3 simbolių')
         .max(30, 'Įmonės pavadinimas negali viršyti 50 simbolių')
-        .regex(/^[a-zA-Z\s]+$/, "Pavadinimas gali turėti tik raides ir tarpus"),
+        .regex(/^[\p{L}\s]+$/gu, "Įmonės pavadinimas gali turėti tik raides arba tarpus"),
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
