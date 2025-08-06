@@ -28,7 +28,7 @@ const onEdit = (employee: Employee) => emit('edit-contact', employee);
 const onDelete = (employee: Employee) => emit('delete-contact', employee);
 const auth = useAuthenticationStore();
 const hideRow = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
         return true
     }
     return false;

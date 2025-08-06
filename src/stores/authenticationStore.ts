@@ -1,4 +1,4 @@
-import { getUserPermissions } from "@/services/authenticationService";
+import { getUserPermissions, refreshToken } from "@/services/authenticationService";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -11,11 +11,17 @@ export const useAuthenticationStore = defineStore('auth', () => {
 
     const fetchPermissions = async () => {
         if(!user.value) return;
-        const response = await getUserPermissions(user.value.permissions_id);
-        user_permissions.value = response;
+        try {
+            const response = await getUserPermissions(user.value.permissions_id);
+            user_permissions.value = response;
+        }
+        catch(eror: any) {
+            user_permissions.value = null;
+        }
     }
 
     if (isLoggedIn && user) {
+        refreshToken();
         fetchPermissions()
     }
 

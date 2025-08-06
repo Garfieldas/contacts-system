@@ -55,7 +55,7 @@ const currentDisplay = shallowRef(ContactList);
 const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
 const auth = useAuthenticationStore();
 const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
         return true
     }
     return false;

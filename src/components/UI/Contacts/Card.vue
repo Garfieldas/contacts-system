@@ -59,7 +59,7 @@ const toggleEmail = () => {
     arrow.value = hideEmail.value ? '▼' : '▲'
 }
 const hideButtons = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
         return true
     }
     return false;
