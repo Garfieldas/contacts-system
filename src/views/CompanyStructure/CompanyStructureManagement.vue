@@ -1,9 +1,6 @@
 <template>
     <BaseLayout title="Struktūra">
-    <div class="flex flex-row items-center mb-6 gap-12">
-        <button>
-        <img src="../../assets/icons/Add Contact rounded.png" class="w-15 h-15"/>
-        </button>
+    <div class="flex flex-row-reverse justify-end items-center mb-6 gap-12" id="button">
         <h2>Pridėti naują struktūrą:</h2>
     </div>
     <div class="flex flex-row text-white gap-2 mb-10">

@@ -1,13 +1,20 @@
 <template>
+    <teleport defer to="#button">
+        <AddButton @click="switchComponent()"/>
+    </teleport>
     <OfficesTable :offices="offices"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
+    </BaseModal>
 </template>
 <script setup lang="ts">
 import Pagination from '@/components/Layout/Pagination.vue';
+import AddButton from '@/components/UI/AddButton.vue';
+import BaseModal from '@/components/UI/BaseModal.vue';
 import OfficesTable from '@/components/UI/Offices/OfficesTable.vue';
 import { getOffices } from '@/services/officesService';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, shallowRef, computed } from 'vue';
 
 const offices = ref();
 const page = ref(1);
@@ -16,11 +23,20 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 
+const currentForm = shallowRef();
+const showModal = ref(false);
+const toggleModal = () => {
+  showModal.value = !showModal.value
+}
+const switchComponent = (component?: any) => {
+    showModal.value = true;
+    currentForm.value = component;
+}
+
 const fetchOffices = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
     try {
         const response = await getOffices(url);
-        console.log(response);
         offices.value = response.items;
         totalItems.value = response.totalItems;
         totalPages.value = response.totalPages;
