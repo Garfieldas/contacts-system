@@ -358,7 +358,7 @@ const createSchema = z.object({
     .min(1, "Vardas privalomas")
     .min(3, "Vardas privalo būti bent 3 simbolių")
     .max(20, "Vardas privalo neviršyti 20 simbolių")
-    .regex(/^[a-zA-Z]+$/, "Vardas gali turėti tik raides"),
+    .regex(/^[\p{L}\s]+$/gu, "Vardas gali turėti tik raides"),
 
   surname: z
     .string()
@@ -366,7 +366,7 @@ const createSchema = z.object({
     .min(1, "Pavardė privaloma")
     .min(4, "Pavardė privalo būti bent 4 simbolių")
     .max(20, "Pavardė privalo neviršyti 20 simbolių")
-    .regex(/^[a-zA-Z]+$/, "Pavardė gali turėti tik raides"),
+    .regex(/^[\p{L}\s]+$/gu, "Pavardė gali turėti tik raides"),
 
   position: z
     .string()
@@ -374,7 +374,7 @@ const createSchema = z.object({
     .min(1, "Pozicija privaloma")
     .min(3, "Pozicija privalo būti bent 3 simbolių")
     .max(50, "Pozicija privalo neviršyti 50 simbolių")
-    .regex(/^[a-zA-Z\s]+$/, "Pozicija gali turėti tik raides"),
+    .regex(/^[\p{L}\s]+$/gu, "Pozicija gali turėti tik raides"),
 
   email: z
     .string()
@@ -382,7 +382,7 @@ const createSchema = z.object({
     .min(1, "El.paštas privalomas")
     .email("El.paštas privalo būti valydus")
     .min(12, "El.paštas privalo būti bent 12 simbolių")
-    .max(30, "El.paštas negali viršyti 30 simbolių"),
+    .max(60, "El.paštas negali viršyti 60 simbolių"),
 
   phone_number: z
     .string()
