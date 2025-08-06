@@ -9,12 +9,12 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-            <OfficesTableRow v-for="office in offices" :key="office.id" :office="office"/>
+            <OficesTableRow v-for="office in offices" :key="office.id" :office="office"/>
         </tbody>
       </table>
     </div>
 </template>
 <script setup lang="ts">
-import OficessTableRow from './OficessTableRow.vue';
+import OficesTableRow from './OficesTableRow.vue';
 const props = defineProps(['offices']);
 </script>

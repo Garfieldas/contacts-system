@@ -6,7 +6,7 @@
         </button>
         <h2>Pridėti naują struktūrą:</h2>
     </div>
-    <div class="flex flex-row text-white gap-2">
+    <div class="flex flex-row text-white gap-2 mb-10">
         <RouterLink :to="{name: 'offices'}"
         v-slot="{navigate, isActive}">
         <button class="bg-[#0054A6] p-1.5 px-10 border-2 rounded-xl" @click="navigate"
