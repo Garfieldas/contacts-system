@@ -83,14 +83,8 @@ const handleEmit = (employee: Employee) => selectedEmployee.value = employee;
 
 const handleSubmit = () => {
   showModal.value = false;
-
   searchParam.value = '';
   page.value = 1;
-
-  Object.keys(filters).forEach((key) => {
-    filters[key as keyof typeof filters] = '';
-  });
-
   fetchRequest(fullQuery.value);
 };
 
