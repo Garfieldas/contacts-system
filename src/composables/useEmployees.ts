@@ -1,11 +1,11 @@
 import { getEmployees } from "@/services/employeesService";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { useNotificationStore } from "@/stores/notificationstore";
 
 export const useEmployees = () => {
     const employees = ref([]);
     const page = ref(1);
-    const perPage = ref(25);
+    const perPage = ref<Number | String | null>(25);
     const totalItems = ref();
     const totalPages = ref();
     const store = useNotificationStore();

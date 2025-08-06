@@ -17,14 +17,23 @@
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 import { deleteCompany } from '@/services/companiesService';
+import { useEmployees } from '@/composables/useEmployees';
 const props = defineProps(['company']);
 const emits = defineEmits(['company-deleted', 'cancel-delete'])
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
+const { employees, fetchRequest, perPage } = useEmployees();
+perPage.value = '';
 
 const onSubmit = async () => {
     if(!auth.isLoggedIn && !auth.user_permissions.delete_companies) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+        return;
+    }
+    await fetchRequest(`&filter=company_id="${props.company.id}"`);
+    if (employees.value.length > 0) {
+        store.addErrorNotification('Ši įmonė turi priskirtus kontaktus!');
+        emits('cancel-delete')
         return;
     }
     try {
