@@ -96,6 +96,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useCompanies } from '@/composables/useCompanies';
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import * as z from "zod";
 
 const { companies, fetchCompanies } = useCompanies();
 const selectedCompany = ref(null);
@@ -106,6 +109,44 @@ const selectCompany = (company) => {
     selectedCompany.value = company;
   }
 };
+
+const createSchema = z.object({
+  officeName: z
+    .string()
+    .trim()
+    .min(1, "Ofiso pavadinimas yra privalomas")
+    .min(3, "Ofiso pavadinimas privalo būti bent 3 simbolių")
+    .max(60, "Ofiso pavadinimas privalo neviršyti 60 simbolių"),
+
+  street: z
+    .string()
+    .trim()
+    .min(1, "Gatvė privaloma")
+    .min(4, "Gatvė privalo būti bent 4 simbolių")
+    .max(20, "Gatvė privalo neviršyti 20 simbolių"),
+
+  street_number: z
+    .string()
+    .trim()
+    .min(1, "Gatvės numeris privalomas")
+    .min(3, "Gatvės numeris privalo būti bent 3 simbolių")
+    .max(50, "Gatvės numeris privalo neviršyti 50 simbolių"),
+
+  city: z
+    .string()
+    .trim()
+    .min(1, "Miestas privalomas")
+    .min(12, "Miestas privalo būti bent 12 simbolių")
+    .max(60, "Miestas negali viršyti 60 simbolių"),
+
+  country: z
+    .string()
+    .trim()
+    .min(1, "Šalis privalomas")
+    .min(12, "Šalis privalo būti bent 12 simbolių")
+    .max(60, "Šalis negali viršyti 60 simbolių"),
+
+});
 
 onMounted(() => {
     fetchCompanies();
