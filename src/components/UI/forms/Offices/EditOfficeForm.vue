@@ -49,8 +49,8 @@
         <h3 class="text-lg font-medium mb-4">Įmonės:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div v-for="(company, index) in companies" :key="company.id" @click="selectCompany(company)" :class="{
-            'bg-[#0054A6] text-white': selectedCompanies.some((c: { id: string; })  => c.id === company.id),
-            'bg-gray-200 text-gray-800': !selectedCompanies.some((c: { id: string; }) => c.id === company.id)
+            'bg-[#0054A6] text-white': selectedCompanies.find((item: any)  => item.id === company.id),
+            'bg-gray-200 text-gray-800': !selectedCompanies.find((item: any) => item.id === company.id)
           }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ company.name }}
           </div>
@@ -88,12 +88,12 @@ const emit = defineEmits(['office-created']);
 const existingCompanies = ref();
 
 const selectCompany = (company: Company) => {
-  const index = selectedCompanies.value.findIndex((c: { id: string; }) => c.id === company.id);
-  if (index > -1) {
-    selectedCompanies.value.splice(index, 1);
-  } else {
-    selectedCompanies.value.push(company);
+  const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
+  if (exist) {
+    selectedCompanies.value = selectedCompanies.value.filter((item: any) => item.id !== company.id);
+    return;
   }
+  selectedCompanies.value.push(company);
 };
 
 const createSchema = z.object({
