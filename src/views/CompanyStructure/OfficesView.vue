@@ -5,7 +5,7 @@
     <OfficesTable :offices="offices"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
-        <component :is="currentForm" />
+        <component :is="currentForm" @office-created="handleSubmit"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -48,6 +48,13 @@ const fetchOffices = async (params?:string) => {
         store.addErrorNotification(error);
     }
 }
+
+const handleSubmit = () => {
+    page.value = 1;
+    fetchOffices();
+    showModal.value = false;
+}
+
 watch(page, () => {
     fetchOffices();
 })

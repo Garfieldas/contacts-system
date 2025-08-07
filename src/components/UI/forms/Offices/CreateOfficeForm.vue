@@ -77,12 +77,14 @@ import * as z from "zod";
 import type { Company } from '@/types/companyType';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { getOffices } from '@/services/officesService';
+import { getOffices, createOffice } from '@/services/officesService';
 
 const { companies, fetchCompanies } = useCompanies();
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const searchedOffices = ref();
+const emit = defineEmits(['office-created']);
+
 const selectCompany = (company: Company) => {
   if (selectedCompany.value && selectedCompany.value.id === company.id) {
     selectedCompany.value = null;
@@ -180,6 +182,16 @@ const onSubmit = handleSubmit(async (values) => {
   if (exist) {
     store.addErrorNotification('Toks ofisas jau egizstuoja')
     return;
+  }
+
+  try {
+      await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
+      store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
+      resetForm();
+      emit('office-created');
+  }
+  catch(error: any) {
+      store.addErrorNotification(error);
   }
 
 })
