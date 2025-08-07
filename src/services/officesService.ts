@@ -22,11 +22,12 @@ export const createOffice = async (
     const token = localStorage.getItem('token');
     const newOffice = { name, street, street_number, city, country }
     try {
-        await axiosInstance.post('/offices/records', newOffice, {
+        const response = await axiosInstance.post('/offices/records', newOffice, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
+        return response.data;
     }
     catch(error: any){
         throw error;

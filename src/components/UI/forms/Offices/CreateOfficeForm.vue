@@ -77,6 +77,7 @@ import type { Company } from '@/types/companyType';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 import { getOffices, createOffice } from '@/services/officesService';
+import { createCompaniesOffices } from '@/services/companiesOfficesService';
 
 const { companies, fetchCompanies } = useCompanies();
 const auth = useAuthenticationStore();
@@ -178,7 +179,11 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   try {
-      await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
+      const response = await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
+      const officeId = response.id;
+      const companies_ids = selectedCompanies.value.map((company: Company)=> company.id);
+
+      await createCompaniesOffices(companies_ids, officeId);
       store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
       resetForm();
       emit('office-created');

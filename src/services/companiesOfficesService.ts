@@ -12,9 +12,12 @@ export const getCompaniesOffices = async(params?: string) => {
     }
 }
 
-export const createCompaniesOffices = async (company_id: string, office_id: string) => {
+export const createCompaniesOffices = async (companies_ids: string[], office_id: string) => {
     const token = localStorage.getItem('token');
-    const newCompanyOffice = { company_id, office_id };
+    const newCompanyOffice = {
+        "company_id": companies_ids,
+        "office_id": office_id
+    }
     try {
         await axiosInstance.post('/companies_offices/records', newCompanyOffice, {
             headers: {
