@@ -49,7 +49,7 @@
         <h3 class="text-lg font-medium mb-4">Įmonės:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div v-for="(company, index) in companies" :key="company.id" @click="selectCompany(company)" :class="{
-            'bg-[#0054A6] text-white': selectedCompanies.find((item: any)  => item.id === company.id),
+            'bg-[#0054A6] text-white': selectedCompanies.find((item: any) => item.id === company.id),
             'bg-gray-200 text-gray-800': !selectedCompanies.find((item: any) => item.id === company.id)
           }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ company.name }}
@@ -176,9 +176,13 @@ const fetchCompaniesOffices = async (params?: string) => {
   const url = params ? `${params}` : '';
   try {
     const response = await getCompaniesOffices(url);
-    existingCompanies.value = response.items;
-    selectedCompanies.value = (existingCompanies.value as expandCompany[]).map((item) => item.expand.company_id) || [];
-    console.log(selectedCompanies.value)
+
+    if (response.items.length > 0) {
+      const associatedCompanies = response.items[0].expand.company_id;
+      selectedCompanies.value = associatedCompanies;
+    } else {
+      selectedCompanies.value = [];
+    }
   }
   catch (error: any) {
     store.addErrorNotification(error);
@@ -216,12 +220,15 @@ onMounted(() => {
   fetchCompanies();
 });
 
-watch(() => props.office, (newOffice) => {
-  officeName.value = newOffice.name;
-  street.value = newOffice.street;
-  street_number.value = newOffice.street_number;
-  city.value = newOffice.city;
-  country.value = newOffice.country;
-  fetchCompaniesOffices(`?filter=office_id="${newOffice.id}"&expand=company_id&fields=expand.company_id`);
-}, { immediate: true })
+watch(() => props.office, async (newOffice) => {
+    if (!newOffice) return;
+
+    officeName.value = newOffice.name;
+    street.value = newOffice.street;
+    street_number.value = newOffice.street_number;
+    city.value = newOffice.city;
+    country.value = newOffice.country;
+
+    await fetchCompaniesOffices(`?filter=office_id="${newOffice.id}"&expand=company_id&fields=expand.company_id`);
+  },{ immediate: true });
 </script>
