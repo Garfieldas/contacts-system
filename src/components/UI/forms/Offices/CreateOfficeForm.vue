@@ -90,6 +90,7 @@
           >
             {{ company.name }}
           </div>
+            <div v-if="errors.selectedCompany" class="error-message">{{ errors.selectedCompany }}</div>
         </div>
       </div>
     </div>
@@ -103,16 +104,16 @@
     </div>
   </form>
 </template>
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useCompanies } from '@/composables/useCompanies';
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
+import type { Company } from '@/types/companyType';
 
 const { companies, fetchCompanies } = useCompanies();
-const selectedCompany = ref(null);
-const selectCompany = (company) => {
+const selectCompany = (company: Company) => {
   if (selectedCompany.value && selectedCompany.value.id === company.id) {
     selectedCompany.value = null;
   } else {
@@ -152,11 +153,29 @@ const createSchema = z.object({
     .max(60, "Šalis negali viršyti 60 simbolių")
     .regex(/^[\p{L}\s]+$/gu, "Šalies pavadinimas gali turėti tik raides arba tarpus"),
 
+  selectedCompany: z.any().refine(
+    (selectedCompany:  Company | null) => {
+      if(!selectedCompany) return false;
+      return true;
+    },
+    {
+      message: 'Įmonė pasirinkti privaloma!'
+    }
+  )
 
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
     validationSchema: toTypedSchema(createSchema),
+
+    initialValues: {
+      officeName: '',
+      street: '',
+      street_number: '',
+      city: '',
+      country: '',
+      selectedCompany: ''
+    }
 });
 
 const [officeName] = defineField('officeName');
@@ -164,6 +183,7 @@ const [street] = defineField('street');
 const [street_number] = defineField('street_number');
 const [city] = defineField('city');
 const [country] = defineField('country');
+const [selectedCompany] = defineField('selectedCompany');
 
 onMounted(() => {
     fetchCompanies();
