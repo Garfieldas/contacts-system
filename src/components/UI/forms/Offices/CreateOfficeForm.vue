@@ -49,13 +49,12 @@
         <h3 class="text-lg font-medium mb-4">Įmonės:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div v-for="(company, index) in companies" :key="company.id" @click="selectCompany(company)" :class="{
-            'bg-[#0054A6] text-white': selectedCompany && selectedCompany.id === company.id,
-            'bg-gray-200 text-gray-800': !selectedCompany || selectedCompany.id !== company.id
-          }"
-            class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
+            'bg-[#0054A6] text-white': selectedCompanies.find((item: any)  => item.id === company.id),
+            'bg-gray-200 text-gray-800': !selectedCompanies.find((item: any) => item.id === company.id)
+          }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ company.name }}
           </div>
-          <div v-if="errors.selectedCompany" class="error-message">{{ errors.selectedCompany }}</div>
+          <div v-if="errors.selectedCompanies" class="error-message">{{ errors.selectedCompanies }}</div>
         </div>
       </div>
     </div>
@@ -86,11 +85,12 @@ const searchedOffices = ref();
 const emit = defineEmits(['office-created']);
 
 const selectCompany = (company: Company) => {
-  if (selectedCompany.value && selectedCompany.value.id === company.id) {
-    selectedCompany.value = null;
-  } else {
-    selectedCompany.value = company;
+  const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
+  if (exist) {
+    selectedCompanies.value = selectedCompanies.value.filter((item: any) => item.id !== company.id);
+    return;
   }
+  selectedCompanies.value.push(company);
 };
 
 const createSchema = z.object({
@@ -125,15 +125,8 @@ const createSchema = z.object({
     .max(60, "Šalis negali viršyti 60 simbolių")
     .regex(/^[\p{L}\s]+$/gu, "Šalies pavadinimas gali turėti tik raides arba tarpus"),
 
-  selectedCompany: z.any().refine(
-    (selectedCompany: Company | null) => {
-      if (!selectedCompany) return false;
-      return true;
-    },
-    {
-      message: 'Įmonė pasirinkti privaloma!'
-    }
-  )
+  selectedCompanies: z.any()
+    .optional()
 
 });
 
@@ -146,7 +139,7 @@ const { handleSubmit, defineField, errors, resetForm } = useForm({
     street_number: '',
     city: '',
     country: '',
-    selectedCompany: ''
+    selectedCompanies: []
   }
 });
 
@@ -155,7 +148,7 @@ const [street] = defineField('street');
 const [street_number] = defineField('street_number');
 const [city] = defineField('city');
 const [country] = defineField('country');
-const [selectedCompany] = defineField('selectedCompany');
+const [selectedCompanies] = defineField('selectedCompanies');
 
 const fetchOffices = async (street: string, street_number: string, city: string, country: string) => {
   const searchTerm = `(street?~"${street}" && street_number?~"${street_number}" && city?~"${city}" && country?~"${country}")`;
