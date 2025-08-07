@@ -1,9 +1,15 @@
 <template>
+  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+  :hide-close-button="currentForm === DeleteContactForm">
+    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
+    @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
+  </BaseModal>
   <BaseLayout>
     <div class="flex flex-row items-center mb-6">
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
+      <AddContactButton @add-contact="switchComponent(CreateContactForm)" v-if="hideActions"/>
     </div>
     <div class="text-sm text-gray-600">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
@@ -14,7 +20,13 @@
       <h1 class="text-2xl font-semibold text-gray-700 mb-2">Nerasta jokių kontaktų</h1>
       <p class="text-gray-500">Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus.</p>
     </div>
-    <component :is="currentDisplay" :employees="employees" v-else />
+    <component :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
+      handleEmit(employee); switchComponent(EditContactForm);
+    }"
+    @delete-contact="(employee) => {
+      handleEmit(employee); switchComponent(DeleteContactForm);
+    }"
+     v-else/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages" />
   </BaseLayout>
 </template>
@@ -29,10 +41,25 @@ import DisplayButton from "@/components/UI/Contacts/DisplayButton.vue";
 import PaginatioButton from "@/components/UI/Contacts/PaginatioButton.vue";
 import { useEmployees } from "@/composables/useEmployees";
 import { onMounted, shallowRef, reactive, computed, watch, ref } from "vue";
+import BaseModal from "@/components/UI/BaseModal.vue";
+import CreateContactForm from "@/components/UI/forms/Contacts/CreateContactForm.vue";
+import AddContactButton from "@/components/UI/Contacts/AddContactButton.vue";
+import { useAuthenticationStore } from "@/stores/authenticationStore";
+import EditContactForm from "@/components/UI/forms/Contacts/EditContactForm.vue";
+import type { Employee } from "@/types/employeeType";
+import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.vue";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
 const currentDisplay = shallowRef(ContactList);
+const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
+const auth = useAuthenticationStore();
+const hideActions = computed(() => {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+        return true
+    }
+    return false;
+})
 
 const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
@@ -40,6 +67,26 @@ const toggleComponent = () => {
 
 const searchParam = ref('');
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+const showModal = ref(false);
+const toggleModal = () => {
+  showModal.value = !showModal.value
+}
+
+const switchComponent = (component: any) => {
+  showModal.value = true;
+  currentForm.value = component;
+}
+
+const selectedEmployee = ref();
+const handleEmit = (employee: Employee) => selectedEmployee.value = employee;
+
+const handleSubmit = () => {
+  showModal.value = false;
+  searchParam.value = '';
+  page.value = 1;
+  fetchRequest(fullQuery.value);
+};
 
 const filters = reactive<{
   company?: string;
@@ -75,7 +122,7 @@ const fullQuery = computed(() => {
     query += (query.includes('&filter=') ? ' && ' : '&filter=') + encodeURIComponent(searchTerm);
   }
 
-  return `${query}&expand=office_id`;
+  return `${query}&expand=company_id,office_id,division_id,department_id,group_id`;
 });
 
 const handleFilters = (newFilters: {

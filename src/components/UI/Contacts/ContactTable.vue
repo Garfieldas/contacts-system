@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-      <ContactTableRow v-for="employee in employees" :employee="employee" :key="employee.id"/>
+      <ContactTableRow v-for="employee in employees" :employee="employee" :key="employee.id" @edit-contact="onEdit" @delete-contact="onDelete"/>
     </tbody>
   </table>
 </div>
@@ -21,10 +21,14 @@
 import { computed } from 'vue';
 import ContactTableRow from './ContactTableRow.vue';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
+import type { Employee } from '@/types/employeeType';
 const props = defineProps(['employees']);
+const emit = defineEmits(['edit-contact', 'delete-contact']);
+const onEdit = (employee: Employee) => emit('edit-contact', employee);
+const onDelete = (employee: Employee) => emit('delete-contact', employee);
 const auth = useAuthenticationStore();
 const hideRow = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
         return true
     }
     return false;
