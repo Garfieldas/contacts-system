@@ -11,3 +11,18 @@ export const getCompaniesOffices = async(params?: string) => {
         throw error;
     }
 }
+
+export const createCompaniesOffices = async (company_id: string, office_id: string) => {
+    const token = localStorage.getItem('token');
+    const newCompanyOffice = { company_id, office_id };
+    try {
+        await axiosInstance.post('/companies_offices/records', newCompanyOffice, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+    catch(error: any) {
+        throw error;
+    }
+}
