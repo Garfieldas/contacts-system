@@ -98,13 +98,13 @@ const createSchema = z.object({
   officeName: z.string()
     .trim()
     .min(1, "Ofiso pavadinimas yra privalomas")
-    .min(5, "Ofiso pavadinimas privalo būti bent 5 simbolių")
+    .min(3, "Ofiso pavadinimas privalo būti bent 3 simbolių")
     .max(80, "Ofiso pavadinimas privalo neviršyti 80 simbolių"),
 
   street: z.string()
     .trim()
     .min(1, "Gatvė privaloma")
-    .min(5, "Gatvė privalo būti bent 5 simbolių")
+    .min(3, "Gatvė privalo būti bent 3 simbolių")
     .max(50, "Gatvė privalo neviršyti 50 simbolių"),
 
   street_number: z.string()
@@ -122,7 +122,7 @@ const createSchema = z.object({
   country: z.string()
     .trim()
     .min(1, "Šalis privalomas")
-    .min(5, "Šalis privalo būti bent 5 simbolių")
+    .min(4, "Šalis privalo būti bent 4 simbolių")
     .max(60, "Šalis negali viršyti 60 simbolių")
     .regex(/^[\p{L}\s]+$/gu, "Šalies pavadinimas gali turėti tik raides arba tarpus"),
 
