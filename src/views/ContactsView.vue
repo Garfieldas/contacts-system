@@ -4,7 +4,7 @@
     <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
     @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
   </BaseModal>
-  <BaseLayout>
+  <BaseLayout title="Kontaktų sistema">
     <div class="flex flex-row items-center mb-6">
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
