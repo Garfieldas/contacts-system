@@ -15,7 +15,8 @@
             }"
             @delete-office="(office) => {
               emits('delete-office', office)
-            }"/>
+            }"
+            />
         </tbody>
       </table>
     </div>
@@ -24,6 +25,7 @@
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import OficesTableRow from './OficesTableRow.vue';
 import { computed } from 'vue';
+import type { Office } from '@/types/officeType';
 
 const props = defineProps(['offices']);
 const auth = useAuthenticationStore();

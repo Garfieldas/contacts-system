@@ -3,10 +3,12 @@
         <AddButton @click="switchComponent(CreateOfficeForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <OfficesTable :offices="offices"/>
+    <OfficesTable :offices="offices" @edit-office="(office: Office) => {
+      handleEmit(office); switchComponent(EditOfficeForm);
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @office-created="handleSubmit"/>
+        <component :is="currentForm" @office-created="handleSubmit" :office="selectedOffice"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -14,10 +16,12 @@ import Pagination from '@/components/Layout/Pagination.vue';
 import AddButton from '@/components/UI/AddButton.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import CreateOfficeForm from '@/components/UI/forms/Offices/CreateOfficeForm.vue';
+import EditOfficeForm from '@/components/UI/forms/Offices/EditOfficeForm.vue';
 import OfficesTable from '@/components/UI/Offices/OfficesTable.vue';
 import { getOffices } from '@/services/officesService';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
+import type { Office } from '@/types/officeType';
 import { ref, onMounted, watch, shallowRef, computed } from 'vue';
 
 const offices = ref();
@@ -44,6 +48,9 @@ const switchComponent = (component: any) => {
     showModal.value = true;
     currentForm.value = component;
 }
+
+const selectedOffice = ref();
+const handleEmit = (office: Office) => selectedOffice.value = office;
 
 const fetchOffices = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
