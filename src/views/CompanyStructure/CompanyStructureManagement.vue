@@ -1,7 +1,6 @@
 <template>
     <BaseLayout title="Struktūra">
-    <div class="flex flex-row-reverse justify-end items-center mb-6 gap-12" id="button">
-        <h2>Pridėti naują struktūrą:</h2>
+    <div class="flex items-center mb-6 gap-12" id="button">
     </div>
     <div class="flex flex-row text-white gap-2 mb-10">
         <RouterLink :to="{name: 'offices'}"

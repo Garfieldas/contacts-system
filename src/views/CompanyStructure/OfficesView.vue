@@ -1,10 +1,11 @@
 <template>
-    <teleport defer to="#button">
+    <teleport defer to="#button" v-if="hideActions">
         <AddButton @click="switchComponent(CreateOfficeForm)"/>
+        <h2>Pridėti naują struktūrą:</h2>
     </teleport>
     <OfficesTable :offices="offices"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal">
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
         <component :is="currentForm" @office-created="handleSubmit"/>
     </BaseModal>
 </template>
@@ -15,8 +16,9 @@ import BaseModal from '@/components/UI/BaseModal.vue';
 import CreateOfficeForm from '@/components/UI/forms/Offices/CreateOfficeForm.vue';
 import OfficesTable from '@/components/UI/Offices/OfficesTable.vue';
 import { getOffices } from '@/services/officesService';
+import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { ref, onMounted, watch, shallowRef } from 'vue';
+import { ref, onMounted, watch, shallowRef, computed } from 'vue';
 
 const offices = ref();
 const page = ref(1);
@@ -24,6 +26,14 @@ const perPage=ref(25);
 const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
+const auth = useAuthenticationStore();
+
+const hideActions = computed(() => {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_offices && auth.user_permissions.delete_offices) {
+        return true;
+    }
+    return false;
+})
 
 const currentForm = shallowRef(CreateOfficeForm);
 const showModal = ref(false);
