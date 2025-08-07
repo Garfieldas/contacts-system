@@ -386,18 +386,10 @@ const createSchema = z.object({
   phone_number: z
     .string()
     .trim()
-    .max(20, "Telefono numeris negali viršyti 14 simbolių")
+    .max(20, "Telefono numeris negali viršyti 20 simbolių")
+    .regex(/^\+?\d{1,20}$/, "Neteisingas telefono numerio formatas")
     .optional()
-    .or(z.literal(''))
-    .refine(
-      (value) => {
-        if (!value) {
-          return true;
-        }
-        return /^(?:\+370|0)(?:[1-9]\d{7}|(?:[1-9]\d|\(85\))\d{6})$/.test(value);
-      },
-      "Numeris privalo būti validus"
-    ),
+    .or(z.literal('')),
 
 
   selectedCompany: z.string().min(1, "Įmonė privaloma"),
