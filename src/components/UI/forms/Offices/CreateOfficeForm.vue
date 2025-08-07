@@ -13,7 +13,9 @@
             id="officeName"
             placeholder="Įveskite ofiso pavadinimą..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            v-model.trim="officeName"
           />
+            <div v-if="errors.officeName" class="error-message">{{ errors.officeName }}</div>
         </div>
 
         <div class="mb-4">
@@ -25,7 +27,9 @@
             id="street"
             placeholder="Įveskite gatvės pavadinimą..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            v-model.trim="street"
           />
+            <div v-if="errors.street" class="error-message">{{ errors.street }}</div>
         </div>
 
         <div class="mb-6">
@@ -37,7 +41,9 @@
             id="street_number"
             placeholder="Įveskite pastato numerį..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            v-model.trim="street_number"
           />
+            <div v-if="errors.street_number" class="error-message">{{ errors.street_number }}</div>
         </div>
 
         <div class="mb-6">
@@ -49,7 +55,9 @@
             id="city"
             placeholder="Įveskite miestą..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            v-model.trim="city"
           />
+            <div v-if="errors.city" class="error-message">{{ errors.city }}</div>
         </div>
 
         <div class="mb-6">
@@ -61,7 +69,9 @@
             id="country"
             placeholder="Įveskite šalį..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            v-model.trim="country"
           />
+            <div v-if="errors.country" class="error-message">{{ errors.country }}</div>
         </div>
     </div>
       
@@ -111,42 +121,49 @@ const selectCompany = (company) => {
 };
 
 const createSchema = z.object({
-  officeName: z
-    .string()
+  officeName: z.string()
     .trim()
     .min(1, "Ofiso pavadinimas yra privalomas")
-    .min(3, "Ofiso pavadinimas privalo būti bent 3 simbolių")
-    .max(60, "Ofiso pavadinimas privalo neviršyti 60 simbolių"),
+    .min(5, "Ofiso pavadinimas privalo būti bent 5 simbolių")
+    .max(80, "Ofiso pavadinimas privalo neviršyti 80 simbolių"),
 
-  street: z
-    .string()
+  street: z.string()
     .trim()
     .min(1, "Gatvė privaloma")
-    .min(4, "Gatvė privalo būti bent 4 simbolių")
-    .max(20, "Gatvė privalo neviršyti 20 simbolių"),
+    .min(5, "Gatvė privalo būti bent 5 simbolių")
+    .max(50, "Gatvė privalo neviršyti 50 simbolių"),
 
-  street_number: z
-    .string()
+  street_number: z.string()
     .trim()
-    .min(1, "Gatvės numeris privalomas")
-    .min(3, "Gatvės numeris privalo būti bent 3 simbolių")
-    .max(50, "Gatvės numeris privalo neviršyti 50 simbolių"),
+    .min(1, "Gatvės numeris privalo būti bent 1 simbolio")
+    .max(4, "Gatvės numeris privalo neviršyti 4 simbolių"),
 
-  city: z
-    .string()
+  city: z.string()
     .trim()
     .min(1, "Miestas privalomas")
-    .min(12, "Miestas privalo būti bent 12 simbolių")
-    .max(60, "Miestas negali viršyti 60 simbolių"),
+    .min(4, "Miestas privalo būti bent 4 simbolių")
+    .max(22, "Miestas negali viršyti 22 simbolių")
+    .regex(/^[\p{L}\s]+$/gu, "Miesto pavadinimas gali turėti tik raides arba tarpus"),
 
-  country: z
-    .string()
+  country: z.string()
     .trim()
     .min(1, "Šalis privalomas")
-    .min(12, "Šalis privalo būti bent 12 simbolių")
-    .max(60, "Šalis negali viršyti 60 simbolių"),
+    .min(5, "Šalis privalo būti bent 5 simbolių")
+    .max(60, "Šalis negali viršyti 60 simbolių")
+    .regex(/^[\p{L}\s]+$/gu, "Šalies pavadinimas gali turėti tik raides arba tarpus"),
+
 
 });
+
+const { handleSubmit, defineField, errors, resetForm } = useForm({
+    validationSchema: toTypedSchema(createSchema),
+});
+
+const [officeName] = defineField('officeName');
+const [street] = defineField('street');
+const [street_number] = defineField('street_number');
+const [city] = defineField('city');
+const [country] = defineField('country');
 
 onMounted(() => {
     fetchCompanies();
