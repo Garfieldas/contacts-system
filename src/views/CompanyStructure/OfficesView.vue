@@ -16,7 +16,7 @@ import CreateOfficeForm from '@/components/UI/forms/Offices/CreateOfficeForm.vue
 import OfficesTable from '@/components/UI/Offices/OfficesTable.vue';
 import { getOffices } from '@/services/officesService';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { ref, onMounted, watch, shallowRef, computed } from 'vue';
+import { ref, onMounted, watch, shallowRef } from 'vue';
 
 const offices = ref();
 const page = ref(1);

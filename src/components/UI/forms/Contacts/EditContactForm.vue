@@ -464,7 +464,7 @@ const onSubmit = handleSubmit(async (values) => {
     return;
   }
   const searchTerm = values.phone_number ? `(email?~"${values.email}") || phone_number?~"${values.phone_number}"` : `(email?~"${values.email}")`;
-  await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
+  await fetchRequest('?filter=' + encodeURIComponent(searchTerm));
 
   const existingList = employees.value;
 
