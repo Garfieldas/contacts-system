@@ -49,13 +49,12 @@
         <h3 class="text-lg font-medium mb-4">Įmonės:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div v-for="(company, index) in companies" :key="company.id" @click="selectCompany(company)" :class="{
-            'bg-[#0054A6] text-white': selectedCompany && selectedCompany.id === company.id,
-            'bg-gray-200 text-gray-800': !selectedCompany || selectedCompany.id !== company.id
-          }"
-            class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
+            'bg-[#0054A6] text-white': selectedCompanies.some((c: { id: string; })  => c.id === company.id),
+            'bg-gray-200 text-gray-800': !selectedCompanies.some((c: { id: string; }) => c.id === company.id)
+          }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ company.name }}
           </div>
-          <div v-if="errors.selectedCompany" class="error-message">{{ errors.selectedCompany }}</div>
+          <div v-if="errors.selectedCompanies" class="error-message">{{ errors.selectedCompanies }}</div>
         </div>
       </div>
     </div>
@@ -74,10 +73,11 @@ import { useCompanies } from '@/composables/useCompanies';
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import type { Company } from '@/types/companyType';
+import type { Company, expandCompany } from '@/types/companyType';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 import { getOffices, createOffice } from '@/services/officesService';
+import { getCompaniesOffices } from '@/services/companiesOfficesService';
 
 const { companies, fetchCompanies } = useCompanies();
 const auth = useAuthenticationStore();
@@ -85,12 +85,14 @@ const store = useNotificationStore();
 const searchedOffices = ref();
 const props = defineProps(['office']);
 const emit = defineEmits(['office-created']);
+const existingCompanies = ref();
 
 const selectCompany = (company: Company) => {
-  if (selectedCompany.value && selectedCompany.value.id === company.id) {
-    selectedCompany.value = null;
+  const index = selectedCompanies.value.findIndex((c: { id: string; }) => c.id === company.id);
+  if (index > -1) {
+    selectedCompanies.value.splice(index, 1);
   } else {
-    selectedCompany.value = company;
+    selectedCompanies.value.push(company);
   }
 };
 
@@ -126,7 +128,7 @@ const createSchema = z.object({
     .max(60, "Šalis negali viršyti 60 simbolių")
     .regex(/^[\p{L}\s]+$/gu, "Šalies pavadinimas gali turėti tik raides arba tarpus"),
 
-  selectedCompany: z.any().refine(
+  selectedCompanies: z.any().refine(
     (selectedCompany: Company | null) => {
       if (!selectedCompany) return false;
       return true;
@@ -147,7 +149,7 @@ const { handleSubmit, defineField, errors, resetForm } = useForm({
     street_number: '',
     city: '',
     country: '',
-    selectedCompany: ''
+    selectedCompanies: []
   }
 });
 
@@ -156,7 +158,7 @@ const [street] = defineField('street');
 const [street_number] = defineField('street_number');
 const [city] = defineField('city');
 const [country] = defineField('country');
-const [selectedCompany] = defineField('selectedCompany');
+const [selectedCompanies] = defineField('selectedCompanies');
 
 const fetchOffices = async (street: string, street_number: string, city: string, country: string) => {
   const searchTerm = `(street?~"${street}" && street_number?~"${street_number}" && city?~"${city}" && country?~"${country}")`;
@@ -164,6 +166,19 @@ const fetchOffices = async (street: string, street_number: string, city: string,
   try {
     const response = await getOffices(url);
     searchedOffices.value = response.items;
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
+}
+
+const fetchCompaniesOffices = async (params?: string) => {
+  const url = params ? `${params}` : '';
+  try {
+    const response = await getCompaniesOffices(url);
+    existingCompanies.value = response.items;
+    selectedCompanies.value = (existingCompanies.value as expandCompany[]).map((item) => item.expand.company_id) || [];
+    console.log(selectedCompanies.value)
   }
   catch (error: any) {
     store.addErrorNotification(error);
@@ -186,13 +201,13 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   try {
-      await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
-      store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
-      resetForm();
-      emit('office-created');
+    await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
+    store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
+    resetForm();
+    emit('office-created');
   }
-  catch(error: any) {
-      store.addErrorNotification(error);
+  catch (error: any) {
+    store.addErrorNotification(error);
   }
 
 })
@@ -202,10 +217,11 @@ onMounted(() => {
 });
 
 watch(() => props.office, (newOffice) => {
-    officeName.value = newOffice.name;
-    street.value = newOffice.street;
-    street_number.value = newOffice.street_number;
-    city.value = newOffice.city;
-    country.value = newOffice.country;
-}, {immediate: true})
+  officeName.value = newOffice.name;
+  street.value = newOffice.street;
+  street_number.value = newOffice.street_number;
+  city.value = newOffice.city;
+  country.value = newOffice.country;
+  fetchCompaniesOffices(`?filter=office_id="${newOffice.id}"&expand=company_id&fields=expand.company_id`);
+}, { immediate: true })
 </script>
