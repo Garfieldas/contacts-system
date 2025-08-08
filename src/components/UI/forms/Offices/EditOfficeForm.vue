@@ -77,7 +77,7 @@ import type { Company } from '@/types/companyType';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 import { getOffices, updateOffice } from '@/services/officesService';
-import { getCompaniesOffices, updateCompaniesOffices } from '@/services/companiesOfficesService';
+import { getCompaniesOffices, createCompaniesOffices, updateCompaniesOffices, deleteCompaniesOffices } from '@/services/companiesOfficesService';
 
 const { companies, fetchCompanies } = useCompanies();
 const auth = useAuthenticationStore();
@@ -85,7 +85,7 @@ const store = useNotificationStore();
 const searchedOffices = ref();
 const props = defineProps(['office']);
 const emit = defineEmits(['office-created']);
-const companiesOfficesId = ref();
+const companiesOfficesId = ref('');
 
 const selectCompany = (company: Company) => {
   const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
@@ -199,7 +199,15 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await updateOffice(props.office.id, values.officeName, values.street, values.street_number, values.city, values.country);
     const companies_ids = selectedCompanies.value.map((company: Company)=> company.id);
-    await updateCompaniesOffices(companiesOfficesId.value, companies_ids, props.office.id)
+    if (!companiesOfficesId) {
+        await createCompaniesOffices(companies_ids, props.office.id);
+    }
+    else if(companiesOfficesId && selectedCompanies.value.length === 0) {
+        await deleteCompaniesOffices(companiesOfficesId.value)
+    }
+    else {
+        await updateCompaniesOffices(companiesOfficesId.value, companies_ids, props.office.id)
+    }
     store.addSuccessNotification('Ofisas atnaujintas sėkmingai!');
     resetForm();
     emit('office-created');

@@ -47,3 +47,17 @@ export const updateCompaniesOffices = async (id: string, companies_ids: string[]
         throw error;
     }
 }
+
+export const deleteCompaniesOffices = async (id: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        await axiosInstance.delete(`/companies_offices/records/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+    catch(error: any) {
+        throw error;
+    }
+}
