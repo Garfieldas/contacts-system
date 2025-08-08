@@ -73,11 +73,11 @@ import { useCompanies } from '@/composables/useCompanies';
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import type { Company, expandCompany } from '@/types/companyType';
+import type { Company } from '@/types/companyType';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { getOffices, createOffice } from '@/services/officesService';
-import { getCompaniesOffices } from '@/services/companiesOfficesService';
+import { getOffices, updateOffice } from '@/services/officesService';
+import { getCompaniesOffices, updateCompaniesOffices } from '@/services/companiesOfficesService';
 
 const { companies, fetchCompanies } = useCompanies();
 const auth = useAuthenticationStore();
@@ -85,7 +85,7 @@ const store = useNotificationStore();
 const searchedOffices = ref();
 const props = defineProps(['office']);
 const emit = defineEmits(['office-created']);
-const existingCompanies = ref();
+const companiesOfficesId = ref();
 
 const selectCompany = (company: Company) => {
   const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
@@ -96,7 +96,7 @@ const selectCompany = (company: Company) => {
   selectedCompanies.value.push(company);
 };
 
-const createSchema = z.object({
+const editSchema = z.object({
   officeName: z.string()
     .trim()
     .min(1, "Ofiso pavadinimas yra privalomas")
@@ -128,20 +128,13 @@ const createSchema = z.object({
     .max(60, "Šalis negali viršyti 60 simbolių")
     .regex(/^[\p{L}\s]+$/gu, "Šalies pavadinimas gali turėti tik raides arba tarpus"),
 
-  selectedCompanies: z.any().refine(
-    (selectedCompany: Company | null) => {
-      if (!selectedCompany) return false;
-      return true;
-    },
-    {
-      message: 'Įmonė pasirinkti privaloma!'
-    }
-  )
+  selectedCompanies: z.any()
+    .optional()
 
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-  validationSchema: toTypedSchema(createSchema),
+  validationSchema: toTypedSchema(editSchema),
 
   initialValues: {
     officeName: '',
@@ -178,6 +171,7 @@ const fetchCompaniesOffices = async (params?: string) => {
     const response = await getCompaniesOffices(url);
 
     if (response.items.length > 0) {
+      companiesOfficesId.value = response.items[0].id;
       const associatedCompanies = response.items[0].expand.company_id;
       selectedCompanies.value = associatedCompanies;
     } else {
@@ -196,17 +190,17 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   await fetchOffices(values.street, values.street_number, values.city, values.country);
-  const exist = searchedOffices.value.find((item: any) => item.street === values.street &&
-    item.street_number === values.street_number && item.city === values.city && item.country === values.country);
 
-  if (exist) {
+  if (searchedOffices.value.length > 1) {
     store.addErrorNotification('Toks ofisas jau egizstuoja')
     return;
   }
 
   try {
-    await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
-    store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
+    await updateOffice(props.office.id, values.officeName, values.street, values.street_number, values.city, values.country);
+    const companies_ids = selectedCompanies.value.map((company: Company)=> company.id);
+    await updateCompaniesOffices(companiesOfficesId.value, companies_ids, props.office.id)
+    store.addSuccessNotification('Ofisas atnaujintas sėkmingai!');
     resetForm();
     emit('office-created');
   }
@@ -229,6 +223,6 @@ watch(() => props.office, async (newOffice) => {
     city.value = newOffice.city;
     country.value = newOffice.country;
 
-    await fetchCompaniesOffices(`?filter=office_id="${newOffice.id}"&expand=company_id&fields=expand.company_id`);
+    await fetchCompaniesOffices(`?filter=office_id="${newOffice.id}"&expand=company_id&fields=id,expand.company_id`);
   },{ immediate: true });
 </script>
