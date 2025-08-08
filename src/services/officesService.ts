@@ -33,3 +33,26 @@ export const createOffice = async (
         throw error;
     }
 }
+
+export const updateOffice = async (
+    id: string,
+    name: string,
+    street: string,
+    street_number: string,
+    city: string,
+    country: string
+) => {
+    const token = localStorage.getItem('token');
+    const newOffice = { name, street, street_number, city, country }
+    try {
+        const response = await axiosInstance.patch(`/offices/records/${id}`, newOffice, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        return response.data;
+    }
+    catch(error: any){
+        throw error;
+    }
+}
