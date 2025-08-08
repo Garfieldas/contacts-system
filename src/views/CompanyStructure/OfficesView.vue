@@ -5,10 +5,14 @@
     </teleport>
     <OfficesTable :offices="offices" @edit-office="(office: Office) => {
       handleEmit(office); switchComponent(EditOfficeForm);
+    }"
+    @delete-office="(office: Office) => {
+        handleEmit(office); switchComponent(DeleteOfficeForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice"/>
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+        :hide-close-button="currentForm === DeleteOfficeForm">
+        <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice" @cancel-delete="toggleModal"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -16,6 +20,7 @@ import Pagination from '@/components/Layout/Pagination.vue';
 import AddButton from '@/components/UI/AddButton.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import CreateOfficeForm from '@/components/UI/forms/Offices/CreateOfficeForm.vue';
+import DeleteOfficeForm from '@/components/UI/forms/Offices/DeleteOfficeForm.vue';
 import EditOfficeForm from '@/components/UI/forms/Offices/EditOfficeForm.vue';
 import OfficesTable from '@/components/UI/Offices/OfficesTable.vue';
 import { getOffices } from '@/services/officesService';
@@ -39,7 +44,7 @@ const hideActions = computed(() => {
     return false;
 })
 
-const currentForm = shallowRef(CreateOfficeForm);
+const currentForm = shallowRef<typeof CreateOfficeForm | typeof EditOfficeForm | typeof DeleteOfficeForm>(CreateOfficeForm);
 const showModal = ref(false);
 const toggleModal = () => {
   showModal.value = !showModal.value
