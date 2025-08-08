@@ -14,15 +14,38 @@
     </form>
 </template>
 <script setup lang="ts">
+import { useEmployees } from '@/composables/useEmployees';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
+import { getCompaniesOffices } from '@/services/companiesOfficesService';
+import { ref } from 'vue';
 const props = defineProps(['office']);
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
+const { employees, fetchRequest } = useEmployees();
 const emits = defineEmits(['cancel-delete']);
+const companiesOffices = ref();
+
+const fetchCompaniesOffices = async (params?: string) => {
+  const url = params ? `${params}` : '';
+  try {
+    const response = await getCompaniesOffices(url);
+    companiesOffices.value = response.items;
+
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
+}
 const onSubmit = async () => {
     if(!auth.isLoggedIn && !auth.user_permissions.delete_offices) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+        return;
+    }
+    await fetchRequest(`&filter=office_id="${props.office.id}"`);
+    if(employees.value.length > 0) {
+        store.addErrorNotification('Šis ofisas turi priskirtus kontaktus');
+        emits('cancel-delete');
         return;
     }
 }
