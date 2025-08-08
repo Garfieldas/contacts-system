@@ -84,7 +84,7 @@ const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const searchedOffices = ref();
 const props = defineProps(['office']);
-const emit = defineEmits(['office-created']);
+const emit = defineEmits(['office-submit']);
 const companiesOfficesId = ref('');
 
 const selectCompany = (company: Company) => {
@@ -210,7 +210,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
     store.addSuccessNotification('Ofisas atnaujintas sėkmingai!');
     resetForm();
-    emit('office-created');
+    emit('office-submit');
   }
   catch (error: any) {
     store.addErrorNotification(error);

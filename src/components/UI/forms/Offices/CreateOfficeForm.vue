@@ -83,7 +83,7 @@ const { companies, fetchCompanies } = useCompanies();
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const searchedOffices = ref();
-const emit = defineEmits(['office-created']);
+const emit = defineEmits(['office-submit']);
 
 const selectCompany = (company: Company) => {
   const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
@@ -186,7 +186,7 @@ const onSubmit = handleSubmit(async (values) => {
       await createCompaniesOffices(companies_ids, officeId);
       store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
       resetForm();
-      emit('office-created');
+      emit('office-submit');
   }
   catch(error: any) {
       store.addErrorNotification(error);

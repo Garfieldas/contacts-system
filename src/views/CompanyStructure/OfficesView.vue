@@ -8,7 +8,7 @@
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @office-created="handleSubmit" :office="selectedOffice"/>
+        <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
