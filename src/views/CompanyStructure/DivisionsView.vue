@@ -29,7 +29,7 @@ const store = useNotificationStore();
 const isFirstLoad = ref(true);
 const auth = useAuthenticationStore();
 const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_offices && auth.user_permissions.delete_offices) {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_structure && auth.user_permissions.delete_structure) {
         return true;
     }
     return false;

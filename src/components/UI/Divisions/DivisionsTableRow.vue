@@ -17,10 +17,10 @@ import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { computed } from 'vue';
 const auth = useAuthenticationStore();
 const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_offices && auth.user_permissions.delete_offices) {
+    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_structure && auth.user_permissions.delete_structure) {
         return true;
     }
     return false;
-})
+});
 const emits = defineEmits(['edit-division', 'delete-division']);
 </script>

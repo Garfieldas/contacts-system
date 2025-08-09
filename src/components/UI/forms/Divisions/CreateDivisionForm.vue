@@ -108,7 +108,7 @@ const fetchDivisions = async (name: string) => {
 }
 
 const onSubmit = handleSubmit(async (values) => {
-    if (!auth.isLoggedIn && !auth.user_permissions.edit_divisions) {
+    if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
         return;
     }
