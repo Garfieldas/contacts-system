@@ -27,3 +27,19 @@ export const createDivision = async (name: string) => {
         throw error;
     }
 }
+
+export const updateDivision = async (id: string, name: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await axiosInstance.patch(`/divisions/records/${id}`, { name }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = response.data;
+        return data;
+    }
+    catch (error: any) {
+        throw error;
+    }
+}

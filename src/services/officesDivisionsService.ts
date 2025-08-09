@@ -29,3 +29,35 @@ export const createOfficesDivision = async (offices_ids: string[], division_id: 
         throw error;
     }
 }
+
+export const updateOfficesDivision = async (id: string, offices_ids: string[], division_id: string) => {
+    const token = localStorage.getItem('token');
+    const newOfficeDivision = {
+        "office_id": offices_ids,
+        "division_id": division_id
+    }
+    try {
+        await axiosInstance.patch(`/offices_divisions/records/${id}`, newOfficeDivision, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+    catch(error: any) {
+        throw error;
+    }
+}
+
+export const deleteOfficesDivision = async (id: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        await axiosInstance.delete(`/offices_divisions/records/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+    catch(error: any) {
+        throw error;
+    }
+}

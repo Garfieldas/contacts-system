@@ -3,10 +3,12 @@
         <AddButton @click="switchComponent(CreateDivisionForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <DivisionsTable :divisions="divisions"/>
+    <DivisionsTable :divisions="divisions" @edit-division="(division: Division) => {
+        selectDivision(division); switchComponent(EditDivisionForm);
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @division-submit="handleSubmit"/>
+        <component :is="currentForm" @division-submit="handleSubmit" :division="selectedDivision"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -19,6 +21,8 @@ import { useNotificationStore } from '@/stores/notificationstore';
 import { onMounted, ref, watch, computed, shallowRef } from 'vue';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import CreateDivisionForm from '@/components/UI/forms/Divisions/CreateDivisionForm.vue';
+import type { Division } from '@/types/divisionType';
+import EditDivisionForm from '@/components/UI/forms/Divisions/EditDivisionForm.vue';
 
 const divisions = ref();
 const page = ref(1);
@@ -50,6 +54,8 @@ const handleSubmit = () => {
     fetchDivisions();
     showModal.value = false;
 }
+const selectedDivision = ref();
+const selectDivision = (division: Division) => selectedDivision.value = division;
 
 const fetchDivisions = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
