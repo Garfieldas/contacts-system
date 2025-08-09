@@ -36,6 +36,7 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
+const isFirstLoad = ref(true);
 
 const hideActions = computed(() => {
     if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_offices && auth.user_permissions.delete_offices) {
@@ -64,7 +65,10 @@ const fetchOffices = async (params?:string) => {
         offices.value = response.items;
         totalItems.value = response.totalItems;
         totalPages.value = response.totalPages;
-        store.addSuccessNotification('Ofisai gauti sėkmingai!');
+        if (isFirstLoad.value) {
+            store.addSuccessNotification('Ofisai gauti sėkmingai!');
+            isFirstLoad.value = false;
+        }
     }
     catch (error: any) {
         store.addErrorNotification(error);

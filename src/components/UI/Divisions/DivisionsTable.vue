@@ -8,7 +8,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-            <DivisionsTableRow v-for="division in divisions" :key="division.id" :office="division"
+            <DivisionsTableRow v-for="division in divisions" :key="division.id" :division="division"
             @edit-division="(division) => {
               emits('edit-division', division)
             }"
