@@ -5,10 +5,13 @@
     </teleport>
     <DivisionsTable :divisions="divisions" @edit-division="(division: Division) => {
         selectDivision(division); switchComponent(EditDivisionForm);
+    }" @delete-division="(division: Division) => {
+        selectDivision(division); switchComponent(DeleteDivisionForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @division-submit="handleSubmit" :division="selectedDivision"/>
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+        :hide-close-button="currentForm === DeleteDivisionForm">
+        <component :is="currentForm" @division-submit="handleSubmit" :division="selectedDivision" @cancel-delete="toggleModal"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -23,6 +26,7 @@ import { useAuthenticationStore } from '@/stores/authenticationStore';
 import CreateDivisionForm from '@/components/UI/forms/Divisions/CreateDivisionForm.vue';
 import type { Division } from '@/types/divisionType';
 import EditDivisionForm from '@/components/UI/forms/Divisions/EditDivisionForm.vue';
+import DeleteDivisionForm from '@/components/UI/forms/Divisions/DeleteDivisionForm.vue';
 
 const divisions = ref();
 const page = ref(1);
@@ -39,7 +43,7 @@ const hideActions = computed(() => {
     return false;
 });
 
-const currentForm = shallowRef(CreateDivisionForm);
+const currentForm = shallowRef<typeof CreateDivisionForm | typeof EditDivisionForm | typeof DeleteDivisionForm>(CreateDivisionForm);
 const showModal = ref(false);
 const toggleModal = () => {
   showModal.value = !showModal.value
