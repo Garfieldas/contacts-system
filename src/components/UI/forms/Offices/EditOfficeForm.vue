@@ -199,10 +199,10 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await updateOffice(props.office.id, values.officeName, values.street, values.street_number, values.city, values.country);
     const companies_ids = selectedCompanies.value.map((company: Company)=> company.id);
-    if (!companiesOfficesId) {
+    if (!companiesOfficesId.value) {
         await createCompaniesOffices(companies_ids, props.office.id);
     }
-    else if(companiesOfficesId && selectedCompanies.value.length === 0) {
+    else if(companiesOfficesId.value && selectedCompanies.value.length === 0) {
         await deleteCompaniesOffices(companiesOfficesId.value)
     }
     else {
