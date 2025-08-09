@@ -19,11 +19,12 @@ import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 import { getCompaniesOffices } from '@/services/companiesOfficesService';
 import { onMounted, ref } from 'vue';
+import { deleteOffice } from '@/services/officesService';
 const props = defineProps(['office']);
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const { employees, fetchRequest } = useEmployees();
-const emits = defineEmits(['cancel-delete']);
+const emits = defineEmits(['cancel-delete', 'office-submit']);
 const companiesOffices = ref();
 
 const fetchCompaniesOffices = async (params?: string) => {
@@ -58,6 +59,14 @@ const onSubmit = async () => {
         store.addErrorNotification('Šis ofisas turi priskirtas įmonės');
         emits('cancel-delete');
         return;
+    }
+    try {
+        await deleteOffice(props.office.id);
+        store.addSuccessNotification('Ofisas pašalintas sėkmingai!');
+        emits('office-submit');
+    }
+    catch(error: any) {
+        store.addErrorNotification(error);
     }
 }
 </script>

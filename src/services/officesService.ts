@@ -56,3 +56,18 @@ export const updateOffice = async (
         throw error;
     }
 }
+
+export const deleteOffice = async (id: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await axiosInstance.delete(`/offices/records/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        return response.data;
+    }
+    catch(error: any){
+        throw error;
+    }
+}
