@@ -9,13 +9,13 @@
         :class="{'bg-white text-[#0054A6] border-[#0054A6]': isActive}">Ofisai</button>
          </RouterLink>
 
-        <RouterLink :to="{name: 'departments'}"
+        <RouterLink :to="{name: 'divisions'}"
         v-slot="{navigate, isActive}">
         <button class="bg-[#0054A6] p-1.5 px-10 border-2 rounded-xl" @click="navigate"
         :class="{'bg-white text-[#0054A6] border-[#0054A6]': isActive}">Padaliniai</button>
          </RouterLink>
 
-        <RouterLink :to="{name: 'divisions'}"
+        <RouterLink :to="{name: 'departments'}"
         v-slot="{navigate, isActive}">
         <button class="bg-[#0054A6] p-1.5 px-10 border-2 rounded-xl" @click="navigate"
         :class="{'bg-white text-[#0054A6] border-[#0054A6]': isActive}">Skyriai</button>
