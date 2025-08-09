@@ -43,3 +43,17 @@ export const updateDivision = async (id: string, name: string) => {
         throw error;
     }
 }
+
+export const deleteDivision = async (id: string, name: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        await axiosInstance.delete(`/divisions/records/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+    catch (error: any) {
+        throw error;
+    }
+}
