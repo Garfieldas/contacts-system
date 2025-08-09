@@ -11,3 +11,19 @@ export const getDivisions = async (params?: string) => {
         throw error;
     }
 }
+
+export const createDivision = async (name: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await axiosInstance.post('/divisions/records', { name }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = response.data;
+        return data;
+    }
+    catch (error: any) {
+        throw error;
+    }
+}

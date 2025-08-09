@@ -6,7 +6,7 @@
     <DivisionsTable :divisions="divisions"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm"/>
+        <component :is="currentForm" @division-submit="handleSubmit"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -43,6 +43,12 @@ const toggleModal = () => {
 const switchComponent = (component: any) => {
     showModal.value = true;
     currentForm.value = component;
+}
+
+const handleSubmit = () => {
+    page.value = 1;
+    fetchDivisions();
+    showModal.value = false;
 }
 
 const fetchDivisions = async (params?:string) => {

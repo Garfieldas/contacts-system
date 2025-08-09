@@ -11,3 +11,21 @@ export const getOfficessDivisions = async(params?: string) => {
         throw error;
     }
 }
+
+export const createOfficesDivision = async (offices_ids: string[], division_id: string) => {
+    const token = localStorage.getItem('token');
+    const newOfficeDivision = {
+        "office_id": offices_ids,
+        "division_id": division_id
+    }
+    try {
+        await axiosInstance.post('/offices_divisions/records', newOfficeDivision, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+    catch(error: any) {
+        throw error;
+    }
+}

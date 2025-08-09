@@ -43,7 +43,8 @@ import { useNotificationStore } from "@/stores/notificationstore";
 import { onMounted, ref } from "vue";
 import { getOffices } from "@/services/officesService";
 import type { Office } from "@/types/officeType";
-import { getDivisions } from "@/services/divisionsService";
+import { createDivision, getDivisions } from "@/services/divisionsService";
+import { createOfficesDivision } from "@/services/officesDivisionsService";
 
 const divisionSchema = z.object({
     divisionName: z
@@ -73,6 +74,7 @@ const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const offices = ref();
 const searchedDivisions = ref();
+const emits = defineEmits(['division-submit']);
 
 const selectOffice = (office: Office) => {
   const exist = selectedOffices.value.find((item: any) => item.id === office.id);
@@ -114,6 +116,19 @@ const onSubmit = handleSubmit(async (values) => {
     const exist = searchedDivisions.value.find((item: any) => item.name === values.divisionName);
     if (exist) {
         store.addErrorNotification('Toks padalinys jau yra sukurtas!');
+        return;
+    }
+    try {
+        const response = await createDivision(values.divisionName);
+        const divisionId = response.id;
+        const offices_ids = selectedOffices.value.map((office: Office) => office.id);
+        await createOfficesDivision(offices_ids, divisionId);
+        resetForm();
+        emits('division-submit');
+        store.addSuccessNotification('Padalinys sėkmingai sukurtas!');
+    }
+    catch(error: any){
+        store.addErrorNotification(error);
     }
 })
 
