@@ -16,15 +16,57 @@
 <script setup lang="ts">
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
+import { useEmployees } from '@/composables/useEmployees';
+import { getOfficessDivisions } from '@/services/officesDivisionsService';
+import { ref } from 'vue';
+import { deleteDivision } from '@/services/divisionsService';
 const props = defineProps(['division']);
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
-const emits = defineEmits(['cancel-delete', 'office-submit']);
+const emits = defineEmits(['cancel-delete', 'division-submit']);
+const { employees, fetchRequest } = useEmployees();
+const officesDivisions = ref();
+
+const fetchOfficesDivision = async (params?: string) => {
+    const url = params ? `${params}` : '';
+    try {
+        const response = await getOfficessDivisions(url);
+        if (response.items.length > 0) {
+            officesDivisions.value = response.items[0].expand.office_id;
+        }
+        else {
+            officesDivisions.value = [];
+        }
+    }
+    catch (error: any) {
+        store.addErrorNotification(error);
+    }
+}
 
 const onSubmit = async () => {
     if (!auth.isLoggedIn && !auth.user_permissions.delete_structure) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
         return;
+    }
+    await fetchRequest(`&filter=division_id="${props.division.id}"`);
+    if (employees.value.length > 0) {
+        store.addErrorNotification('Šis padalinys turi priskirtus kontaktus');
+        emits('cancel-delete');
+        return;
+    }
+    await fetchOfficesDivision(`?filter=division_id="${props.division.id}"&expand=office_id&fields=id,expand.office_id`);
+    if (officesDivisions.value && officesDivisions.value.length > 0) {
+        store.addErrorNotification('Šis padalinys turi priskirtus ofisus');
+        emits('cancel-delete');
+        return;
+    }
+    try {
+        await deleteDivision(props.division.id);
+        store.addSuccessNotification('Padalinys pašalintas sėkmingai!');
+        emits('division-submit');
+    }
+    catch (error: any) {
+        store.addErrorNotification(error);
     }
 }
 </script>

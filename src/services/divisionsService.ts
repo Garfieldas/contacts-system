@@ -44,7 +44,7 @@ export const updateDivision = async (id: string, name: string) => {
     }
 }
 
-export const deleteDivision = async (id: string, name: string) => {
+export const deleteDivision = async (id: string) => {
     const token = localStorage.getItem('token');
     try {
         await axiosInstance.delete(`/divisions/records/${id}`, {
