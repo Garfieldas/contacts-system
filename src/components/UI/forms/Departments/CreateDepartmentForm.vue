@@ -6,7 +6,7 @@
       <div>
         <div class="mb-4">
           <label for="divisionName" class="block text-sm font-normal text-gray-700">Skyriaus pavadinimas:</label>
-          <input type="text" id="divisionName" placeholder="Įveskite padalinio pavadinimą..."
+          <input type="text" id="divisionName" placeholder="Įveskite skyriaus pavadinimą..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             v-model.trim="departmentName" />
           <div v-if="errors.departmentName" class="error-message">{{ errors.departmentName }}</div>
@@ -43,6 +43,7 @@ import { useNotificationStore } from "@/stores/notificationstore";
 import { onMounted, ref } from "vue";
 import type { Division } from "@/types/divisionType";
 import { getDivisions } from "@/services/divisionsService";
+import { getDepartments } from "@/services/departmentsService";
 
 const fetchDivisions = async () => {
     try {
@@ -52,6 +53,18 @@ const fetchDivisions = async () => {
     catch (error: any) {
         store.addErrorNotification(error);
     }
+}
+
+const fetchDepartments = async (name: string) => {
+  const searchTerm = `(name?~"${name}")`;
+  const url = '?filter=' + encodeURIComponent(searchTerm);
+  try {
+    const response = await getDepartments(url);
+    searchedDepartments.value = response.items;
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 }
 
 const departmentSchema = z.object({
@@ -81,7 +94,7 @@ const [selectedDivisions] = defineField("selectedDivisions");
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const divisions = ref();
-const searchedDivisions = ref();
+const searchedDepartments = ref();
 const emits = defineEmits(['division-submit']);
 
 const selectedDivision = (division: Division) => {
@@ -96,6 +109,12 @@ const selectedDivision = (division: Division) => {
 const onSubmit = handleSubmit(async (values) => {
     if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+        return;
+    }
+    await fetchDepartments(values.departmentName);
+    const filteredDepartments = searchedDepartments.value.filter((item: any) => item.name === values.departmentName);
+    if (filteredDepartments.length > 0) {
+        store.addErrorNotification('Toks skyrius jau yra sukurtas');
         return;
     }
 });
