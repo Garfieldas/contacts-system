@@ -5,46 +5,28 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
         <div class="mb-4">
-          <label for="firstName" class="block text-sm font-normal text-gray-700"
-            >Vardas:</label
-          >
-          <input
-            type="text"
-            id="firstName"
-            placeholder="Įveskite vardą..."
+          <label for="firstName" class="block text-sm font-normal text-gray-700">Vardas:</label>
+          <input type="text" id="firstName" placeholder="Įveskite vardą..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            v-model.trim="name"
-          />
+            v-model.trim="name" />
           <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
         </div>
 
         <div class="mb-4">
-          <label for="lastName" class="block text-sm font-normal text-gray-700"
-            >Pavardė:</label
-          >
-          <input
-            type="text"
-            id="lastName"
-            placeholder="Įveskite pavardę..."
+          <label for="lastName" class="block text-sm font-normal text-gray-700">Pavardė:</label>
+          <input type="text" id="lastName" placeholder="Įveskite pavardę..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            v-model.trim="surname"
-          />
+            v-model.trim="surname" />
           <div v-if="errors.surname" class="error-message">
             {{ errors.surname }}
           </div>
         </div>
 
         <div class="mb-6">
-          <label for="position" class="block text-sm font-normal text-gray-700"
-            >Pozicija:</label
-          >
-          <input
-            type="text"
-            id="position"
-            placeholder="Įveskite poziciją..."
+          <label for="position" class="block text-sm font-normal text-gray-700">Pozicija:</label>
+          <input type="text" id="position" placeholder="Įveskite poziciją..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            v-model.trim="position"
-          />
+            v-model.trim="position" />
           <div v-if="errors.position" class="error-message">
             {{ errors.position }}
           </div>
@@ -53,34 +35,20 @@
         <h3 class="text-lg font-medium mb-4">Kontaktinė informacija:</h3>
 
         <div class="mb-4">
-          <label for="email" class="block text-sm font-normal text-gray-700"
-            >Elektroninis paštas:</label
-          >
-          <input
-            type="email"
-            id="email"
-            placeholder="&#xf0e0; Įveskite el.paštą..."
+          <label for="email" class="block text-sm font-normal text-gray-700">Elektroninis paštas:</label>
+          <input type="email" id="email" placeholder="&#xf0e0; Įveskite el.paštą..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            v-model.trim="email"
-          />
+            v-model.trim="email" />
           <div v-if="errors.email" class="error-message">
             {{ errors.email }}
           </div>
         </div>
 
         <div class="mb-4">
-          <label
-            for="phone_number"
-            class="block text-sm font-normal text-gray-700"
-            >Telefono numeris:</label
-          >
-          <input
-            type="text"
-            id="phone_number"
-            placeholder="&#xf098; Įveskite telefono numerį..."
+          <label for="phone_number" class="block text-sm font-normal text-gray-700">Telefono numeris:</label>
+          <input type="text" id="phone_number" placeholder="&#xf098; Įveskite telefono numerį..."
             class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            v-model.trim="phone_number"
-          />
+            v-model.trim="phone_number" />
           <div v-if="errors.phone_number" class="error-message">
             {{ errors.phone_number }}
           </div>
@@ -91,15 +59,10 @@
         <h3 class="text-lg font-medium mb-4">Įmonės detalės:</h3>
 
         <div class="mb-4">
-          <label for="company" class="block text-sm font-normal text-gray-700"
-            >Įmonė:</label
-          >
-          <select
-            id="company"
+          <label for="company" class="block text-sm font-normal text-gray-700">Įmonė:</label>
+          <select id="company"
             class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-            v-model="selectedCompany"
-            @change="handleCompanyChange"
-          >
+            v-model="selectedCompany" @change="handleCompanyChange">
             <option value="" selected>Pasirinkite įmonę...</option>
             <option v-for="company in companies" :value="company.id">
               {{ company.name }}
@@ -111,15 +74,10 @@
         </div>
 
         <div class="mb-4">
-          <label for="office" class="block text-sm font-normal text-gray-700"
-            >Offisas:</label
-          >
-          <select
-            id="office"
+          <label for="office" class="block text-sm font-normal text-gray-700">Offisas:</label>
+          <select id="office"
             class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-            v-model="selectedOffice"
-            @change="handleOfficeChange"
-          >
+            v-model="selectedOffice" @change="handleOfficeChange">
             <option value="" selected>Pasirinkite ofisą...</option>
             <option v-for="office in displayOffice" :value="office.id">
               {{ office.name }}
@@ -131,15 +89,10 @@
         </div>
 
         <div class="mb-4">
-          <label for="division" class="block text-sm font-normal text-gray-700"
-            >Skyrius:</label
-          >
-          <select
-            id="division"
+          <label for="division" class="block text-sm font-normal text-gray-700">Skyrius:</label>
+          <select id="division"
             class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-            v-model="selectedDivision"
-            @change="handleDivisionChange"
-          >
+            v-model="selectedDivision" @change="handleDivisionChange">
             <option value="" selected>Pasirinkite skyrių...</option>
             <option v-for="division in displayDivision" :value="division.id">
               {{ division.name }}
@@ -151,36 +104,22 @@
         </div>
 
         <div class="mb-4">
-          <label
-            for="department"
-            class="block text-sm font-normal text-gray-700"
-            >Padalinys:</label
-          >
-          <select
-            id="department"
+          <label for="department" class="block text-sm font-normal text-gray-700">Padalinys:</label>
+          <select id="department"
             class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-            v-model="selectedDepartment"
-            @change="handleDepartmentChange"
-          >
+            v-model="selectedDepartment" @change="handleDepartmentChange">
             <option value="" selected>Pasirinkite padalinį...</option>
-            <option
-              v-for="department in displayDepartment"
-              :value="department.id"
-            >
+            <option v-for="department in displayDepartment" :value="department.id">
               {{ department.name }}
             </option>
           </select>
         </div>
 
         <div class="mb-6">
-          <label for="group" class="block text-sm font-normal text-gray-700"
-            >Grupė:</label
-          >
-          <select
-            id="group"
+          <label for="group" class="block text-sm font-normal text-gray-700">Grupė:</label>
+          <select id="group"
             class="mt-1 block w-full pl-3 pr-10 py-4 text-[#414042] shadow-xl shadow-black-500/100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-            v-model="selectedGroup"
-          >
+            v-model="selectedGroup">
             <option value="" selected>Pasirinkite grupę...</option>
             <option v-for="group in displayGroup" :value="group.id">
               {{ group.name }}
@@ -189,41 +128,29 @@
         </div>
 
         <div class="flex items-center space-x-4 mb-8">
-          <label
-            v-if="!selectedAvatar"
-            for="avatar"
-            class="cursor-pointer inline-block pe-20 ps-20 py-1 bg-[#0054A6] text-white text-sm rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
+          <label v-if="!selectedAvatar" for="avatar"
+            class="cursor-pointer inline-block pe-20 ps-20 py-1 bg-[#0054A6] text-white text-sm rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             Įkelti nuotrauką
           </label>
-          <label
-            v-else
-            class="cursor-pointer inline-block pe-20 ps-20 py-1 bg-red-500 text-white text-sm rounded"
-            @click="handleFileCancelation"
-          >
+          <label v-else class="cursor-pointer inline-block pe-20 ps-20 py-1 bg-red-500 text-white text-sm rounded"
+            @click="handleFileCancelation">
             Atšaukti
           </label>
-          <input
-            type="file"
-            id="avatar"
-            class="hidden"
-            accept="image/png, image/jpeg, image/svg+xml, image/webp"
-            @change="handleFileChange"
-          />
+          <input type="file" id="avatar" class="hidden" accept="image/png, image/jpeg, image/svg+xml, image/webp"
+            @change="handleFileChange" />
           <div v-if="errors.selectedAvatar" class="error-message">
             {{ errors.selectedAvatar }}
           </div>
-          <span class="text-gray-500 text-sm" :class="{'break-all': selectedAvatar || employee.photo}" v-else>{{
+          <span class="text-gray-500 text-sm" :class="{ 'break-all': selectedAvatar || employee.photo }" v-else>{{
             displayAvatar
-          }}</span>
+            }}</span>
         </div>
       </div>
     </div>
 
     <div class="flex justify-end pt-4">
       <button
-        class="ps-20 pe-20 py-1 bg-[#0054A6] text-white rounded-xs text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
+        class="ps-20 pe-20 py-1 bg-[#0054A6] text-white rounded-xs text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
         REDAGUOTI
       </button>
     </div>
@@ -236,7 +163,6 @@ import { useOffices } from "@/composables/useOffices";
 import { useDivisions } from "@/composables/useDivisions";
 import { useDepartments } from "@/composables/useDepartments";
 import { useGroups } from "@/composables/useGroups";
-import { useEmployees } from "@/composables/useEmployees";
 import type { expandOffice } from "@/types/officeType";
 import type { expandDivision } from "@/types/divisionType";
 import type { expandDepartment } from "@/types/departmentType";
@@ -245,7 +171,7 @@ import { ref, watch } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import { updateEmployee } from "@/services/employeesService";
+import { getEmployees, updateEmployee } from "@/services/employeesService";
 import { useNotificationStore } from "@/stores/notificationstore";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 
@@ -254,7 +180,6 @@ const { offices, fetchOffices } = useOffices();
 const { divisions, fetchDivisions } = useDivisions();
 const { departments, fetchDepartments } = useDepartments();
 const { groups, fetchGroups } = useGroups();
-const { employees, fetchRequest } = useEmployees();
 
 const displayOffice = ref();
 const displayDivision = ref();
@@ -265,6 +190,7 @@ const store = useNotificationStore();
 const emits = defineEmits(['employee-updated']);
 const props = defineProps(['employee']);
 const auth = useAuthenticationStore();
+const searchedEmployees = ref();
 
 const handleCompanyChange = async () => {
   selectedOffice.value = "";
@@ -278,7 +204,7 @@ const handleCompanyChange = async () => {
 
   if (selectedCompany.value) {
     await fetchOffices(`?filter=company_id~"${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
-    displayOffice.value =(offices.value as expandOffice[]).map((item) => item.expand.office_id) ||[];
+    displayOffice.value = (offices.value as expandOffice[]).map((item) => item.expand.office_id) || [];
   } else {
     displayOffice.value = [];
     displayDivision.value = [];
@@ -328,7 +254,7 @@ const handleDepartmentChange = async () => {
 
   if (selectedDepartment.value) {
     await fetchGroups(`?filter=department_id~"${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
-    displayGroup.value =(groups.value as expandGroup[]).map((item) => item.expand.group_id) || [];
+    displayGroup.value = (groups.value as expandGroup[]).map((item) => item.expand.group_id) || [];
   } else {
     displayGroup.value = [];
   }
@@ -350,6 +276,18 @@ const handleFileCancelation = () => {
   displayAvatar.value = "Nuotrauka nėra įkėlta";
   selectedAvatar.value = null;
 };
+
+const fetchContacts = async () => {
+  const searchEmployee = phone_number.value ? `(email?~"${email.value}") || phone_number?~"${phone_number.value}"` : `(email?~"${email.value}")`;
+  const url = '?filter=' + encodeURIComponent(searchEmployee);
+  try {
+    const response = await getEmployees(url);
+    searchedEmployees.value = response.items;
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
+}
 
 const createSchema = z.object({
   name: z
@@ -455,22 +393,14 @@ const onSubmit = handleSubmit(async (values) => {
     store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
     return;
   }
-  const searchTerm = values.phone_number ? `(email?~"${values.email}") || phone_number?~"${values.phone_number}"` : `(email?~"${values.email}")`;
-  await fetchRequest('?filter=' + encodeURIComponent(searchTerm));
+  await fetchContacts();
 
-  const existingList = employees.value;
+  const existingList = searchedEmployees.value.filter((item: any) => item.email === values.email || item.phone_number === values.phone_number);
 
   if (existingList.length > 1) {
-
-    const found = existingList.find((item: any) =>
-    item.email === values.email || item.phone_number === values.phone_number
-    );
-
-    if (found) {
-      store.addErrorNotification('Toks kontaktas jau egzistuoja');
-      return;
-    }
-}
+    store.addErrorNotification('Toks kontaktas jau egzistuoja');
+    return;
+  }
 
   try {
     await updateEmployee(
@@ -496,7 +426,7 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-watch(()=> props.employee, (newEmployee) => {
+watch(() => props.employee, (newEmployee) => {
   name.value = newEmployee.name;
   surname.value = newEmployee.surname;
   position.value = newEmployee.position;
@@ -508,7 +438,7 @@ watch(()=> props.employee, (newEmployee) => {
   selectedOffice.value = newEmployee.expand.office_id.id;
   handleOfficeChange();
   selectedDivision.value = newEmployee.expand.division_id.id;
-  if(newEmployee.expand.department_id) {
+  if (newEmployee.expand.department_id) {
     handleDivisionChange();
     selectedDepartment.value = newEmployee.expand.department_id.id;
   }
@@ -521,9 +451,9 @@ watch(()=> props.employee, (newEmployee) => {
   if (newEmployee.photo) {
     displayAvatar.value = newEmployee.photo;
   }
-  else{
+  else {
     displayAvatar.value = 'Nuotrauka nėra įkėlta'
   }
-  
-}, {immediate: true})
+
+}, { immediate: true })
 </script>
