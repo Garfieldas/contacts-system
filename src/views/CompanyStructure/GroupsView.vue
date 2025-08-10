@@ -5,10 +5,13 @@
     </teleport>
     <GroupsTable :groups="groups" @edit-group="(group: Group) => {
         selectGroup(group); switchComponent(EditGroupForm);
+    }" @delete-group="(group: Group) => {
+        selectGroup(group); switchComponent(DeleteGroupForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @group-submit="handleSubmit" :group="selectedGroup"/>
+   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+   :hide-close-button="currentForm === DeleteGroupForm">
+        <component :is="currentForm" @group-submit="handleSubmit" :group="selectedGroup" @cancel-delete="toggleModal"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -23,6 +26,8 @@ import BaseModal from '@/components/UI/BaseModal.vue';
 import CreateGroupForm from '@/components/UI/forms/Groups/CreateGroupForm.vue';
 import type { Group } from '@/types/groupType';
 import EditGroupForm from '@/components/UI/forms/Groups/EditGroupForm.vue';
+import DeleteGroupForm from '@/components/UI/forms/Groups/DeleteGroupForm.vue';
+
 const groups = ref();
 const page = ref(1);
 const perPage=ref(25);
@@ -31,7 +36,7 @@ const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
 const auth = useAuthenticationStore();
-const currentForm = shallowRef(CreateGroupForm);
+const currentForm = shallowRef<typeof CreateGroupForm | typeof EditGroupForm | typeof DeleteGroupForm>(CreateGroupForm);
 const showModal = ref(false);
 const toggleModal = () => {
   showModal.value = !showModal.value

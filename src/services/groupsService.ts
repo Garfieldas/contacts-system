@@ -44,7 +44,7 @@ export const updateGroup = async (id: string, name: string) => {
 export const deleteGroup = async (id: string) => {
     const token = localStorage.getItem('token');
     try {
-        await axiosInstance.patch(`/groups/records/${id}`, {
+        await axiosInstance.delete(`/groups/records/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
