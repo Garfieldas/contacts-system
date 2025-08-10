@@ -43,8 +43,8 @@ import { useNotificationStore } from "@/stores/notificationstore";
 import { onMounted, ref, watch } from "vue";
 import type { Division } from "@/types/divisionType";
 import { getDivisions } from "@/services/divisionsService";
-import { createDepartment, getDepartments } from "@/services/departmentsService";
-import { createDivisionsDepartment, getDivisionsDepartments } from "@/services/divisionsDepartmentsService";
+import { createDepartment, getDepartments, updateDepartment } from "@/services/departmentsService";
+import { createDivisionsDepartment, deleteDivisionsDepartment, getDivisionsDepartments, updateDivisionsDepartment } from "@/services/divisionsDepartmentsService";
 
 const fetchDivisions = async () => {
     try {
@@ -134,16 +134,23 @@ const onSubmit = handleSubmit(async (values) => {
     }
     await fetchDepartments(values.departmentName);
     const filteredDepartments = searchedDepartments.value.filter((item: any) => item.name === values.departmentName);
-    if (filteredDepartments.length > 0) {
+    if (filteredDepartments.length > 1) {
         store.addErrorNotification('Toks skyrius jau yra sukurtas');
         return;
     }
     try {
-        const response = await createDepartment(values.departmentName);
-        const departmentId = response.id;
+        await updateDepartment(props.department.id, values.departmentName);
         const divisions_ids = selectedDivisions.value.map((division: Division) => division.id);
-        await createDivisionsDepartment(divisions_ids, departmentId);
-        store.addSuccessNotification('Skyrius sėkmingai sukurtas!');
+        if (!divisionsDepartmentId.value) {
+            await createDivisionsDepartment(divisions_ids, props.department.id);
+        }
+        else if (divisionsDepartmentId.value && selectedDivisions.value.length === 0) {
+            await deleteDivisionsDepartment(divisionsDepartmentId.value)
+        }
+        else {
+            await updateDivisionsDepartment(divisionsDepartmentId.value, divisions_ids, props.department.id)
+        }
+        store.addSuccessNotification('Skyrius atnaujintas sukurtas!');
         resetForm();
         emits('department-submit');
     }
@@ -157,7 +164,6 @@ onMounted(() => {
 });
 
 watch(() => props.department, async (newDepartment) => {
-    if (!newDepartment) return;
 
     departmentName.value = newDepartment.name;
     await fetchDivisionsDepartment(`?filter=department_id="${newDepartment.id}"&expand=division_id&fields=id,expand.division_id`);

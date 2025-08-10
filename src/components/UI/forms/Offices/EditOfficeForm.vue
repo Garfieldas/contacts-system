@@ -223,7 +223,6 @@ onMounted(() => {
 });
 
 watch(() => props.office, async (newOffice) => {
-    if (!newOffice) return;
 
     officeName.value = newOffice.name;
     street.value = newOffice.street;

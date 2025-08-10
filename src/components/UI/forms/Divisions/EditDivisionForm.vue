@@ -166,7 +166,6 @@ onMounted(() => {
 })
 
 watch(() => props.division, async (newDivision) => {
-    if (!newDivision) return;
 
     divisionName.value = newDivision.name;
     await fetchOfficesDivisions(`?filter=division_id="${newDivision.id}"&expand=office_id&fields=id,expand.office_id`);
