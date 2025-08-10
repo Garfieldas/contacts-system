@@ -11,7 +11,6 @@ export const useOffices = () => {
         try {
             const response = await getCompaniesOffices(url);
             offices.value = response.items;
-            console.log(response)
         }
         catch (error: any) {
             store.addErrorNotification(error);
