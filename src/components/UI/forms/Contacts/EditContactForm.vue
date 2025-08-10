@@ -171,15 +171,17 @@ import { ref, watch } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import { getEmployees, updateEmployee } from "@/services/employeesService";
+import { updateEmployee } from "@/services/employeesService";
 import { useNotificationStore } from "@/stores/notificationstore";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
+import { useEmployees } from "@/composables/useEmployees";
 
 const { companies, fetchCompanies } = useCompanies();
 const { offices, fetchOffices } = useOffices();
 const { divisions, fetchDivisions } = useDivisions();
 const { departments, fetchDepartments } = useDepartments();
 const { groups, fetchGroups } = useGroups();
+const { employees, fetchRequest } = useEmployees();
 
 const displayOffice = ref();
 const displayDivision = ref();
@@ -190,7 +192,6 @@ const store = useNotificationStore();
 const emits = defineEmits(['employee-updated']);
 const props = defineProps(['employee']);
 const auth = useAuthenticationStore();
-const searchedEmployees = ref();
 
 const handleCompanyChange = async () => {
   selectedOffice.value = "";
@@ -276,18 +277,6 @@ const handleFileCancelation = () => {
   displayAvatar.value = "Nuotrauka nėra įkėlta";
   selectedAvatar.value = null;
 };
-
-const fetchContacts = async () => {
-  const searchEmployee = phone_number.value ? `(email?~"${email.value}") || phone_number?~"${phone_number.value}"` : `(email?~"${email.value}")`;
-  const url = '?filter=' + encodeURIComponent(searchEmployee);
-  try {
-    const response = await getEmployees(url);
-    searchedEmployees.value = response.items;
-  }
-  catch (error: any) {
-    store.addErrorNotification(error);
-  }
-}
 
 const createSchema = z.object({
   name: z
@@ -393,9 +382,10 @@ const onSubmit = handleSubmit(async (values) => {
     store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
     return;
   }
-  await fetchContacts();
+  const searchTerm = values.phone_number ? `(email?~"${values.email}") || phone_number?~"${values.phone_number}"` : `(email?~"${values.email}")`;
+  await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
 
-  const existingList = searchedEmployees.value.filter((item: any) => item.email === values.email || item.phone_number === values.phone_number);
+  const existingList = employees.value.filter((item: any) => item.email === values.email || item.phone_number === values.phone_number);
 
   if (existingList.length > 1) {
     store.addErrorNotification('Toks kontaktas jau egzistuoja');
