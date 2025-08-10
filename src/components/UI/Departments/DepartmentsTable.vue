@@ -8,6 +8,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+            <DepartmentsTableRow v-for="department in departments" :key="department.id" :department="department"/>
         </tbody>
       </table>
     </div>
@@ -15,6 +16,7 @@
 <script setup lang="ts">
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { computed } from 'vue';
+import DepartmentsTableRow from './DepartmentsTableRow.vue';
 
 const props = defineProps(['departments']);
 const auth = useAuthenticationStore();
