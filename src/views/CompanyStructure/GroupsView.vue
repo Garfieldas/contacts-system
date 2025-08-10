@@ -3,10 +3,12 @@
         <AddButton @click="switchComponent(CreateGroupForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <GroupsTable :groups="groups"/>
+    <GroupsTable :groups="groups" @edit-group="(group: Group) => {
+        selectGroup(group); switchComponent(EditGroupForm);
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @group-submit="handleSubmit"/>
+        <component :is="currentForm" @group-submit="handleSubmit" :group="selectedGroup"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -20,6 +22,7 @@ import { getGroups } from '@/services/groupsService';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import CreateGroupForm from '@/components/UI/forms/Groups/CreateGroupForm.vue';
 import type { Group } from '@/types/groupType';
+import EditGroupForm from '@/components/UI/forms/Groups/EditGroupForm.vue';
 const groups = ref();
 const page = ref(1);
 const perPage=ref(25);
