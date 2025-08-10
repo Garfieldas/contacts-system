@@ -1,10 +1,13 @@
 <template>
     <teleport defer to="#button" v-if="hideActions">
-        <AddButton/>
+        <AddButton @click="switchComponent(CreateGroupForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
     <GroupsTable :groups="groups"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
+   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
+        <component :is="currentForm" @group-submit="handleSubmit"/>
+    </BaseModal>
 </template>
 <script setup lang="ts">
 import GroupsTable from '@/components/UI/Groups/GroupsTable.vue';
@@ -12,8 +15,11 @@ import Pagination from '@/components/Layout/Pagination.vue';
 import AddButton from '@/components/UI/AddButton.vue';
 import { useNotificationStore } from '@/stores/notificationstore';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, shallowRef } from 'vue';
 import { getGroups } from '@/services/groupsService';
+import BaseModal from '@/components/UI/BaseModal.vue';
+import CreateGroupForm from '@/components/UI/forms/Groups/CreateGroupForm.vue';
+import type { Group } from '@/types/groupType';
 const groups = ref();
 const page = ref(1);
 const perPage=ref(25);
@@ -22,6 +28,25 @@ const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
 const auth = useAuthenticationStore();
+const currentForm = shallowRef(CreateGroupForm);
+const showModal = ref(false);
+const toggleModal = () => {
+  showModal.value = !showModal.value
+}
+
+const switchComponent = (component: any) => {
+    showModal.value = true;
+    currentForm.value = component;
+}
+
+const handleSubmit = () => {
+    page.value = 1;
+    fetchGroups();
+    showModal.value = false;
+}
+
+const selectedGroup = ref();
+const selectGroup = (group: Group) => selectedGroup.value = group;
 const hideActions = computed(() => {
     if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_structure && auth.user_permissions.delete_structure) {
         return true;
