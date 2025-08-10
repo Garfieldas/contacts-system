@@ -1,15 +1,15 @@
 <template>
   <tr class="hover:bg-gray-50 transition-colors">
-    <td class="px-6 py-4 text-gray-700">{{ user.name }}</td>
-    <td class="px-6 py-4 text-gray-700">{{ user.email }}</td>
+    <td class="px-6 py-4 text-gray-700">{{ user.name ? user.name : 'Nėra informacijos' }}</td>
+    <td class="px-6 py-4 text-gray-700">{{ user.email ? user.email : 'Nėra informacijos' }}</td>
     <td class="px-6 py-4 text-white flex justify-end pr-4" v-if="hideActions">
-      <button class="bg-[#0054A6] rounded-2xl px-10 py-1 mr-4 shadow-md hover:bg-blue-700 transition-colors" @click="emits('edit-permissions', user)">
+      <button class="bg-[#0054A6] rounded-2xl px-10 py-0.2 mr-4 shadow-md hover:bg-blue-700 transition-colors" @click="emits('edit-permissions', user)">
         Keisti leidimus
       </button>
-      <button class="bg-[#0054A6] rounded-2xl px-10 py-1 mr-4 shadow-md hover:bg-blue-700 transition-colors" @click="emits('edit-user', user)">
+      <button class="bg-[#0054A6] rounded-2xl px-10 py-0.2 mr-4 shadow-md hover:bg-blue-700 transition-colors" @click="emits('edit-user', user)">
         Modifikuoti
       </button>
-      <button class="bg-[#A61A11] rounded-2xl px-10 py-1 shadow-md hover:bg-red-700 transition-colors" @click="emits('delete-user', user)">
+      <button class="bg-[#A61A11] rounded-2xl px-10 py-0.2 shadow-md hover:bg-red-700 transition-colors" @click="emits('delete-user', user)">
         Ištrinti
       </button>
     </td>
