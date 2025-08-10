@@ -15,10 +15,11 @@
       <div>
         <h3 class="text-lg font-medium mb-4">Skyriai:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
-          <div v-for="(department, index) in departments" :key="department.id" @click="selectDepartment(department)" :class="{
-            'bg-[#0054A6] text-white': selectedDepartments.find((item: any)  => item.id === department.id),
-            'bg-gray-200 text-gray-800': !selectedDepartments.find((item: any) => item.id === department.id)
-          }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
+          <div v-for="(department, index) in departments" :key="department.id" @click="selectDepartment(department)"
+            :class="{
+              'bg-[#0054A6] text-white': selectedDepartments.find((item: any) => item.id === department.id),
+              'bg-gray-200 text-gray-800': !selectedDepartments.find((item: any) => item.id === department.id)
+            }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ department.name }}
           </div>
           <div v-if="errors.selectedDepartments" class="error-message">{{ errors.selectedDepartments }}</div>
@@ -69,25 +70,25 @@ const fetchGroups = async (name: string) => {
 }
 
 const groupSchema = z.object({
-    groupName: z
-        .string()
-        .trim()
-        .min(1, 'Grupės pavadinimas yra privalomas')
-        .min(2, 'Grupės pavadinimas privalo būti bent 2 simbolių')
-        .max(50, 'Grupės pavadinimas negali viršyti 50 simbolių')
-        .regex(/^[\p{L}\s]+$/gu, "Grupės pavadinimas gali turėti tik raides arba tarpus"),
+  groupName: z
+    .string()
+    .trim()
+    .min(1, 'Grupės pavadinimas yra privalomas')
+    .min(2, 'Grupės pavadinimas privalo būti bent 2 simbolių')
+    .max(50, 'Grupės pavadinimas negali viršyti 50 simbolių')
+    .regex(/^[\p{L}\s]+$/gu, "Grupės pavadinimas gali turėti tik raides arba tarpus"),
 
-    selectedDepartments: z.any()
-        .optional()
+  selectedDepartments: z.any()
+    .optional()
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-    validationSchema: toTypedSchema(groupSchema),
+  validationSchema: toTypedSchema(groupSchema),
 
-    initialValues: {
-        groupName: "",
-        selectedDepartments: []
-    },
+  initialValues: {
+    groupName: "",
+    selectedDepartments: []
+  },
 });
 
 const [groupName] = defineField("groupName");
@@ -108,32 +109,34 @@ const selectDepartment = (department: Department) => {
 };
 
 const onSubmit = handleSubmit(async (values) => {
-    if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
-        store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
-        return;
+  if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
+    store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+    return;
+  }
+  await fetchGroups(values.groupName);
+  const filteredGroups = searchedGroups.value.filter((item: any) => item.name === values.groupName);
+  if (filteredGroups.length > 0) {
+    store.addErrorNotification('Tokia grupė jau sukurta!');
+    return;
+  }
+  try {
+    const response = await createGroup(values.groupName);
+    if (selectedDepartments.value && selectedDepartments.value.length > 0) {
+      const groupId = response.id;
+      const departmentsIds = selectedDepartments.value.map((item: any) => item.id);
+      await createDepartmentsGroup(departmentsIds, groupId);
     }
-    await fetchGroups(values.groupName);
-    const filteredGroups = searchedGroups.value.filter((item: any) => item.name === values.groupName);
-    if (filteredGroups.length > 0) {
-        store.addErrorNotification('Tokia grupė jau sukurta!');
-        return;
-    }
-    try {
-        const response = await createGroup(values.groupName);
-        const groupId = response.id;
-        const departmentsIds = selectedDepartments.value.map((item: any) => item.id);
-        await createDepartmentsGroup(departmentsIds, groupId);
-        store.addSuccessNotification('Grupė sukurta sėkmingai!');
-        resetForm();
-        emits('group-submit');
-    }
-    catch (error: any) {
-        store.addErrorNotification(error);
-    }
+    store.addSuccessNotification('Grupė sukurta sėkmingai!');
+    resetForm();
+    emits('group-submit');
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 });
 
 onMounted(() => {
-    fetchDepartments();
+  fetchDepartments();
 })
 
 </script>

@@ -16,7 +16,7 @@
         <h3 class="text-lg font-medium mb-4">Ofisai:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div v-for="(office, index) in offices" :key="office.id" @click="selectOffice(office)" :class="{
-            'bg-[#0054A6] text-white': selectedOffices.find((item: any)  => item.id === office.id),
+            'bg-[#0054A6] text-white': selectedOffices.find((item: any) => item.id === office.id),
             'bg-gray-200 text-gray-800': !selectedOffices.find((item: any) => item.id === office.id)
           }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ office.name }}
@@ -47,25 +47,25 @@ import { createDivision, getDivisions } from "@/services/divisionsService";
 import { createOfficesDivision } from "@/services/officesDivisionsService";
 
 const divisionSchema = z.object({
-    divisionName: z
-        .string()
-        .trim()
-        .min(1, 'Padalinio pavadinimas yra privalomas')
-        .min(2, 'Padalinio pavadinimas privalo būti bent 2 simbolių')
-        .max(50, 'Padalinio pavadinimas negali viršyti 50 simbolių')
-        .regex(/^[\p{L}\s]+$/gu, "Padalinio pavadinimas gali turėti tik raides arba tarpus"),
+  divisionName: z
+    .string()
+    .trim()
+    .min(1, 'Padalinio pavadinimas yra privalomas')
+    .min(2, 'Padalinio pavadinimas privalo būti bent 2 simbolių')
+    .max(50, 'Padalinio pavadinimas negali viršyti 50 simbolių')
+    .regex(/^[\p{L}\s]+$/gu, "Padalinio pavadinimas gali turėti tik raides arba tarpus"),
 
-    selectedOffices: z.any()
-        .optional()
+  selectedOffices: z.any()
+    .optional()
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-    validationSchema: toTypedSchema(divisionSchema),
+  validationSchema: toTypedSchema(divisionSchema),
 
-    initialValues: {
-        divisionName: "",
-        selectedOffices: []
-    },
+  initialValues: {
+    divisionName: "",
+    selectedOffices: []
+  },
 });
 
 const [divisionName] = defineField("divisionName");
@@ -86,13 +86,13 @@ const selectOffice = (office: Office) => {
 };
 
 const fetchOffices = async () => {
-    try {
-        const response = await getOffices();
-        offices.value = response.items;
-    }
-    catch (error: any) {
-        store.addErrorNotification(error);
-    }
+  try {
+    const response = await getOffices();
+    offices.value = response.items;
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 }
 
 const fetchDivisions = async (name: string) => {
@@ -108,32 +108,34 @@ const fetchDivisions = async (name: string) => {
 }
 
 const onSubmit = handleSubmit(async (values) => {
-    if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
-        store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
-        return;
+  if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
+    store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+    return;
+  }
+  await fetchDivisions(values.divisionName);
+  const exist = searchedDivisions.value.find((item: any) => item.name === values.divisionName);
+  if (exist) {
+    store.addErrorNotification('Toks padalinys jau yra sukurtas!');
+    return;
+  }
+  try {
+    const response = await createDivision(values.divisionName);
+    if (selectedOffices.value && selectedOffices.value.length > 0) {
+      const divisionId = response.id;
+      const offices_ids = selectedOffices.value.map((office: Office) => office.id);
+      await createOfficesDivision(offices_ids, divisionId);
     }
-    await fetchDivisions(values.divisionName);
-    const exist = searchedDivisions.value.find((item: any) => item.name === values.divisionName);
-    if (exist) {
-        store.addErrorNotification('Toks padalinys jau yra sukurtas!');
-        return;
-    }
-    try {
-        const response = await createDivision(values.divisionName);
-        const divisionId = response.id;
-        const offices_ids = selectedOffices.value.map((office: Office) => office.id);
-        await createOfficesDivision(offices_ids, divisionId);
-        resetForm();
-        emits('division-submit');
-        store.addSuccessNotification('Padalinys sėkmingai sukurtas!');
-    }
-    catch(error: any){
-        store.addErrorNotification(error);
-    }
+    resetForm();
+    emits('division-submit');
+    store.addSuccessNotification('Padalinys sėkmingai sukurtas!');
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 })
 
 onMounted(() => {
-    fetchOffices();
+  fetchOffices();
 })
 
 </script>

@@ -49,7 +49,7 @@
         <h3 class="text-lg font-medium mb-4">Įmonės:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div v-for="(company, index) in companies" :key="company.id" @click="selectCompany(company)" :class="{
-            'bg-[#0054A6] text-white': selectedCompanies.find((item: any)  => item.id === company.id),
+            'bg-[#0054A6] text-white': selectedCompanies.find((item: any) => item.id === company.id),
             'bg-gray-200 text-gray-800': !selectedCompanies.find((item: any) => item.id === company.id)
           }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ company.name }}
@@ -179,17 +179,19 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   try {
-      const response = await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
+    const response = await createOffice(values.officeName, values.street, values.street_number, values.city, values.country);
+    if (selectedCompanies.value && selectedCompanies.value.length > 0) {
       const officeId = response.id;
-      const companies_ids = selectedCompanies.value.map((company: Company)=> company.id);
+      const companies_ids = selectedCompanies.value.map((company: Company) => company.id);
 
       await createCompaniesOffices(companies_ids, officeId);
-      store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
-      resetForm();
-      emit('office-submit');
+    }
+    store.addSuccessNotification('Ofisas sukurtas sėkmingai!');
+    resetForm();
+    emit('office-submit');
   }
-  catch(error: any) {
-      store.addErrorNotification(error);
+  catch (error: any) {
+    store.addErrorNotification(error);
   }
 
 })
