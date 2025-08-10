@@ -8,7 +8,9 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-            <DepartmentsTableRow v-for="department in departments" :key="department.id" :department="department"/>
+            <DepartmentsTableRow v-for="department in departments" :key="department.id" :department="department"
+            @edit-department="(department) => emits('edit-department', department)"
+            @delete-department="(department) => emits('delete-department', department)"/>
         </tbody>
       </table>
     </div>

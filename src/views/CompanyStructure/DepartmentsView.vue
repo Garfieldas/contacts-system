@@ -3,10 +3,12 @@
         <AddButton @click="switchComponent(CreateDepartmentForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <DepartmentsTable :departments="departments"/>
+    <DepartmentsTable :departments="departments" @edit-department="(department: Department) => {
+        selectDepartment(department); switchComponent(EditDepartmentForm);
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @department-submit="handleSubmit"/>
+        <component :is="currentForm" @department-submit="handleSubmit" :department="selectedDepartment"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -20,6 +22,7 @@ import { useNotificationStore } from '@/stores/notificationstore';
 import { ref, onMounted, watch, computed, shallowRef } from 'vue';
 import CreateDepartmentForm from '@/components/UI/forms/Departments/CreateDepartmentForm.vue';
 import type { Department } from '@/types/departmentType';
+import EditDepartmentForm from '@/components/UI/forms/Departments/EditDepartmentForm.vue';
 const departments = ref();
 const page = ref(1);
 const perPage = ref(25);

@@ -29,3 +29,35 @@ export const createDivisionsDepartment = async (divisions_ids: string[], departm
         throw error;
     }
 }
+
+export const updateDivisionsDepartment = async (id: string, divisions_ids: string[], department_id: string) => {
+    const token = localStorage.getItem('token');
+    const newDivisionDepartment = {
+        "division_id": divisions_ids,
+        "department_id": department_id
+    }
+    try {
+        await axiosInstance.patch(`/divisions_departments/records/${id}`, newDivisionDepartment, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+    catch(error: any){
+        throw error;
+    }
+}
+
+export const deleteDivisionsDepartment = async (id: string) => {
+    const token = localStorage.getItem('token');
+    try {
+        await axiosInstance.delete(`/divisions_departments/records/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+    catch(error: any){
+        throw error;
+    }
+}
