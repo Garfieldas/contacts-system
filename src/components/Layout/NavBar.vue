@@ -3,10 +3,10 @@
         <router-link class="contents" :to="{name: 'contacts'}">
         <img class="w-1/6" src="../../assets/icons/logotipas.png" alt="logotipas"/>
         </router-link>
-        <router-link :to="{name: 'login'}" v-if="!store.isLoggedIn">
+        <router-link :to="{name: 'login'}" v-if="!hideLinks">
         <a href="#">Prisijungti</a>
         </router-link>
-        <div class="flex flex-row justify-between w-full ml-20" v-if="store.isLoggedIn">
+        <div class="flex flex-row justify-between w-full ml-20" v-if="hideLinks">
         <router-link :to="{name: 'contacts'}">
         <a href="#">Kontaktai</a>
         </router-link>
@@ -16,7 +16,7 @@
         <router-link :to="{name: 'company-structure'}">
         <a href="#">Struktūra</a>
         </router-link>
-        <router-link :to="{name: 'admin'}">
+        <router-link :to="{name: 'admin'}" v-if="hideAdminPage">
         <a href="#">Paskyros</a>
         </router-link>
         </div>
@@ -54,6 +54,20 @@ const hideDropDown = ref(true);
 const toggleDropDown = () => {
     hideDropDown.value = hideDropDown.value ? false : true
 }
+
+const hideLinks = computed(() => {
+    if (store.isLoggedIn) {
+        return true;
+    }
+    return false;
+});
+
+const hideAdminPage = computed(() => {
+    if (store.isLoggedIn && store.user_permissions && store.user_permissions.edit_permissions && store.user_permissions.delete_permissions) {
+        return true;
+    }
+    return false;
+});
 const Logout = () => {
     store.Logout();
     notify.addSuccessNotification('Jūs sėkmingai atsijungėte nuo savo paskyros.')
