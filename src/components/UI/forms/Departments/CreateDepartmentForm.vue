@@ -43,7 +43,8 @@ import { useNotificationStore } from "@/stores/notificationstore";
 import { onMounted, ref } from "vue";
 import type { Division } from "@/types/divisionType";
 import { getDivisions } from "@/services/divisionsService";
-import { getDepartments } from "@/services/departmentsService";
+import { createDepartment, getDepartments } from "@/services/departmentsService";
+import { createDivisionsDepartment } from "@/services/divisionsDepartmentsService";
 
 const fetchDivisions = async () => {
     try {
@@ -95,7 +96,7 @@ const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const divisions = ref();
 const searchedDepartments = ref();
-const emits = defineEmits(['division-submit']);
+const emits = defineEmits(['department-submit']);
 
 const selectedDivision = (division: Division) => {
   const exist = selectedDivisions.value.find((item: any) => item.id === division.id);
@@ -116,6 +117,18 @@ const onSubmit = handleSubmit(async (values) => {
     if (filteredDepartments.length > 0) {
         store.addErrorNotification('Toks skyrius jau yra sukurtas');
         return;
+    }
+    try {
+        const response = await createDepartment(values.departmentName);
+        const departmentId = response.id;
+        const divisions_ids = selectedDivisions.value.map((division: Division) => division.id);
+        await createDivisionsDepartment(divisions_ids, departmentId);
+        store.addSuccessNotification('Skyrius sėkmingai sukurtas!');
+        resetForm();
+        emits('department-submit');
+    }
+    catch(error: any) {
+        store.addErrorNotification(error);
     }
 });
 

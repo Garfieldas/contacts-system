@@ -6,7 +6,7 @@
     <DepartmentsTable :departments="departments"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" />
+        <component :is="currentForm" @department-submit="handleSubmit"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
