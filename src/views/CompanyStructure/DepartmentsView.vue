@@ -5,10 +5,13 @@
     </teleport>
     <DepartmentsTable :departments="departments" @edit-department="(department: Department) => {
         selectDepartment(department); switchComponent(EditDepartmentForm);
+    }" @delete-department="(department: Department) => {
+        selectDepartment(department); switchComponent(DeleteDepartmentForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @department-submit="handleSubmit" :department="selectedDepartment"/>
+   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+   :hide-close-button="currentForm === DeleteDepartmentForm">
+        <component :is="currentForm" @department-submit="handleSubmit" :department="selectedDepartment" @cancel-delete="toggleModal"/>
     </BaseModal>
 </template>
 <script setup lang="ts">
@@ -23,6 +26,7 @@ import { ref, onMounted, watch, computed, shallowRef } from 'vue';
 import CreateDepartmentForm from '@/components/UI/forms/Departments/CreateDepartmentForm.vue';
 import type { Department } from '@/types/departmentType';
 import EditDepartmentForm from '@/components/UI/forms/Departments/EditDepartmentForm.vue';
+import DeleteDepartmentForm from '@/components/UI/forms/Departments/DeleteDepartmentForm.vue';
 const departments = ref();
 const page = ref(1);
 const perPage = ref(25);
@@ -32,7 +36,7 @@ const store = useNotificationStore();
 const auth = useAuthenticationStore();
 const isFirstLoad = ref(true);
 
-const currentForm = shallowRef(CreateDepartmentForm);
+const currentForm = shallowRef<typeof CreateDepartmentForm | typeof EditDepartmentForm | typeof DeleteDepartmentForm>(CreateDepartmentForm);
 const showModal = ref(false);
 const toggleModal = () => {
   showModal.value = !showModal.value
