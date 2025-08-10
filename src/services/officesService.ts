@@ -19,14 +19,9 @@ export const createOffice = async (
     city: string,
     country: string
 ) => {
-    const token = localStorage.getItem('token');
     const newOffice = { name, street, street_number, city, country }
     try {
-        const response = await axiosInstance.post('/offices/records', newOffice, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        const response = await axiosInstance.post('/offices/records', newOffice)
         return response.data;
     }
     catch(error: any){
@@ -42,15 +37,9 @@ export const updateOffice = async (
     city: string,
     country: string
 ) => {
-    const token = localStorage.getItem('token');
     const newOffice = { name, street, street_number, city, country }
     try {
-        const response = await axiosInstance.patch(`/offices/records/${id}`, newOffice, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-        return response.data;
+        await axiosInstance.patch(`/offices/records/${id}`, newOffice,)
     }
     catch(error: any){
         throw error;
@@ -58,14 +47,8 @@ export const updateOffice = async (
 }
 
 export const deleteOffice = async (id: string) => {
-    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.delete(`/offices/records/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-        return response.data;
+        await axiosInstance.delete(`/offices/records/${id}`)
     }
     catch(error: any){
         throw error;

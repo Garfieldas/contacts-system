@@ -13,13 +13,8 @@ export const getDivisions = async (params?: string) => {
 }
 
 export const createDivision = async (name: string) => {
-    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.post('/divisions/records', { name }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await axiosInstance.post('/divisions/records', { name });
         const data = response.data;
         return data;
     }
@@ -29,15 +24,8 @@ export const createDivision = async (name: string) => {
 }
 
 export const updateDivision = async (id: string, name: string) => {
-    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.patch(`/divisions/records/${id}`, { name }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        const data = response.data;
-        return data;
+        await axiosInstance.patch(`/divisions/records/${id}`, { name });
     }
     catch (error: any) {
         throw error;
@@ -45,13 +33,8 @@ export const updateDivision = async (id: string, name: string) => {
 }
 
 export const deleteDivision = async (id: string) => {
-    const token = localStorage.getItem('token');
     try {
-        await axiosInstance.delete(`/divisions/records/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        await axiosInstance.delete(`/divisions/records/${id}`);
     }
     catch (error: any) {
         throw error;

@@ -43,7 +43,7 @@ import { useNotificationStore } from "@/stores/notificationstore";
 import { onMounted, ref, watch } from "vue";
 import type { Department } from "@/types/departmentType";
 import { getDepartments } from "@/services/departmentsService";
-import { createGroup, updateGroup } from "@/services/groupsService";
+import { updateGroup } from "@/services/groupsService";
 import { createDepartmentsGroup, updateDepartmentsGroup, deleteDepartmentsGroup, getDepartmentsGroups } from "@/services/departmentsGroupsService";
 
 const fetchDepartments = async () => {

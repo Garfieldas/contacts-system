@@ -12,13 +12,8 @@ export const getGroups = async (params?: string) => {
 }
 
 export const createGroup = async (name: string) => {
-    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.post('/groups/records', { name }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await axiosInstance.post('/groups/records', { name });
         return response.data;
     }
     catch(error: any) {
@@ -27,14 +22,8 @@ export const createGroup = async (name: string) => {
 }
 
 export const updateGroup = async (id: string, name: string) => {
-    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.patch(`/groups/records/${id}`, { name }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return response.data;
+        await axiosInstance.patch(`/groups/records/${id}`, { name });
     }
     catch(error: any) {
         throw error;
@@ -42,13 +31,8 @@ export const updateGroup = async (id: string, name: string) => {
 }
 
 export const deleteGroup = async (id: string) => {
-    const token = localStorage.getItem('token');
     try {
-        await axiosInstance.delete(`/groups/records/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        await axiosInstance.delete(`/groups/records/${id}`);
     }
     catch(error: any) {
         throw error;

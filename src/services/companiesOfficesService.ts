@@ -13,17 +13,12 @@ export const getCompaniesOffices = async(params?: string) => {
 }
 
 export const createCompaniesOffices = async (companies_ids: string[], office_id: string) => {
-    const token = localStorage.getItem('token');
     const newCompanyOffice = {
         "company_id": companies_ids,
         "office_id": office_id
     }
     try {
-        await axiosInstance.post('/companies_offices/records', newCompanyOffice, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        await axiosInstance.post('/companies_offices/records', newCompanyOffice)
     }
     catch(error: any) {
         throw error;
@@ -31,17 +26,12 @@ export const createCompaniesOffices = async (companies_ids: string[], office_id:
 }
 
 export const updateCompaniesOffices = async (id: string, companies_ids: string[], office_id: string) => {
-    const token = localStorage.getItem('token');
     const newCompanyOffice = {
         "company_id": companies_ids,
         "office_id": office_id
     }
     try {
-        await axiosInstance.patch(`/companies_offices/records/${id}`, newCompanyOffice, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        await axiosInstance.patch(`/companies_offices/records/${id}`, newCompanyOffice)
     }
     catch(error: any) {
         throw error;
@@ -49,13 +39,8 @@ export const updateCompaniesOffices = async (id: string, companies_ids: string[]
 }
 
 export const deleteCompaniesOffices = async (id: string) => {
-    const token = localStorage.getItem('token');
     try {
-        await axiosInstance.delete(`/companies_offices/records/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        await axiosInstance.delete(`/companies_offices/records/${id}`)
     }
     catch(error: any) {
         throw error;
