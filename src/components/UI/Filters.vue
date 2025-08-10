@@ -94,7 +94,7 @@ const handleCompanyChange = async () => {
     emitFilters();
 
     if (selectedCompany.value) {
-        await fetchOffices(`?filter=company_id="${selectedCompany.value}"&expand=office_id&fields=expand.office_id`);
+        await fetchOffices(`?filter=company_id~"${selectedCompany.value}"&expand=office_id&fields=id,expand.office_id`);
         displayOffice.value = (offices.value as expandOffice[]).map((item) => item.expand.office_id) || [];
     } else {
         displayOffice.value = [];
@@ -115,7 +115,7 @@ const handleOfficeChange = async () => {
     emitFilters();
 
     if (selectedOffice.value) {
-        await fetchDivisions(`?filter=office_id="${selectedOffice.value}"&expand=division_id&fields=expand.division_id`);
+        await fetchDivisions(`?filter=office_id~"${selectedOffice.value}"&expand=division_id&fields=expand.division_id`);
         displayDivision.value = (divisions.value as expandDivision[]).map(item => item.expand.division_id) || [];
     } else {
         displayDivision.value = [];
@@ -133,7 +133,7 @@ const handleDivisionChange = async () => {
     emitFilters();
 
     if (selectedDivision.value) {
-        await fetchDepartments(`?filter=division_id="${selectedDivision.value}"&expand=department_id&fields=expand.department_id`);
+        await fetchDepartments(`?filter=division_id~"${selectedDivision.value}"&expand=department_id&fields=expand.department_id`);
         displayDepartment.value = (departments.value as expandDepartment[]).map(item => item.expand.department_id) || [];
     } else {
         displayDepartment.value = [];
@@ -148,7 +148,7 @@ const handleDepartmentChange = async () => {
     emitFilters();
 
     if (selectedDepartment.value) {
-        await fetchGroups(`?filter=department_id="${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
+        await fetchGroups(`?filter=department_id~"${selectedDepartment.value}"&expand=group_id&fields=expand.group_id`);
         displayGroup.value = (groups.value as expandGroup[]).map(item => item.expand.group_id) || [];
     } else {
         displayGroup.value = [];
