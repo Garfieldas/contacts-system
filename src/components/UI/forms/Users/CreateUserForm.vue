@@ -33,9 +33,9 @@
       <div>
         <h3 class="text-lg font-medium mb-4 text-center">Administracinės teisės:</h3>
         <div class="flex flex-col justify-center">
-        <div class="mb-4 flex gap-5" v-for="permission in permissions">
-          <input type="checkbox"></input>
-          <label>{{ permission }}</label>
+        <div class="mb-4 flex gap-5" v-for="(permission, key) in permissions">
+          <input type="checkbox" :id="key" v-model="selectedPermissions[key]"></input>
+          <label :for="key">{{ permission }}</label>
         </div>
       </div>
       </div>
@@ -55,19 +55,20 @@ import { ref } from 'vue';
 
 const displayAvatar = ref("Nuotrauka nėra įkėlta");
 const selectedAvatar = ref();
-const permissions = ref([
-  'Redaguoti ir kurti kontaktus',
-  'Trinti kontaktus',
-  'Redaguoti ir kurti įmonės',
-  'Trinti įmonės',
-  'Redaguoti ir kurti ofisus',
-  'Trinti ofisus',
-  'Redaguoti ir kurti struktūras',
-  'Trinti struktūras'
-]
-);
+const permissions = ref({
+  edit_employees: 'Redaguoti ir kurti kontaktus',
+  delete_employees: 'Trinti kontaktus',
+  edit_companies: 'Redaguoti ir kurti įmonės',
+  delete_companies: 'Trinti įmonės',
+  edit_offices: 'Redaguoti ir kurti ofisus',
+  delete_offices: 'Trinti ofisus',
+  edit_structures: 'Redaguoti ir kurti struktūras',
+  delete_structures: 'Trinti struktūras'
+}
+)
 const store = useNotificationStore();
-const selectedPermissions = ref([]);
+
+const selectedPermissions: any = ref({});
 
 const handleFileChange = (event: Event) => {
   const target = event?.target as HTMLInputElement;
