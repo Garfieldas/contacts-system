@@ -58,7 +58,6 @@ const selectedComapny = ref();
 const handleEmit = (company: Company) => selectedComapny.value = company;
 
 const handleSubmit = () => {
-    page.value = 1;
     fetchCompanies();
     showModal.value = false;
 }

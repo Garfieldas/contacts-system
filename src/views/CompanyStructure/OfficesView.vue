@@ -76,7 +76,6 @@ const fetchOffices = async (params?:string) => {
 }
 
 const handleSubmit = () => {
-    page.value = 1;
     fetchOffices();
     showModal.value = false;
 }
