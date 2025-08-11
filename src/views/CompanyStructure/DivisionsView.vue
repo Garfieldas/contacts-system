@@ -54,7 +54,6 @@ const switchComponent = (component: any) => {
 }
 
 const handleSubmit = () => {
-    page.value = 1;
     fetchDivisions();
     showModal.value = false;
 }

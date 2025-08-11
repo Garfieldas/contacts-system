@@ -48,7 +48,6 @@ const switchComponent = (component: any) => {
 }
 
 const handleSubmit = () => {
-    page.value = 1;
     fetchGroups();
     showModal.value = false;
 }
