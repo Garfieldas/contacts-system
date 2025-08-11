@@ -190,8 +190,13 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   await fetchOffices(values.street, values.street_number, values.city, values.country);
+  const exist = searchedOffices.value.filter((item: any) => 
+    item.street.toLowerCase() === values.street.toLowerCase() &&
+    item.street_number.toLowerCase() === values.street_number.toLowerCase() &&
+    item.city.toLowerCase() === values.city.toLowerCase() && 
+    item.country.toLowerCase() === values.country.toLowerCase());
 
-  if (searchedOffices.value.length > 1) {
+  if (exist && exist.length > 1) {
     store.addErrorNotification('Toks ofisas jau egizstuoja')
     return;
   }

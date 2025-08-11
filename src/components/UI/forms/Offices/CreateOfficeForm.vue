@@ -170,10 +170,13 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   await fetchOffices(values.street, values.street_number, values.city, values.country);
-  const exist = searchedOffices.value.find((item: any) => item.street === values.street &&
-    item.street_number === values.street_number && item.city === values.city && item.country === values.country);
+  const exist = searchedOffices.value.filter((item: any) => 
+    item.street.toLowerCase() === values.street.toLowerCase() &&
+    item.street_number.toLowerCase() === values.street_number.toLowerCase() &&
+    item.city.toLowerCase() === values.city.toLowerCase() && 
+    item.country.toLowerCase() === values.country.toLowerCase());
 
-  if (exist) {
+  if (exist && exist.length > 0) {
     store.addErrorNotification('Toks ofisas jau egizstuoja')
     return;
   }
