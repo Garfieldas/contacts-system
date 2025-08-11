@@ -22,7 +22,7 @@ import { updatedCompany } from "@/services/companiesService";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import { useNotificationStore } from "@/stores/notificationstore";
 import { useCompanies } from "@/composables/useCompanies";
-import { watch } from "vue";
+import { watch, ref } from "vue";
 
 const companySchema = z.object({
     companyName: z
@@ -31,7 +31,7 @@ const companySchema = z.object({
         .min(1, 'Įmonės pavadinimas yra privalomas')
         .min(3, 'Įmonės pavadinimas privalo būti bent 3 simbolių')
         .max(50, 'Įmonės pavadinimas negali viršyti 50 simbolių')
-        .regex(/^[\p{L}\s]+$/gu, "Įmonės pavadinimas gali turėti tik raides arba tarpus"),
+        .regex(/^[\p{L}\s\d]+$/gu, 'Įmonės pavadinimas gali būti raidės, tarpas arba skaičius'),
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
@@ -48,22 +48,24 @@ const store = useNotificationStore();
 const { companies, fetchCompanies } = useCompanies();
 const emit = defineEmits(['company-updated']);
 const props = defineProps(['company']);
+const originalCompanyName = ref();
 
 const onSubmit = handleSubmit(async (values) => {
     if (!auth.isLoggedIn && !auth.user_permissions.edit_companies) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
         return;
     }
+    if (values.companyName.toLowerCase() === originalCompanyName.value.toLowerCase()){
+        store.addSuccessNotification('Įmonė sėkmingai atnaujinta')
+        emit('company-updated');
+        return;
+    }
     const searchTerm = `(name?~"${values.companyName}")`;
-    await fetchCompanies('&filter=' + encodeURIComponent(searchTerm));
+    await fetchCompanies('?filter=' + encodeURIComponent(searchTerm));
+    const found = companies.value.filter((item: any) => item.name.toLowerCase() === values.companyName.toLowerCase())
 
-    const existingList = companies.value;
-    const found = existingList.find((item: any) => 
-        item.name === values.companyName
-    );
-
-    if (found) {
-        store.addErrorNotification('Pakeiskite įmonės pavadinimą!');
+    if (found && found.length > 0) {
+        store.addErrorNotification('Tokia įmonė jau yra sukurta');
         return;
     }
     
@@ -79,6 +81,7 @@ const onSubmit = handleSubmit(async (values) => {
 })
 watch(() => props.company, (newCompany) => {
     companyName.value = newCompany.name;
+    originalCompanyName.value = newCompany.name;
 }, {immediate: true})
 
 </script>

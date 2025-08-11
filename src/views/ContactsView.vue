@@ -84,7 +84,6 @@ const handleEmit = (employee: Employee) => selectedEmployee.value = employee;
 const handleSubmit = () => {
   showModal.value = false;
   searchParam.value = '';
-  page.value = 1;
   fetchRequest(fullQuery.value);
 };
 

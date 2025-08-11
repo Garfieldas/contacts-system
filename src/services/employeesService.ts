@@ -45,12 +45,9 @@ export const createEmployee = async (
   if (group_id) formData.append("group_id", group_id);
   if (photo) formData.append("photo", photo);
 
-  const token = localStorage.getItem("token");
-
   try {
     await axiosInstance.post("/employees/records", formData, {
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     });
@@ -88,12 +85,9 @@ export const updateEmployee = async (
   if (group_id) formData.append("group_id", group_id);
   if (photo) formData.append("photo", photo);
 
-  const token = localStorage.getItem("token");
-
   try {
     await axiosInstance.patch(`/employees/records/${id}`, formData, {
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     });
@@ -103,13 +97,8 @@ export const updateEmployee = async (
 };
 
 export const deleteEmployee = async (id: string) => {
-  const token = localStorage.getItem('token');
   try {
-      await axiosInstance.delete(`/employees/records/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      await axiosInstance.delete(`/employees/records/${id}`)
   }
   catch (error: any) {
     throw error;
