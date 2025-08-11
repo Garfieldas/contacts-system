@@ -114,8 +114,8 @@ const onSubmit = handleSubmit(async (values) => {
     return;
   }
   await fetchGroups(values.groupName);
-  const filteredGroups = searchedGroups.value.filter((item: any) => item.name === values.groupName);
-  if (filteredGroups.length > 0) {
+  const exist = searchedGroups.value.filter((item: any) => item.name.toLowerCase() === values.groupName.toLowerCase());
+  if (exist && exist.length > 0) {
     store.addErrorNotification('Tokia grupė jau sukurta!');
     return;
   }

@@ -133,22 +133,24 @@ const onSubmit = handleSubmit(async (values) => {
         return;
     }
     await fetchGroups(values.groupName);
-    const filteredGroups = searchedGroups.value.filter((item: any) => item.name === values.groupName);
-    if (filteredGroups.length > 1) {
+    const exist = searchedGroups.value.filter((item: any) => item.name.toLowerCase() === values.groupName.toLowerCase());
+    if (exist && exist.length > 0) {
         store.addErrorNotification('Tokia grupė jau sukurta!');
         return;
     }
     try {
         await updateGroup(props.group.id, values.groupName);
         const departmentsIds = selectedDepartments.value.map((item: any) => item.id);
-            if (!departmentsGroupId.value) {
-            await createDepartmentsGroup(departmentsIds, props.group.id);
+        if (departmentsIds.length > 0) {
+          if (departmentsGroupId.value) {
+              await updateDepartmentsGroup(departmentsGroupId.value ,departmentsIds, props.group.id);
+          }
+          else {
+              await createDepartmentsGroup(departmentsIds, props.group.id);
+          }
         }
-        else if (departmentsGroupId.value && selectedDepartments.value.length === 0) {
-            await deleteDepartmentsGroup(departmentsGroupId.value);
-        }
-        else {
-            await updateDepartmentsGroup(departmentsGroupId.value ,departmentsIds, props.group.id);
+        else if(departmentsGroupId.value) {
+              await deleteDepartmentsGroup(departmentsGroupId.value);
         }
         store.addSuccessNotification('Grupė atnaujinta sėkmingai!');
         resetForm();
