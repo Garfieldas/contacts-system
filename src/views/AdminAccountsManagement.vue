@@ -1,11 +1,14 @@
 <template>
     <BaseLayout title="Admin paskyros">
     <div class="flex items-center mb-6 gap-12" id="button">
-        <AddButton v-if="hideActions"/>
+        <AddButton v-if="hideActions" @click="switchComponent(CreateUserForm)"/>
         <h2>Sukūrti naują admin paskyrą:</h2>
     </div>
     <UsersTable :users="users"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
+        <component :is="currentForm" />
+    </BaseModal>
     </BaseLayout>
 </template>
 <script setup lang="ts">
@@ -13,10 +16,12 @@ import BaseLayout from '@/components/Layout/BaseLayout.vue';
 import AddButton from '@/components/UI/AddButton.vue';
 import UsersTable from '@/components/UI/Users/UsersTable.vue';
 import Pagination from '@/components/Layout/Pagination.vue';
+import BaseModal from '@/components/UI/BaseModal.vue';
 import { getUsers } from '@/services/usersService';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { onMounted, ref, computed, watch } from 'vue';
+import { onMounted, ref, computed, watch, shallowRef } from 'vue';
+import CreateUserForm from '@/components/UI/forms/Users/CreateUserForm.vue';
 const users = ref();
 const page = ref(1);
 const perPage=ref(25);
@@ -25,6 +30,16 @@ const totalPages = ref();
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
 const isFirstLoad = ref(true);
+
+const currentForm = shallowRef<typeof CreateUserForm>(CreateUserForm);
+const showModal = ref(false);
+const toggleModal = () => {
+  showModal.value = !showModal.value
+}
+const switchComponent = (component: any) => {
+    showModal.value = true;
+    currentForm.value = component;
+}
 
 const hideActions = computed(() => {
     if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_permissions && auth.user_permissions.delete_permissions) {
