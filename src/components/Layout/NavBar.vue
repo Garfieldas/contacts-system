@@ -63,7 +63,7 @@ const hideLinks = computed(() => {
 });
 
 const hideAdminPage = computed(() => {
-    if (store.isLoggedIn && store.user_permissions && store.user_permissions.edit_permissions && store.user_permissions.delete_permissions) {
+    if (store.isLoggedIn && store.user.username === 'admin' ) {
         return true;
     }
     return false;

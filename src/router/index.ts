@@ -84,9 +84,7 @@ const router = createRouter({
         const auth = useAuthenticationStore();
         if (
           auth.isLoggedIn &&
-          auth.user_permissions &&
-          auth.user_permissions.edit_permissions &&
-          auth.user_permissions.delete_permissions
+          auth.user.username === 'admin' 
         ) {
           next();
         } else {
