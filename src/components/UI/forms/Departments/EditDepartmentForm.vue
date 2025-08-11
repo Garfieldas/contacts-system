@@ -142,16 +142,17 @@ const onSubmit = handleSubmit(async (values) => {
     await updateDepartment(props.department.id, values.departmentName);
     const divisions_ids = selectedDivisions.value.map((division: Division) => division.id);
     if (divisions_ids.length > 0) {
-      if (divisionsDepartmentId.value) {
-        await updateDivisionsDepartment(divisionsDepartmentId.value, divisions_ids, props.department.id);
+      if(divisionsDepartmentId.value) {
+        await updateDivisionsDepartment(divisionsDepartmentId.value, divisions_ids, props.department.id)
       }
       else {
         await createDivisionsDepartment(divisions_ids, props.department.id);
       }
     }
-    else if (divisionsDepartmentId.value) {
-      await deleteDivisionsDepartment(divisionsDepartmentId.value);
+    else if(divisionsDepartmentId.value){
+        await deleteDivisionsDepartment(divisionsDepartmentId.value);
     }
+    divisionsDepartmentId.value = '';
     store.addSuccessNotification('Skyrius atnaujintas sukurtas!');
     resetForm();
     emits('department-submit');

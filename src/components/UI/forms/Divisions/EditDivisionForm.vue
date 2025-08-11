@@ -151,6 +151,7 @@ const onSubmit = handleSubmit(async (values) => {
         else {
             await updateOfficesDivision(officesDivisionsId.value, offices_ids, props.division.id)
         }
+        officesDivisionsId.value = '';
         resetForm();
         emits('division-submit');
         store.addSuccessNotification('Padalinys sėkmingai atnaujintas!');
