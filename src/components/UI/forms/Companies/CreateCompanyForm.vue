@@ -30,7 +30,7 @@ const companySchema = z.object({
         .min(1, 'Įmonės pavadinimas yra privalomas')
         .min(3, 'Įmonės pavadinimas privalo būti bent 3 simbolių')
         .max(50, 'Įmonės pavadinimas negali viršyti 50 simbolių')
-        .regex(/^[\p{L}\s]+$/gu, "Įmonės pavadinimas gali turėti tik raides arba tarpus"),
+        .regex(/^[\p{L}\s\d]+$/gu, 'Įmonės pavadinimas gali būti raidės, tarpas arba skaičius'),
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
@@ -53,14 +53,11 @@ const onSubmit = handleSubmit(async (values) => {
         return;
     }
     const searchTerm = `(name?~"${values.companyName}")`;
-    await fetchCompanies('&filter=' + encodeURIComponent(searchTerm));
+    await fetchCompanies('?filter=' + encodeURIComponent(searchTerm));
+    const found = companies.value.filter((item: any) => item.name.toLowerCase() === values.companyName.toLowerCase())
+    console.log(found)
 
-    const existingList = companies.value;
-    const found = existingList.find((item: any) => 
-        item.name === values.companyName
-    );
-
-    if (found) {
+    if (found && found.length > 0) {
         store.addErrorNotification('Tokia įmonė jau yra sukurta');
         return;
     }
