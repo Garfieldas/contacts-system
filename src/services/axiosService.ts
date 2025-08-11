@@ -4,6 +4,21 @@ export const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const jwtToken = localStorage.getItem("token");
+    if (jwtToken) {
+      config.headers = config.headers ?? {};
+      (config.headers as any).Authorization = `Bearer ${jwtToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    const errorMessage = "Nepavyko autorizuotis";
+    return Promise.reject(errorMessage);
+  }
+);
+
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;

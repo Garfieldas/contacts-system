@@ -11,3 +11,38 @@ export const getDivisionsDepartments = async (params?: string) => {
         throw error;
     }
 }
+
+export const createDivisionsDepartment = async (divisions_ids: string[], department_id: string) => {
+    const newDivisionDepartment = {
+        "division_id": divisions_ids,
+        "department_id": department_id
+    }
+    try {
+        await axiosInstance.post('/divisions_departments/records', newDivisionDepartment);
+    }
+    catch(error: any){
+        throw error;
+    }
+}
+
+export const updateDivisionsDepartment = async (id: string, divisions_ids: string[], department_id: string) => {
+    const newDivisionDepartment = {
+        "division_id": divisions_ids,
+        "department_id": department_id
+    }
+    try {
+        await axiosInstance.patch(`/divisions_departments/records/${id}`, newDivisionDepartment);
+    }
+    catch(error: any){
+        throw error;
+    }
+}
+
+export const deleteDivisionsDepartment = async (id: string) => {
+    try {
+        await axiosInstance.delete(`/divisions_departments/records/${id}`);
+    }
+    catch(error: any){
+        throw error;
+    }
+}

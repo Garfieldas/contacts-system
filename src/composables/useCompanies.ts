@@ -12,7 +12,7 @@ export const useCompanies = () => {
     const totalPages = ref();
 
     const fetchCompanies = async (params?: string) => {
-        let url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : '';
+        let url = params? `${params}` : `?page=${page.value}&perPage=${perPage.value}`;
         try {
             const response = await getCompanies(url);
             companies.value = response.items;

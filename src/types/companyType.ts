@@ -6,3 +6,9 @@ export interface Company {
     name: string,
     updated: string,
 }
+
+export interface expandCompany {
+    expand: {
+        company_id: Company
+    }
+}

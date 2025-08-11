@@ -13,7 +13,7 @@
         <h2>Pridėti naują įmonę</h2>
     </div>
     <div class="text-sm text-gray-600 mb-15">
-        Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
+        Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} įmonių</span>
     </div>
     <CompanyTable :companies="companies" @edit-company="(company) => {
       handleEmit(company); switchComponent(EditCompanyForm);
@@ -58,7 +58,6 @@ const selectedComapny = ref();
 const handleEmit = (company: Company) => selectedComapny.value = company;
 
 const handleSubmit = () => {
-    page.value = 1;
     fetchCompanies();
     showModal.value = false;
 }
