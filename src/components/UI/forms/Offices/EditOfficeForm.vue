@@ -86,6 +86,7 @@ const searchedOffices = ref();
 const props = defineProps(['office']);
 const emit = defineEmits(['office-submit']);
 const companiesOfficesId = ref('');
+const initialOfficeData = ref({});
 
 const selectCompany = (company: Company) => {
   const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
@@ -196,7 +197,7 @@ const onSubmit = handleSubmit(async (values) => {
     item.city.toLowerCase() === values.city.toLowerCase() && 
     item.country.toLowerCase() === values.country.toLowerCase());
 
-  if (exist && exist.length > 1) {
+  if (exist && exist.length > 0) {
     store.addErrorNotification('Toks ofisas jau egizstuoja')
     return;
   }
@@ -231,7 +232,8 @@ onMounted(() => {
 });
 
 watch(() => props.office, async (newOffice) => {
-
+    initialOfficeData.value = {...newOffice};
+  
     officeName.value = newOffice.name;
     street.value = newOffice.street;
     street_number.value = newOffice.street_number;
