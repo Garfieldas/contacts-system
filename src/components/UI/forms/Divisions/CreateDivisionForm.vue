@@ -113,8 +113,8 @@ const onSubmit = handleSubmit(async (values) => {
     return;
   }
   await fetchDivisions(values.divisionName);
-  const exist = searchedDivisions.value.find((item: any) => item.name === values.divisionName);
-  if (exist) {
+  const exist = searchedDivisions.value.filter((item: any) => item.name.toLowerCase() === values.divisionName.toLowerCase());
+  if (exist && exist.length > 0) {
     store.addErrorNotification('Toks padalinys jau yra sukurtas!');
     return;
   }
