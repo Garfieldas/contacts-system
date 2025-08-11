@@ -152,6 +152,7 @@ const onSubmit = handleSubmit(async (values) => {
         else if(departmentsGroupId.value) {
               await deleteDepartmentsGroup(departmentsGroupId.value);
         }
+        departmentsGroupId.value = '';
         store.addSuccessNotification('Grupė atnaujinta sėkmingai!');
         resetForm();
         emits('group-submit');
