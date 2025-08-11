@@ -142,14 +142,16 @@ const onSubmit = handleSubmit(async (values) => {
     try {
         await updateDivision(props.division.id, values.divisionName);
         const offices_ids = selectedOffices.value.map((office: Office) => office.id);
-        if (!officesDivisionsId.value) {
-            await createOfficesDivision(offices_ids, props.division.id);
+        if (offices_ids.length > 0) {
+            if (officesDivisionsId.value) {
+                await updateOfficesDivision(officesDivisionsId.value, offices_ids, props.division.id)
+            }
+            else {
+                await createOfficesDivision(offices_ids, props.division.id);
+            }
         }
-        else if (officesDivisionsId.value && selectedOffices.value.length === 0) {
-            await deleteOfficesDivision(officesDivisionsId.value)
-        }
-        else {
-            await updateOfficesDivision(officesDivisionsId.value, offices_ids, props.division.id)
+        else if(officesDivisionsId.value) {
+                await deleteOfficesDivision(officesDivisionsId.value)
         }
         officesDivisionsId.value = '';
         resetForm();
