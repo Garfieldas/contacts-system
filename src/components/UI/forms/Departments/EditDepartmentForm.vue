@@ -16,7 +16,7 @@
         <h3 class="text-lg font-medium mb-4">Padaliniai:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
           <div v-for="(division, index) in divisions" :key="division.id" @click="selectedDivision(division)" :class="{
-            'bg-[#0054A6] text-white': selectedDivisions.find((item: any)  => item.id === division.id),
+            'bg-[#0054A6] text-white': selectedDivisions.find((item: any) => item.id === division.id),
             'bg-gray-200 text-gray-800': !selectedDivisions.find((item: any) => item.id === division.id)
           }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ division.name }}
@@ -43,17 +43,17 @@ import { useNotificationStore } from "@/stores/notificationstore";
 import { onMounted, ref, watch } from "vue";
 import type { Division } from "@/types/divisionType";
 import { getDivisions } from "@/services/divisionsService";
-import { createDepartment, getDepartments, updateDepartment } from "@/services/departmentsService";
+import { getDepartments, updateDepartment } from "@/services/departmentsService";
 import { createDivisionsDepartment, deleteDivisionsDepartment, getDivisionsDepartments, updateDivisionsDepartment } from "@/services/divisionsDepartmentsService";
 
 const fetchDivisions = async () => {
-    try {
-        const response = await getDivisions();
-        divisions.value = response.items;
-    }
-    catch (error: any) {
-        store.addErrorNotification(error);
-    }
+  try {
+    const response = await getDivisions();
+    divisions.value = response.items;
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 }
 
 const fetchDepartments = async (name: string) => {
@@ -69,43 +69,43 @@ const fetchDepartments = async (name: string) => {
 }
 
 const fetchDivisionsDepartment = async (params?: string) => {
-    const url = params ? `${params}` : '';
-    try {
-        const response = await getDivisionsDepartments(url);
-        if (response.items.length > 0) {
-            divisionsDepartmentId.value = response.items[0].id;
-            const associatedDivisions = response.items[0].expand.division_id;
-            selectedDivisions.value = associatedDivisions;
-        }
-        else {
-            selectedDivisions.value = [];
-        }
+  const url = params ? `${params}` : '';
+  try {
+    const response = await getDivisionsDepartments(url);
+    if (response.items.length > 0) {
+      divisionsDepartmentId.value = response.items[0].id;
+      const associatedDivisions = response.items[0].expand.division_id;
+      selectedDivisions.value = associatedDivisions;
     }
-    catch (error: any) {
-        store.addErrorNotification(error);
+    else {
+      selectedDivisions.value = [];
     }
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 }
 
 const departmentSchema = z.object({
-    departmentName: z
-        .string()
-        .trim()
-        .min(1, 'Skyriaus pavadinimas yra privalomas')
-        .min(2, 'Skyriaus pavadinimas privalo būti bent 2 simbolių')
-        .max(50, 'Skyriaus pavadinimas negali viršyti 50 simbolių')
-        .regex(/^[\p{L}\s]+$/gu, "Padalinio pavadinimas gali turėti tik raides arba tarpus"),
+  departmentName: z
+    .string()
+    .trim()
+    .min(1, 'Skyriaus pavadinimas yra privalomas')
+    .min(2, 'Skyriaus pavadinimas privalo būti bent 2 simbolių')
+    .max(50, 'Skyriaus pavadinimas negali viršyti 50 simbolių')
+    .regex(/^[\p{L}\s]+$/gu, "Padalinio pavadinimas gali turėti tik raides arba tarpus"),
 
-    selectedDivisions: z.any()
-        .optional()
+  selectedDivisions: z.any()
+    .optional()
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-    validationSchema: toTypedSchema(departmentSchema),
+  validationSchema: toTypedSchema(departmentSchema),
 
-    initialValues: {
-        departmentName: "",
-        selectedDivisions: []
-    },
+  initialValues: {
+    departmentName: "",
+    selectedDivisions: []
+  },
 });
 
 const [departmentName] = defineField("departmentName");
@@ -128,45 +128,47 @@ const selectedDivision = (division: Division) => {
 };
 
 const onSubmit = handleSubmit(async (values) => {
-    if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
-        store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
-        return;
+  if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
+    store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+    return;
+  }
+  await fetchDepartments(values.departmentName);
+  const exist = searchedDepartments.value.filter((item: any) => item.name.toLowerCase() === values.departmentName.toLowerCase());
+  if (exist && exist.length > 0) {
+    store.addErrorNotification('Toks skyrius jau yra sukurtas');
+    return;
+  }
+  try {
+    await updateDepartment(props.department.id, values.departmentName);
+    const divisions_ids = selectedDivisions.value.map((division: Division) => division.id);
+    if (divisions_ids.length > 0) {
+      if (divisionsDepartmentId.value) {
+        await updateDivisionsDepartment(divisionsDepartmentId.value, divisions_ids, props.department.id);
+      }
+      else {
+        await createDivisionsDepartment(divisions_ids, props.department.id);
+      }
     }
-    await fetchDepartments(values.departmentName);
-    const filteredDepartments = searchedDepartments.value.filter((item: any) => item.name === values.departmentName);
-    if (filteredDepartments.length > 1) {
-        store.addErrorNotification('Toks skyrius jau yra sukurtas');
-        return;
+    else if (divisionsDepartmentId.value) {
+      await deleteDivisionsDepartment(divisionsDepartmentId.value);
     }
-    try {
-        await updateDepartment(props.department.id, values.departmentName);
-        const divisions_ids = selectedDivisions.value.map((division: Division) => division.id);
-        if (!divisionsDepartmentId.value) {
-            await createDivisionsDepartment(divisions_ids, props.department.id);
-        }
-        else if (divisionsDepartmentId.value && selectedDivisions.value.length === 0) {
-            await deleteDivisionsDepartment(divisionsDepartmentId.value)
-        }
-        else {
-            await updateDivisionsDepartment(divisionsDepartmentId.value, divisions_ids, props.department.id)
-        }
-        store.addSuccessNotification('Skyrius atnaujintas sukurtas!');
-        resetForm();
-        emits('department-submit');
-    }
-    catch(error: any) {
-        store.addErrorNotification(error);
-    }
+    store.addSuccessNotification('Skyrius atnaujintas sukurtas!');
+    resetForm();
+    emits('department-submit');
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 });
 
 onMounted(() => {
-    fetchDivisions();
+  fetchDivisions();
 });
 
 watch(() => props.department, async (newDepartment) => {
 
-    departmentName.value = newDepartment.name;
-    await fetchDivisionsDepartment(`?filter=department_id="${newDepartment.id}"&expand=division_id&fields=id,expand.division_id`);
-}, {immediate: true})
+  departmentName.value = newDepartment.name;
+  await fetchDivisionsDepartment(`?filter=department_id="${newDepartment.id}"&expand=division_id&fields=id,expand.division_id`);
+}, { immediate: true })
 
 </script>

@@ -113,8 +113,8 @@ const onSubmit = handleSubmit(async (values) => {
     return;
   }
   await fetchDepartments(values.departmentName);
-  const filteredDepartments = searchedDepartments.value.filter((item: any) => item.name === values.departmentName);
-  if (filteredDepartments.length > 0) {
+  const exist = searchedDepartments.value.filter((item: any) => item.name.toLowerCase() === values.departmentName.toLowerCase());
+  if (exist && exist.length > 0) {
     store.addErrorNotification('Toks skyrius jau yra sukurtas');
     return;
   }
