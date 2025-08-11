@@ -7,7 +7,7 @@
     <UsersTable :users="users"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" />
+        <component :is="currentForm" @user-submit="handleSubmit"/>
     </BaseModal>
     </BaseLayout>
 </template>
@@ -47,6 +47,12 @@ const hideActions = computed(() => {
     }
     return false;
 });
+
+const handleSubmit = () => {
+    fetchUsers();
+    showModal.value = false;
+}
+
 
 const fetchUsers = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
