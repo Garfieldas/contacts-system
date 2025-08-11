@@ -22,7 +22,7 @@ import { updatedCompany } from "@/services/companiesService";
 import { useAuthenticationStore } from "@/stores/authenticationStore";
 import { useNotificationStore } from "@/stores/notificationstore";
 import { useCompanies } from "@/composables/useCompanies";
-import { watch } from "vue";
+import { watch, ref } from "vue";
 
 const companySchema = z.object({
     companyName: z
@@ -48,10 +48,16 @@ const store = useNotificationStore();
 const { companies, fetchCompanies } = useCompanies();
 const emit = defineEmits(['company-updated']);
 const props = defineProps(['company']);
+const originalCompanyName = ref();
 
 const onSubmit = handleSubmit(async (values) => {
     if (!auth.isLoggedIn && !auth.user_permissions.edit_companies) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+        return;
+    }
+    if (values.companyName.toLowerCase() === originalCompanyName.value.toLowerCase()){
+        store.addSuccessNotification('Įmonė sėkmingai atnaujinta')
+        emit('company-updated');
         return;
     }
     const searchTerm = `(name?~"${values.companyName}")`;
@@ -75,6 +81,7 @@ const onSubmit = handleSubmit(async (values) => {
 })
 watch(() => props.company, (newCompany) => {
     companyName.value = newCompany.name;
+    originalCompanyName.value = newCompany.name;
 }, {immediate: true})
 
 </script>
