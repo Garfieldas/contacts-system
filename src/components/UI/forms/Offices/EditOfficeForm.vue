@@ -215,6 +215,7 @@ const onSubmit = handleSubmit(async (values) => {
     else if(companiesOfficesId.value) {
         await deleteCompaniesOffices(companiesOfficesId.value)
     }
+    companiesOfficesId.value = '';
     store.addSuccessNotification('Ofisas atnaujintas sėkmingai!');
     resetForm();
     emit('office-submit');
