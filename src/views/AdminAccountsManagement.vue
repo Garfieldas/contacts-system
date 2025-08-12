@@ -4,10 +4,12 @@
         <AddButton v-if="hideActions" @click="switchComponent(CreateUserForm)"/>
         <h2>Sukūrti naują admin paskyrą:</h2>
     </div>
-    <UsersTable :users="users"/>
+    <UsersTable :users="users" @edit-user="(user: User) => {
+        selectUser(user); switchComponent(EditUserForm);
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @user-submit="handleSubmit"/>
+        <component :is="currentForm" @user-submit="handleSubmit" :user="selectedUser" @cance-action="toggleModal"/>
     </BaseModal>
     </BaseLayout>
 </template>
@@ -22,6 +24,8 @@ import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 import { onMounted, ref, computed, watch, shallowRef } from 'vue';
 import CreateUserForm from '@/components/UI/forms/Users/CreateUserForm.vue';
+import type { User } from '@/types/userType';
+import EditUserForm from '@/components/UI/forms/Users/EditUserForm.vue';
 const users = ref();
 const page = ref(1);
 const perPage=ref(25);
@@ -30,6 +34,7 @@ const totalPages = ref();
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
 const isFirstLoad = ref(true);
+const selectedUser = ref();
 
 const currentForm = shallowRef<typeof CreateUserForm>(CreateUserForm);
 const showModal = ref(false);
@@ -47,6 +52,8 @@ const hideActions = computed(() => {
     }
     return false;
 });
+
+const selectUser = (user: User) => selectedUser.value = user;
 
 const handleSubmit = () => {
     fetchUsers();
