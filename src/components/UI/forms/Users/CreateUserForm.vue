@@ -103,7 +103,7 @@ const userSchema = z.object({
     .trim()
     .min(1, "Vardas privalomas")
     .min(3, "Vardas privalo būti bent 3 simbolių")
-    .max(20, "Vardas privalo neviršyti 20 simbolių")
+    .max(50, "Vardas privalo neviršyti 50 simbolių")
     .regex(/^[\p{L}\s]+$/gu, "Vardas gali turėti tik raides"),
 
   email: z
@@ -173,10 +173,8 @@ const onSubmit = handleSubmit(async (values) => {
     return;
   }
   try {
-    if (selectedPermissions.value && selectedPermissions.value.length > 0) {
-      const response = await createUserPermissions(selectedPermissions.value);
-      permissionsId.value = response.id;
-    }
+    const response = await createUserPermissions(selectedPermissions.value);
+    permissionsId.value = response.id;
     await createUser(values.name, values.email, permissionsId.value, selectedAvatar.value);
     resetForm();
     store.addSuccessNotification('Vartotojas sukurtas sėkmingai!');

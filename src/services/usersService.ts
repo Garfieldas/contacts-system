@@ -15,6 +15,17 @@ export const createUser = async (name: string, email: string, permissions_id?: s
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
+    const chars = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const passwordLength = 12;
+    let password = "";
+    let passwordConfirm ="";
+    for (let i = 0; i <= passwordLength; i++) {
+        let randomNumber = Math.floor(Math.random() * chars.length);
+        password += chars.substring(randomNumber, randomNumber +1);
+    }
+    passwordConfirm = password;
+    formData.append("password", password);
+    formData.append("passwordConfirm", passwordConfirm);
     if (permissions_id) formData.append("permissions_id", permissions_id);
     if (avatar) formData.append("avatar", avatar);
     try {
