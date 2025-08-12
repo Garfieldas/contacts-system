@@ -39,6 +39,22 @@ export const createUser = async (name: string, email: string, permissions_id?: s
     }
 };
 
+export const updateUser = async (id: string, name: string, email: string, avatar?: File) => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    if (avatar) formData.append("avatar", avatar);
+    try {
+        await axiosInstance.patch(`/users/records/${id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    } catch (error: any) {
+        throw error;
+    }
+};
+
 export const createUserPermissions = async (permissions: string[]) => {
     console.log(permissions)
     try {
