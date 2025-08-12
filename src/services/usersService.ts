@@ -56,10 +56,18 @@ export const updateUser = async (id: string, name: string, email: string, avatar
 };
 
 export const createUserPermissions = async (permissions: string[]) => {
-    console.log(permissions)
     try {
         const response = await axiosInstance.post('/user_permissions/records', permissions);
         return response.data;
+    }
+    catch (error: any) {
+        throw error;
+    }
+}
+
+export const updateUserPermissions = async (id: string, permissions: string[]) => {
+    try {
+        await axiosInstance.patch(`/user_permissions/records/${id}`, permissions);
     }
     catch (error: any) {
         throw error;

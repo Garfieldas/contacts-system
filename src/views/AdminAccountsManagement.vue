@@ -6,6 +6,8 @@
     </div>
     <UsersTable :users="users" @edit-user="(user: User) => {
         selectUser(user); switchComponent(EditUserForm);
+    }" @edit-permissions="(user: User) => {
+        selectUser(user); switchComponent(EditUserPermissionsForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
@@ -26,6 +28,7 @@ import { onMounted, ref, computed, watch, shallowRef } from 'vue';
 import CreateUserForm from '@/components/UI/forms/Users/CreateUserForm.vue';
 import type { User } from '@/types/userType';
 import EditUserForm from '@/components/UI/forms/Users/EditUserForm.vue';
+import EditUserPermissionsForm from '@/components/UI/forms/Users/EditUserPermissionsForm.vue';
 const users = ref();
 const page = ref(1);
 const perPage=ref(25);
