@@ -55,6 +55,14 @@ export const updateUser = async (id: string, name: string, email: string, avatar
     }
 };
 
+export const deleteUser = async (id: string) => {
+    try {
+        await axiosInstance.delete(`/users/records/${id}`);
+    } catch (error: any) {
+        throw error;
+    }
+};
+
 export const createUserPermissions = async (permissions: string[]) => {
     try {
         const response = await axiosInstance.post('/user_permissions/records', permissions);
@@ -68,6 +76,15 @@ export const createUserPermissions = async (permissions: string[]) => {
 export const updateUserPermissions = async (id: string, permissions: string[]) => {
     try {
         await axiosInstance.patch(`/user_permissions/records/${id}`, permissions);
+    }
+    catch (error: any) {
+        throw error;
+    }
+}
+
+export const deleteUserPermissions = async (id: string) => {
+    try {
+        await axiosInstance.delete(`/user_permissions/records/${id}`);
     }
     catch (error: any) {
         throw error;

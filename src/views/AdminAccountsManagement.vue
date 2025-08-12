@@ -8,10 +8,13 @@
         selectUser(user); switchComponent(EditUserForm);
     }" @edit-permissions="(user: User) => {
         selectUser(user); switchComponent(EditUserPermissionsForm);
+    }" @delete-user="(user: User) => {
+        selectUser(user); switchComponent(DeleteUserForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions">
-        <component :is="currentForm" @user-submit="handleSubmit" :user="selectedUser" @cance-action="toggleModal"/>
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+    :hide-close-button="currentForm === DeleteUserForm">
+        <component :is="currentForm" @user-submit="handleSubmit" :user="selectedUser" @cancel-action="toggleModal"/>
     </BaseModal>
     </BaseLayout>
 </template>
@@ -29,6 +32,7 @@ import CreateUserForm from '@/components/UI/forms/Users/CreateUserForm.vue';
 import type { User } from '@/types/userType';
 import EditUserForm from '@/components/UI/forms/Users/EditUserForm.vue';
 import EditUserPermissionsForm from '@/components/UI/forms/Users/EditUserPermissionsForm.vue';
+import DeleteUserForm from '@/components/UI/forms/Users/DeleteUserForm.vue';
 const users = ref();
 const page = ref(1);
 const perPage=ref(25);
