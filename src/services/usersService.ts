@@ -26,6 +26,7 @@ export const createUser = async (name: string, email: string, permissions_id?: s
     passwordConfirm = password;
     formData.append("password", password);
     formData.append("passwordConfirm", passwordConfirm);
+    formData.append("emailVisibility", "true");
     if (permissions_id) formData.append("permissions_id", permissions_id);
     if (avatar) formData.append("avatar", avatar);
     try {
