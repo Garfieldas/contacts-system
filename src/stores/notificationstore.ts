@@ -31,6 +31,10 @@ export const useNotificationStore = defineStore('notifications', () => {
   }
 
   const addNotification = (message: string, type: string) => {
+    const exist = notifications.value.filter((item: Notification) => item.message === message);
+    if (exist && exist.length > 0){
+      return;
+    }
     const id = uuidv4();
     const notification = { id, message, type } as Notification;
     notifications.value.push(notification);
