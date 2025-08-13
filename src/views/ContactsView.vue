@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts"
+  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
   :hide-close-button="currentForm === DeleteContactForm">
     <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
     @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
@@ -53,7 +53,7 @@ const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEm
 
 const currentDisplay = shallowRef(ContactList);
 const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
-const { showEditContacts } = useActions();
+const { showEditContacts, showDeleteContacts } = useActions();
 
 const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;
