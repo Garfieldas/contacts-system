@@ -46,7 +46,7 @@ export const useActions = () => {
         return false;
     })
 
-    const showEditStructures = computed(() => {
+    const showEditStructure = computed(() => {
         if (auth.isLoggedIn && auth.user_permissions.edit_structure) {
             return true;
         }
@@ -64,6 +64,6 @@ export const useActions = () => {
         showEditContacts, showDeleteContacts,
         showEditCompanies, showDeleteCompanies,
         showEditOffices, showDeleteOffices,
-        showEditStructures, showDeleteStructure
+        showEditStructure, showDeleteStructure
     }
 }
