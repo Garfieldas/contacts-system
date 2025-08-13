@@ -46,7 +46,6 @@ import { useAuthenticationStore } from '@/stores/authenticationStore';
 const hidePassword = ref(true);
 const hidePassword2 = ref(true);
 const store = useNotificationStore();
-const auth = useAuthenticationStore();
 const router = useRouter();
 const props = defineProps(['token'])
 
@@ -91,7 +90,6 @@ const onSubmit = handleSubmit(async (values) => {
         await createUserPassword(props.token, values.password, values.password2);
         resetForm();
         store.addSuccessNotification('Slaptažodis sėkmingai pakeistas! Prašome prisijungti iš naujo');
-        auth.Logout();
         router.replace({name: 'login'})
     }
     catch(error: any){
