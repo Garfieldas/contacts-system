@@ -97,7 +97,7 @@ const router = createRouter({
       name: 'set-user-password',
       component: () => import("@/views/SetUserPassword.vue"),
       props: true,
-      meta: { hideNavBar: true }
+      meta: { hideNavBar: true, guestOnly: true }
     },
     {
       path: "/not-found",
