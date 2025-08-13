@@ -214,6 +214,7 @@ watch(
     } else {
       displayAvatar.value = "Nuotrauka nėra įkėlta";
     }
+    intitialUser.value.avatar = displayAvatar.value
   },
   { immediate: true }
 );
