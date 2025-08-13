@@ -34,6 +34,7 @@ export const createUser = async (name: string, email: string, permissions_id?: s
                 "Content-Type": "multipart/form-data",
             },
         });
+        await axiosInstance.post("users/request-password-reset", {email})
     } catch (error: any) {
         throw error;
     }
@@ -62,6 +63,15 @@ export const deleteUser = async (id: string) => {
         throw error;
     }
 };
+
+export const createUserPassword = async (token: string, password: string, passwordConfirm: string) => {
+    try {
+        await axiosInstance.post('/users/confirm-password-reset', { token, password, passwordConfirm});
+    }
+    catch(error: any) {
+        throw error;
+    }
+}
 
 export const createUserPermissions = async (permissions: string[]) => {
     try {

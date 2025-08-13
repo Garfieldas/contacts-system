@@ -93,6 +93,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/_/auth/confirm-password-reset/:token',
+      name: 'set-user-password',
+      component: () => import("@/views/SetUserPassword.vue"),
+      props: true,
+      meta: { hideNavBar: true }
+    },
+    {
       path: "/not-found",
       name: "not-found",
       component: () => import("@/views/Error404.vue"),
