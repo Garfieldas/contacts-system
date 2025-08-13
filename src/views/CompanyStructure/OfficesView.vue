@@ -1,5 +1,5 @@
 <template>
-    <teleport defer to="#button" v-if="hideActions">
+    <teleport defer to="#button" v-if="showEditOffices">
         <AddButton @click="switchComponent(CreateOfficeForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
@@ -10,7 +10,7 @@
         handleEmit(office); switchComponent(DeleteOfficeForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditOffices || showDeleteOffices"
         :hide-close-button="currentForm === DeleteOfficeForm">
         <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice" @cancel-delete="toggleModal"/>
     </BaseModal>
@@ -24,10 +24,10 @@ import DeleteOfficeForm from '@/components/UI/forms/Offices/DeleteOfficeForm.vue
 import EditOfficeForm from '@/components/UI/forms/Offices/EditOfficeForm.vue';
 import OfficesTable from '@/components/UI/Offices/OfficesTable.vue';
 import { getOffices } from '@/services/officesService';
-import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 import type { Office } from '@/types/officeType';
-import { ref, onMounted, watch, shallowRef, computed } from 'vue';
+import { ref, onMounted, watch, shallowRef } from 'vue';
+import { useActions } from '@/composables/useActions';
 
 const offices = ref();
 const page = ref(1);
@@ -35,15 +35,9 @@ const perPage=ref(25);
 const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
-const auth = useAuthenticationStore();
 const isFirstLoad = ref(true);
 
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_offices && auth.user_permissions.delete_offices) {
-        return true;
-    }
-    return false;
-})
+const { showEditOffices, showDeleteOffices } = useActions();
 
 const currentForm = shallowRef<typeof CreateOfficeForm | typeof EditOfficeForm | typeof DeleteOfficeForm>(CreateOfficeForm);
 const showModal = ref(false);
