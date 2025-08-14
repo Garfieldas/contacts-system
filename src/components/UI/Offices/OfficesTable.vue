@@ -5,7 +5,7 @@
           <tr>
             <th class="px-6 py-3 font-medium w-3/6">Pavadinimas</th>
             <th class="px-6 py-3 font-medium w-3/4">Adresas</th>
-            <th class="px-6 py-3 font-medium w-1/4 text-center pr-4" v-if="hideActions">Veiksmas</th>
+            <th class="px-6 py-3 font-medium w-1/4 text-center pr-4" v-if="showEditOffices || showDeleteOffices">Veiksmas</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
@@ -22,18 +22,10 @@
     </div>
 </template>
 <script setup lang="ts">
-import { useAuthenticationStore } from '@/stores/authenticationStore';
 import OficesTableRow from './OficesTableRow.vue';
-import { computed } from 'vue';
-import type { Office } from '@/types/officeType';
+import { useActions } from '@/composables/useActions';
 
 const props = defineProps(['offices']);
-const auth = useAuthenticationStore();
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_offices && auth.user_permissions.delete_offices) {
-        return true;
-    }
-    return false;
-});
+const { showEditOffices, showDeleteOffices } = useActions();
 const emits = defineEmits(['edit-office', 'delete-office']);
 </script>

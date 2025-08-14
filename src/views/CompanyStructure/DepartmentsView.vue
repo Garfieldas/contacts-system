@@ -1,5 +1,5 @@
 <template>
-    <teleport defer to="#button" v-if="hideActions">
+    <teleport defer to="#button" v-if="showEditStructure">
         <AddButton @click="switchComponent(CreateDepartmentForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
@@ -9,7 +9,7 @@
         selectDepartment(department); switchComponent(DeleteDepartmentForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditStructure || showDeleteStructure"
    :hide-close-button="currentForm === DeleteDepartmentForm">
         <component :is="currentForm" @department-submit="handleSubmit" :department="selectedDepartment" @cancel-delete="toggleModal"/>
     </BaseModal>
@@ -20,20 +20,19 @@ import Pagination from '@/components/Layout/Pagination.vue';
 import AddButton from '@/components/UI/AddButton.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import { getDepartments } from '@/services/departmentsService';
-import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { ref, onMounted, watch, computed, shallowRef } from 'vue';
+import { ref, onMounted, watch, shallowRef } from 'vue';
 import CreateDepartmentForm from '@/components/UI/forms/Departments/CreateDepartmentForm.vue';
 import type { Department } from '@/types/departmentType';
 import EditDepartmentForm from '@/components/UI/forms/Departments/EditDepartmentForm.vue';
 import DeleteDepartmentForm from '@/components/UI/forms/Departments/DeleteDepartmentForm.vue';
+import { useActions } from '@/composables/useActions';
 const departments = ref();
 const page = ref(1);
 const perPage = ref(25);
 const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
-const auth = useAuthenticationStore();
 const isFirstLoad = ref(true);
 
 const currentForm = shallowRef<typeof CreateDepartmentForm | typeof EditDepartmentForm | typeof DeleteDepartmentForm>(CreateDepartmentForm);
@@ -55,12 +54,8 @@ const handleSubmit = () => {
 const selectedDepartment = ref();
 const selectDepartment = (department: Department) => selectedDepartment.value = department;
 
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_structure && auth.user_permissions.delete_structure) {
-        return true;
-    }
-    return false;
-});
+const { showEditStructure, showDeleteStructure } = useActions();
+
 const fetchDepartments = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
     try {

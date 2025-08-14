@@ -4,7 +4,7 @@
         <thead class="bg-gray-100 text-left text-sm text-gray-700">
           <tr>
             <th class="px-6 py-3 font-medium w-3/6">Pavadinimas</th>
-            <th class="px-6 py-3 font-medium w-1/4 text-center pr-4" v-if="hideActions">Veiksmas</th>
+            <th class="px-6 py-3 font-medium w-1/4 text-center pr-4" v-if="showEditStructure || showDeleteStructure">Veiksmas</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
@@ -21,17 +21,10 @@
     </div>
 </template>
 <script setup lang="ts">
-import { useAuthenticationStore } from '@/stores/authenticationStore';
 import DivisionsTableRow from './DivisionsTableRow.vue';
-import { computed } from 'vue';
+import { useActions } from '@/composables/useActions';
 
 const props = defineProps(['divisions']);
-const auth = useAuthenticationStore();
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_structure && auth.user_permissions.delete_structure) {
-        return true;
-    }
-    return false;
-});
 const emits = defineEmits(['edit-division', 'delete-division']);
+const { showEditStructure, showDeleteStructure } = useActions();
 </script>

@@ -3,10 +3,10 @@
         :hide-close-button="currentForm === DeleteCompanyForm">
         <component :is="currentForm" @company-created="handleSubmit" :company="selectedComapny" @company-updated="handleSubmit" @cancel-delete="toggleModal"
         @company-deleted="handleSubmit"
-        v-if="hideActions"/>
+        v-if="showEditCompanies || showDeleteCompanies"/>
     </BaseModal>
     <BaseLayout title="Įmonės">
-    <div class="flex flex-row items-center mb-6 gap-12" v-if="hideActions">
+    <div class="flex flex-row items-center mb-6 gap-12" v-if="showEditCompanies">
         <button @click="switchComponent(CreateCompanyForm)">
         <img src="../assets/icons/Add Contact rounded.png" class="w-15 h-15"/>
         </button>
@@ -31,20 +31,13 @@ import CompanyTable from '@/components/UI/Companies/CompanyTable.vue';
 import CreateCompanyForm from '@/components/UI/forms/Companies/CreateCompanyForm.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import { useCompanies } from '@/composables/useCompanies';
-import { useAuthenticationStore } from '@/stores/authenticationStore';
-import { computed, onMounted, shallowRef, watch, ref } from 'vue';
+import { onMounted, shallowRef, watch, ref } from 'vue';
 import EditCompanyForm from '@/components/UI/forms/Companies/EditCompanyForm.vue';
 import type { Company } from '@/types/companyType';
 import DeleteCompanyForm from '@/components/UI/forms/Companies/DeleteCompanyForm.vue';
+import { useActions } from '@/composables/useActions';
 const { companies, fetchCompanies, page, totalPages, totalItems } = useCompanies();
-const auth = useAuthenticationStore();
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions.edit_companies && auth.user_permissions.delete_companies) {
-        return true;
-    }
-    return false;
-
-})
+const { showEditCompanies, showDeleteCompanies } = useActions();
 const currentForm = shallowRef<typeof CreateCompanyForm | typeof EditCompanyForm | typeof DeleteCompanyForm>(CreateCompanyForm);
 const showModal = ref(false);
 const toggleModal = () => {
