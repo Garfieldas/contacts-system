@@ -27,6 +27,11 @@ const onSubmit = async () => {
     store.addErrorNotification("Nepakanka teisių šiai operacijai atlikti.");
     return;
   }
+  if(auth.isLoggedIn && auth.user.email === props.user.email) {
+    store.addErrorNotification('Šis veiksmas negalimas!');
+    emits('cancel-action');
+    return;
+  }
     try {
         await deleteUser(props.user.id);
         await deleteUserPermissions(props.user.permissions_id);
