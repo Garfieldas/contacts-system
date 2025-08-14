@@ -1,5 +1,5 @@
 <template>
-    <teleport defer to="#button" v-if="hideActions">
+    <teleport defer to="#button" v-if="showEditStructure">
         <AddButton @click="switchComponent(CreateDivisionForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
@@ -9,7 +9,7 @@
         selectDivision(division); switchComponent(DeleteDivisionForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditStructure || showDeleteStructure"
         :hide-close-button="currentForm === DeleteDivisionForm">
         <component :is="currentForm" @division-submit="handleSubmit" :division="selectedDivision" @cancel-delete="toggleModal"/>
     </BaseModal>
@@ -21,12 +21,12 @@ import Pagination from '@/components/Layout/Pagination.vue';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import { getDivisions } from '@/services/divisionsService';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { onMounted, ref, watch, computed, shallowRef } from 'vue';
-import { useAuthenticationStore } from '@/stores/authenticationStore';
+import { onMounted, ref, watch, shallowRef } from 'vue';
 import CreateDivisionForm from '@/components/UI/forms/Divisions/CreateDivisionForm.vue';
 import type { Division } from '@/types/divisionType';
 import EditDivisionForm from '@/components/UI/forms/Divisions/EditDivisionForm.vue';
 import DeleteDivisionForm from '@/components/UI/forms/Divisions/DeleteDivisionForm.vue';
+import { useActions } from '@/composables/useActions';
 
 const divisions = ref();
 const page = ref(1);
@@ -35,13 +35,7 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
-const auth = useAuthenticationStore();
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_structure && auth.user_permissions.delete_structure) {
-        return true;
-    }
-    return false;
-});
+const { showEditStructure, showDeleteStructure } = useActions();
 
 const currentForm = shallowRef<typeof CreateDivisionForm | typeof EditDivisionForm | typeof DeleteDivisionForm>(CreateDivisionForm);
 const showModal = ref(false);

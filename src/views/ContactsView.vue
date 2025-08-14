@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
   :hide-close-button="currentForm === DeleteContactForm">
     <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
     @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
@@ -9,7 +9,7 @@
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
       <PaginatioButton v-model:per-page="perPage" />
       <DisplayButton @toggle="toggleComponent" :currentDisplay />
-      <AddContactButton @add-contact="switchComponent(CreateContactForm)" v-if="hideActions"/>
+      <AddContactButton @add-contact="switchComponent(CreateContactForm)" v-if="showEditContacts"/>
     </div>
     <div class="text-sm text-gray-600">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
@@ -44,22 +44,16 @@ import { onMounted, shallowRef, reactive, computed, watch, ref } from "vue";
 import BaseModal from "@/components/UI/BaseModal.vue";
 import CreateContactForm from "@/components/UI/forms/Contacts/CreateContactForm.vue";
 import AddContactButton from "@/components/UI/Contacts/AddContactButton.vue";
-import { useAuthenticationStore } from "@/stores/authenticationStore";
 import EditContactForm from "@/components/UI/forms/Contacts/EditContactForm.vue";
 import type { Employee } from "@/types/employeeType";
 import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.vue";
+import { useActions } from "@/composables/useActions";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
 
 const currentDisplay = shallowRef(ContactList);
 const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
-const auth = useAuthenticationStore();
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_employees && auth.user_permissions.delete_employees) {
-        return true
-    }
-    return false;
-})
+const { showEditContacts, showDeleteContacts } = useActions();
 
 const toggleComponent = () => {
   currentDisplay.value = currentDisplay.value === ContactList ? ContactTable : ContactList;

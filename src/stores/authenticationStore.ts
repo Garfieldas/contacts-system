@@ -20,7 +20,7 @@ export const useAuthenticationStore = defineStore('auth', () => {
         }
     }
 
-    if (isLoggedIn && user) {
+    if (isLoggedIn.value && user.value) {
         refreshToken();
         fetchPermissions()
     }

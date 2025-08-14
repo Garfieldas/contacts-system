@@ -24,14 +24,9 @@ export const passwordResset = async (email: string) => {
 }
 
 export const refreshToken = async () => {
-    const token = localStorage.getItem('token');
     const store = useAuthenticationStore();
     try {
-        const response = await axiosInstance.post('/users/auth-refresh', {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+        const response = await axiosInstance.post('/users/auth-refresh', {})
         const data = response.data.record;
         const newToken = response.data.token
         store.Login(newToken, data);
@@ -48,13 +43,8 @@ export const getAvatarUrl = (recordId: string, filename: string) => {
 }
 
 export const updatePassword = async (id: string, password: string, password2: string) => {
-    const token = localStorage.getItem('token');
     try {
-        await axiosInstance.patch(`/users/records/${id}`, {password, passwordConfirm: password2}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        await axiosInstance.patch(`/users/records/${id}`, {password, passwordConfirm: password2});
     }
     catch (error: any){
         throw error;
@@ -62,13 +52,8 @@ export const updatePassword = async (id: string, password: string, password2: st
 }
 
 export const getUserPermissions = async (id: string) => {
-    const token = localStorage.getItem('token');
     try {
-        const response = await axiosInstance.get(`/user_permissions/records/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await axiosInstance.get(`/user_permissions/records/${id}`);
         const user_actions = {
             delete_companies: response.data.delete_companies,
             delete_employees: response.data.delete_employees,

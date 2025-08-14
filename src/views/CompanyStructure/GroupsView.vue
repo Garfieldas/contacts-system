@@ -1,5 +1,5 @@
 <template>
-    <teleport defer to="#button" v-if="hideActions">
+    <teleport defer to="#button" v-if="showEditStructure">
         <AddButton @click="switchComponent(CreateGroupForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
@@ -9,7 +9,7 @@
         selectGroup(group); switchComponent(DeleteGroupForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
-   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="hideActions"
+   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditStructure || showDeleteStructure"
    :hide-close-button="currentForm === DeleteGroupForm">
         <component :is="currentForm" @group-submit="handleSubmit" :group="selectedGroup" @cancel-delete="toggleModal"/>
     </BaseModal>
@@ -19,14 +19,14 @@ import GroupsTable from '@/components/UI/Groups/GroupsTable.vue';
 import Pagination from '@/components/Layout/Pagination.vue';
 import AddButton from '@/components/UI/AddButton.vue';
 import { useNotificationStore } from '@/stores/notificationstore';
-import { useAuthenticationStore } from '@/stores/authenticationStore';
-import { ref, computed, watch, onMounted, shallowRef } from 'vue';
+import { ref, watch, onMounted, shallowRef } from 'vue';
 import { getGroups } from '@/services/groupsService';
 import BaseModal from '@/components/UI/BaseModal.vue';
 import CreateGroupForm from '@/components/UI/forms/Groups/CreateGroupForm.vue';
 import type { Group } from '@/types/groupType';
 import EditGroupForm from '@/components/UI/forms/Groups/EditGroupForm.vue';
 import DeleteGroupForm from '@/components/UI/forms/Groups/DeleteGroupForm.vue';
+import { useActions } from '@/composables/useActions';
 
 const groups = ref();
 const page = ref(1);
@@ -35,7 +35,6 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
-const auth = useAuthenticationStore();
 const currentForm = shallowRef<typeof CreateGroupForm | typeof EditGroupForm | typeof DeleteGroupForm>(CreateGroupForm);
 const showModal = ref(false);
 const toggleModal = () => {
@@ -54,12 +53,8 @@ const handleSubmit = () => {
 
 const selectedGroup = ref();
 const selectGroup = (group: Group) => selectedGroup.value = group;
-const hideActions = computed(() => {
-    if (auth.isLoggedIn && auth.user_permissions && auth.user_permissions.edit_structure && auth.user_permissions.delete_structure) {
-        return true;
-    }
-    return false;
-});
+
+const { showEditStructure, showDeleteStructure } = useActions();
 
 const fetchGroups = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
