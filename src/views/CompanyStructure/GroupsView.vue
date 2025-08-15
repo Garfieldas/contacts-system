@@ -11,7 +11,7 @@
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditStructure || showDeleteStructure"
    :hide-close-button="currentForm === DeleteGroupForm">
-        <component :is="currentForm" @group-submit="handleSubmit" :group="selectedGroup" @cancel-delete="toggleModal"/>
+        <component :is="currentForm" @group-submit="handleSubmit" :group="selectedGroup" @cancel-action="toggleModal"/>
     </BaseModal>
 </template>
 <script setup lang="ts">

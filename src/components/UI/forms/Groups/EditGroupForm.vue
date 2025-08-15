@@ -114,7 +114,7 @@ const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const departments = ref();
 const searchedGroups = ref();
-const emits = defineEmits(['group-submit']);
+const emits = defineEmits(['group-submit', 'cancel-ation']);
 const props = defineProps(['group']);
 const departmentsGroupId = ref();
 
