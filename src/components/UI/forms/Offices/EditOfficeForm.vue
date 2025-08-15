@@ -155,7 +155,7 @@ const [city] = defineField('city');
 const [country] = defineField('country');
 const [selectedCompanies] = defineField('selectedCompanies');
 
-const fetchOffices = async (street: string, street_number: string, city: string, country: string) => {
+const fetchOffices = async (name: string, street: string, street_number: string, city: string, country: string) => {
   const searchTerm = `(street?~"${street}" && street_number?~"${street_number}" && city?~"${city}" && country?~"${country}")`;
   const url = '?filter=' + encodeURIComponent(searchTerm);
   try {
@@ -186,17 +186,19 @@ const fetchCompaniesOffices = async (params?: string) => {
   }
 }
 
-const areCompaniesDifferent = () => {
-  if (selectedCompanies.value.length === initialCompanies.value.length) {
-    const isEqual = selectedCompanies.value.every((item: any, index: any) =>
-      item.id === initialCompanies.value[index].id);
-    return isEqual;
+const hasCompaniesChanged = () => {
+  if (selectedCompanies.value.length !== initialCompanies.value.length) {
+    return true;
   }
-  return false;
+  const initialIds = new Set(initialCompanies.value.map((item: any) => item.id));
+  const selectedIs = new Set(selectedCompanies.value.map((item: any) => item.id));
+
+  return ![...selectedIs].every(id => initialIds.has(id));
 }
 
 const isOfficeChanged = () => {
-  if (initialOffice.value.street === street.value &&
+  if (initialOffice.value.name === officeName.value &&
+    initialOffice.value.street === street.value &&
     initialOffice.value.street_number === street_number.value &&
     initialOffice.value.city === city.value &&
     initialOffice.value.country === country.value) {
@@ -206,8 +208,9 @@ const isOfficeChanged = () => {
 }
 
 const officeExist = async () => {
-  await fetchOffices(street.value!, street_number.value!, city.value!, country.value!);
+  await fetchOffices(officeName.value!, street.value!, street_number.value!, city.value!, country.value!);
   const exist = searchedOffices.value.filter((item: any) =>
+    item.name.toLowerCase() === officeName.value!.toLowerCase() &&
     item.street.toLowerCase() === street.value!.toLowerCase() &&
     item.street_number.toLowerCase() === street_number.value!.toLowerCase() &&
     item.city.toLowerCase() === city.value!.toLowerCase() &&
@@ -224,7 +227,7 @@ const onSubmit = handleSubmit(async (values) => {
     return;
   }
 
-  if (!isOfficeChanged() && areCompaniesDifferent()) {
+  if (!isOfficeChanged() && !hasCompaniesChanged()) {
     store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
     emits('cancel-action');
     return;
@@ -239,7 +242,7 @@ const onSubmit = handleSubmit(async (values) => {
     if (isOfficeChanged()) {
       await updateOffice(props.office.id, values.officeName, values.street, values.street_number, values.city, values.country);
     }
-    if (areCompaniesDifferent()) {
+    if (hasCompaniesChanged()) {
       const companies_ids = selectedCompanies.value.map((company: Company) => company.id);
       if (companies_ids.length > 0) {
         if (companiesOfficesId.value) {
