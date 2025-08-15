@@ -84,9 +84,10 @@ const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const searchedOffices = ref();
 const props = defineProps(['office']);
-const emit = defineEmits(['office-submit']);
+const emits = defineEmits(['office-submit', 'cancel-action']);
 const companiesOfficesId = ref('');
 const initialCompanies = ref();
+const initialOffice = ref();
 
 const selectCompany = (company: Company) => {
   const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
@@ -178,7 +179,7 @@ const fetchCompaniesOffices = async (params?: string) => {
     } else {
       selectedCompanies.value = [];
     }
-      initialCompanies.value = JSON.parse(JSON.stringify(selectedCompanies.value));
+    initialCompanies.value = JSON.parse(JSON.stringify(selectedCompanies.value));
   }
   catch (error: any) {
     store.addErrorNotification(error);
@@ -186,10 +187,35 @@ const fetchCompaniesOffices = async (params?: string) => {
 }
 
 const areCompaniesDifferent = () => {
-  if(selectedCompanies.value.length === initialCompanies.value.length) {
+  if (selectedCompanies.value.length === initialCompanies.value.length) {
+    const isEqual = selectedCompanies.value.every((item: any, index: any) =>
+      item.id === initialCompanies.value[index].id);
+    return isEqual;
+  }
+  return false;
+}
+
+const isOfficeChanged = () => {
+  if (initialOffice.value.street === street.value &&
+    initialOffice.value.street_number === street_number.value &&
+    initialOffice.value.city === city.value &&
+    initialOffice.value.country === country.value) {
     return false;
   }
   return true;
+}
+
+const officeExist = async () => {
+  await fetchOffices(street.value!, street_number.value!, city.value!, country.value!);
+  const exist = searchedOffices.value.filter((item: any) =>
+    item.street.toLowerCase() === street.value!.toLowerCase() &&
+    item.street_number.toLowerCase() === street_number.value!.toLowerCase() &&
+    item.city.toLowerCase() === city.value!.toLowerCase() &&
+    item.country.toLowerCase() === country.value!.toLowerCase());
+  if (exist.length > 0) {
+    return true;
+  }
+  return false;
 }
 
 const onSubmit = handleSubmit(async (values) => {
@@ -198,36 +224,39 @@ const onSubmit = handleSubmit(async (values) => {
     return;
   }
 
-  await fetchOffices(values.street, values.street_number, values.city, values.country);
-  const exist = searchedOffices.value.filter((item: any) => 
-    item.street.toLowerCase() === values.street.toLowerCase() &&
-    item.street_number.toLowerCase() === values.street_number.toLowerCase() &&
-    item.city.toLowerCase() === values.city.toLowerCase() && 
-    item.country.toLowerCase() === values.country.toLowerCase());
+  if (!isOfficeChanged() && areCompaniesDifferent()) {
+    store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
+    emits('cancel-action');
+    return;
+  }
 
-  if (exist && exist.length > 0 && !areCompaniesDifferent()) {
-    store.addErrorNotification('Toks ofisas jau egizstuoja')
+  if (isOfficeChanged() && await officeExist()) {
+    store.addErrorNotification('Toks ofisas jau yra!');
     return;
   }
 
   try {
-    await updateOffice(props.office.id, values.officeName, values.street, values.street_number, values.city, values.country);
-    const companies_ids = selectedCompanies.value.map((company: Company)=> company.id);
-    if (companies_ids.length > 0) {
-      if(companiesOfficesId.value) {
-        await updateCompaniesOffices(companiesOfficesId.value, companies_ids, props.office.id)
-      }
-      else {
-        await createCompaniesOffices(companies_ids, props.office.id);
-      }
+    if (isOfficeChanged()) {
+      await updateOffice(props.office.id, values.officeName, values.street, values.street_number, values.city, values.country);
     }
-    else if(companiesOfficesId.value) {
+    if (areCompaniesDifferent()) {
+      const companies_ids = selectedCompanies.value.map((company: Company) => company.id);
+      if (companies_ids.length > 0) {
+        if (companiesOfficesId.value) {
+          await updateCompaniesOffices(companiesOfficesId.value, companies_ids, props.office.id)
+        }
+        else {
+          await createCompaniesOffices(companies_ids, props.office.id);
+        }
+      }
+      else if (companiesOfficesId.value) {
         await deleteCompaniesOffices(companiesOfficesId.value)
+      }
     }
     companiesOfficesId.value = '';
     store.addSuccessNotification('Ofisas atnaujintas sėkmingai!');
     resetForm();
-    emit('office-submit');
+    emits('office-submit');
   }
   catch (error: any) {
     store.addErrorNotification(error);
@@ -240,12 +269,13 @@ onMounted(() => {
 });
 
 watch(() => props.office, async (newOffice) => {
-    officeName.value = newOffice.name;
-    street.value = newOffice.street;
-    street_number.value = newOffice.street_number;
-    city.value = newOffice.city;
-    country.value = newOffice.country;
+  officeName.value = newOffice.name;
+  street.value = newOffice.street;
+  street_number.value = newOffice.street_number;
+  city.value = newOffice.city;
+  country.value = newOffice.country;
+  initialOffice.value = { ...newOffice };
 
-    await fetchCompaniesOffices(`?filter=office_id="${newOffice.id}"&expand=company_id&fields=id,expand.company_id`);
-  },{ immediate: true });
+  await fetchCompaniesOffices(`?filter=office_id="${newOffice.id}"&expand=company_id&fields=id,expand.company_id`);
+}, { immediate: true });
 </script>
