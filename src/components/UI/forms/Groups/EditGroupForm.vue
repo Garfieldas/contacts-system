@@ -80,6 +80,7 @@ const fetchDepartmentsGroup = async (params?: string) => {
         else {
             selectedDepartments.value = [];
         }
+        initialDepartments.value = JSON.parse(JSON.stringify(selectedDepartments.value));
     }
     catch (error: any) {
         store.addErrorNotification(error);
@@ -117,6 +118,8 @@ const searchedGroups = ref();
 const emits = defineEmits(['group-submit', 'cancel-ation']);
 const props = defineProps(['group']);
 const departmentsGroupId = ref();
+const initialGroup = ref();
+const initialDepartments = ref();
 
 const selectDepartment = (department: Department) => {
   const exist = selectedDepartments.value.find((item: any) => item.id === department.id);
@@ -167,7 +170,7 @@ onMounted(() => {
 })
 
 watch(() => props.group, async (newGroup) => {
-
+    initialGroup.value = { ...newGroup };
     groupName.value = newGroup.name;
     await fetchDepartmentsGroup(`?filter=group_id="${newGroup.id}"&expand=department_id&fields=id,expand.department_id`);
 }, {immediate: true})
