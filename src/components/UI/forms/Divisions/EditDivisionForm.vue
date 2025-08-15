@@ -132,13 +132,13 @@ const fetchDivisions = async (name: string) => {
     }
 }
 
-const areOfficesDifferent = () => {
-    if (selectedOffices.value.length === initialOffices.value.length) {
-        const isEqual = selectedOffices.value.every((item: any, index: any) =>
-            item.id === initialOffices.value[index].id);
-        return isEqual;
+const hasOfficesChanged = () => {
+    if (selectedOffices.value.length !== initialOffices.value.length) {
+        return true;
     }
-    return false;
+    const initialIds = new Set(initialOffices.value.map((item: any) => item.id));
+    const selectedIds = new Set(selectedOffices.value.map((item: any) => item.id));
+    return ![...selectedIds].every(id => initialIds.has(id));
 }
 
 const isDivisionChanged = () => {
@@ -152,9 +152,9 @@ const divisionExist = async () => {
     await fetchDivisions(divisionName.value!);
     const exist = searchedDivisions.value.filter((item: any) => item.name.toLowerCase() === divisionName.value!.toLowerCase());
     if (exist && exist.length > 0) {
-        return false;
+        return true;
     }
-    return true
+    return false;
 }
 
 const onSubmit = handleSubmit(async (values) => {
@@ -163,7 +163,7 @@ const onSubmit = handleSubmit(async (values) => {
         return;
     }
 
-    if (!isDivisionChanged() && areOfficesDifferent()) {
+    if (!isDivisionChanged() && !hasOfficesChanged()) {
         store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
         emits('cancel-action');
         return;
@@ -178,7 +178,7 @@ const onSubmit = handleSubmit(async (values) => {
         if (isDivisionChanged()) {
             await updateDivision(props.division.id, values.divisionName);
         }
-        if (areOfficesDifferent()) {
+        if (hasOfficesChanged()) {
             const offices_ids = selectedOffices.value.map((office: Office) => office.id);
             if (offices_ids.length > 0) {
                 if (officesDivisionsId.value) {
