@@ -18,9 +18,11 @@ export const useCompanies = () => {
             companies.value = response.items;
             totalItems.value = response.totalItems;
             totalPages.value = response.totalPages;
+            return true;
         }
         catch (error: any) {
             store.addErrorNotification(error);
+            return false;
         }
     }
     return {

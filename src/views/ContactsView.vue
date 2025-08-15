@@ -48,8 +48,11 @@ import EditContactForm from "@/components/UI/forms/Contacts/EditContactForm.vue"
 import type { Employee } from "@/types/employeeType";
 import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.vue";
 import { useActions } from "@/composables/useActions";
+import { useNotificationStore } from "@/stores/notificationstore";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
+
+const store = useNotificationStore();
 
 const currentDisplay = shallowRef(ContactList);
 const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
@@ -157,8 +160,11 @@ watch(totalPages, (newTotalPages) => {
   }
 });
 
-onMounted(() => {
-  fetchRequest(fullQuery.value);
+onMounted(async () => {
+  const isSuccess = await fetchRequest(fullQuery.value);
+  if (isSuccess) {
+    store.addSuccessNotification('Kontaktai gauti sėkmingai');
+  }
 })
 
 </script>

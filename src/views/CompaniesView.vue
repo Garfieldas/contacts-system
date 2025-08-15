@@ -36,7 +36,9 @@ import EditCompanyForm from '@/components/UI/forms/Companies/EditCompanyForm.vue
 import type { Company } from '@/types/companyType';
 import DeleteCompanyForm from '@/components/UI/forms/Companies/DeleteCompanyForm.vue';
 import { useActions } from '@/composables/useActions';
+import { useNotificationStore } from '@/stores/notificationstore';
 const { companies, fetchCompanies, page, totalPages, totalItems } = useCompanies();
+const store = useNotificationStore();
 const { showEditCompanies, showDeleteCompanies } = useActions();
 const currentForm = shallowRef<typeof CreateCompanyForm | typeof EditCompanyForm | typeof DeleteCompanyForm>(CreateCompanyForm);
 const showModal = ref(false);
@@ -58,7 +60,10 @@ const handleSubmit = () => {
 watch(page, () => {
     fetchCompanies();
 })
-onMounted(() => {
-    fetchCompanies();
+onMounted(async() => {
+    const isSuccess = await fetchCompanies();
+    if(isSuccess) {
+        store.addSuccessNotification('Įmonės gautos sėkmingai!');
+    }
 })
 </script>
