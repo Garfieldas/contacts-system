@@ -80,6 +80,7 @@ const fetchDivisionsDepartment = async (params?: string) => {
     else {
       selectedDivisions.value = [];
     }
+    initialDivisions.value = JSON.parse(JSON.stringify(selectedDivisions.value));
   }
   catch (error: any) {
     store.addErrorNotification(error);
@@ -115,8 +116,10 @@ const store = useNotificationStore();
 const divisions = ref();
 const searchedDepartments = ref();
 const divisionsDepartmentId = ref();
-const emits = defineEmits(['department-submit']);
-const props = defineProps(['department'])
+const emits = defineEmits(['department-submit', 'cancel-action']);
+const props = defineProps(['department']);
+const initialDivisions = ref();
+const initialDepartment = ref();
 
 const selectedDivision = (division: Division) => {
   const exist = selectedDivisions.value.find((item: any) => item.id === division.id);
@@ -127,19 +130,52 @@ const selectedDivision = (division: Division) => {
   selectedDivisions.value.push(division);
 };
 
+const hasDivisionChanged = () => {
+  if (selectedDivisions.value.length !== initialDivisions.value.length) {
+    return true;
+  }
+  const initialIds = new Set(initialDivisions.value.map((item: any) => item.id));
+  const selectedIs = new Set(selectedDivisions.value.map((item: any) => item.id));
+  return ![...selectedIs].every(id => initialIds.has(id));
+}
+
+const isDeparmentChanged = () => {
+  if(initialDepartment.value.name === departmentName.value) {
+    return false;
+  }
+  return true;
+}
+
+const departmentExist = async() => {
+  await fetchDepartments(departmentName.value!);
+  const exist = searchedDepartments.value.filter((item: any) => item.name.toLowerCase() === departmentName.value!.toLowerCase());
+  if (exist && exist.length > 0) {
+    store.addErrorNotification('Toks skyrius jau yra sukurtas');
+    return true;
+  }
+  return false;
+}
+
 const onSubmit = handleSubmit(async (values) => {
   if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
     store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
     return;
   }
-  await fetchDepartments(values.departmentName);
-  const exist = searchedDepartments.value.filter((item: any) => item.name.toLowerCase() === values.departmentName.toLowerCase());
-  if (exist && exist.length > 0) {
-    store.addErrorNotification('Toks skyrius jau yra sukurtas');
+  if (!isDeparmentChanged() && !hasDivisionChanged()) {
+    store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
+    emits('cancel-action');
+    return;
+  }
+
+  if (isDeparmentChanged() && await departmentExist()) {
+    store.addErrorNotification('Toks skyrius jau yra!');
     return;
   }
   try {
+    if (isDeparmentChanged()) {
     await updateDepartment(props.department.id, values.departmentName);
+    }
+    if (hasDivisionChanged()) {
     const divisions_ids = selectedDivisions.value.map((division: Division) => division.id);
     if (divisions_ids.length > 0) {
       if(divisionsDepartmentId.value) {
@@ -152,8 +188,9 @@ const onSubmit = handleSubmit(async (values) => {
     else if(divisionsDepartmentId.value){
         await deleteDivisionsDepartment(divisionsDepartmentId.value);
     }
+    }
     divisionsDepartmentId.value = '';
-    store.addSuccessNotification('Skyrius atnaujintas sukurtas!');
+    store.addSuccessNotification('Skyrius atnaujintas sėkmingai!');
     resetForm();
     emits('department-submit');
   }
@@ -167,7 +204,7 @@ onMounted(() => {
 });
 
 watch(() => props.department, async (newDepartment) => {
-
+  initialDepartment.value = { ...newDepartment };
   departmentName.value = newDepartment.name;
   await fetchDivisionsDepartment(`?filter=department_id="${newDepartment.id}"&expand=division_id&fields=id,expand.division_id`);
 }, { immediate: true })

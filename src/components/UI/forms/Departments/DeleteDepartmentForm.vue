@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="flex flex-row justify-end gap-5 mt-10 text-[#0054A6]">
-            <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-delete')">Ne</a>
+            <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-action')">Ne</a>
             <button type="submit" class="cursor-pointer uppercase hover:text-sky-400">Taip</button>
         </div>
     </form>
@@ -23,7 +23,7 @@ import { deleteDepartment } from '@/services/departmentsService';
 const props = defineProps(['department']);
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
-const emits = defineEmits(['cancel-delete', 'department-submit']);
+const emits = defineEmits(['cancel-action', 'department-submit']);
 const { employees, fetchRequest } = useEmployees();
 const divisionsDepartment = ref();
 
@@ -51,13 +51,13 @@ const onSubmit = async () => {
     await fetchRequest(`&filter=department_id="${props.department.id}"`);
     if (employees.value.length > 0) {
         store.addErrorNotification('Šis skyrius turi priskirtus kontaktus');
-        emits('cancel-delete');
+        emits('cancel-action');
         return;
     }
     await fetchDivisionsDepartment(`?filter=department_id="${props.department.id}"&expand=division_id&fields=id,expand.division_id`);
     if (divisionsDepartment.value && divisionsDepartment.value.length > 0) {
         store.addErrorNotification('Šis skyrius turi priskirtus padalinius');
-        emits('cancel-delete');
+        emits('cancel-action');
         return;
     }
     try {
