@@ -1,0 +1,25 @@
+<template>
+    <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200 mb-8">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100 text-left text-sm text-gray-700">
+          <tr>
+            <th class="px-6 py-3 font-medium w-3/6">Pavadinimas</th>
+            <th class="px-6 py-3 font-medium w-1/4 text-center pr-4" v-if="showEditStructure || showDeleteStructure">Veiksmas</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+            <DepartmentsTableRow v-for="department in departments" :key="department.id" :department="department"
+            @edit-department="(department) => emits('edit-department', department)"
+            @delete-department="(department) => emits('delete-department', department)"/>
+        </tbody>
+      </table>
+    </div>
+</template>
+<script setup lang="ts">
+import DepartmentsTableRow from './DepartmentsTableRow.vue';
+import { useActions } from '@/composables/useActions';
+
+const props = defineProps(['departments']);
+const emits = defineEmits(['edit-department', 'delete-department']);
+const { showEditStructure, showDeleteStructure } = useActions();
+</script>
