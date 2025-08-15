@@ -19,7 +19,8 @@
                     <div v-for="(office, index) in offices" :key="office.id" @click="selectOffice(office)" :class="{
                         'bg-[#0054A6] text-white': selectedOffices.find((item: any) => item.id === office.id),
                         'bg-gray-200 text-gray-800': !selectedOffices.find((item: any) => item.id === office.id)
-                    }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
+                    }"
+                        class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
                         {{ office.name }}
                     </div>
                     <div v-if="errors.selectedOffices" class="error-message">{{ errors.selectedOffices }}</div>
@@ -76,8 +77,10 @@ const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const offices = ref();
 const searchedDivisions = ref();
-const emits = defineEmits(['division-submit']);
+const emits = defineEmits(['division-submit', 'cancel-action']);
 const officesDivisionsId = ref();
+const initialOffices = ref();
+const initialDivision = ref();
 
 const selectOffice = (office: Office) => {
     const exist = selectedOffices.value.find((item: any) => item.id === office.id);
@@ -100,6 +103,7 @@ const fetchOfficesDivisions = async (params?: string) => {
         else {
             selectedOffices.value = [];
         }
+        initialOffices.value = JSON.parse(JSON.stringify(selectedOffices.value));
     }
     catch (error: any) {
         store.addErrorNotification(error);
@@ -128,30 +132,65 @@ const fetchDivisions = async (name: string) => {
     }
 }
 
+const areOfficesDifferent = () => {
+    if (selectedOffices.value.length === initialOffices.value.length) {
+        const isEqual = selectedOffices.value.every((item: any, index: any) =>
+            item.id === initialOffices.value[index].id);
+        return isEqual;
+    }
+    return false;
+}
+
+const isDivisionChanged = () => {
+    if (initialDivision.value.name === divisionName.value) {
+        return false;
+    }
+    return true;
+}
+
+const divisionExist = async () => {
+    await fetchDivisions(divisionName.value!);
+    const exist = searchedDivisions.value.filter((item: any) => item.name.toLowerCase() === divisionName.value!.toLowerCase());
+    if (exist && exist.length > 0) {
+        return false;
+    }
+    return true
+}
+
 const onSubmit = handleSubmit(async (values) => {
     if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
         store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
         return;
     }
-    await fetchDivisions(values.divisionName);
-    const exist = searchedDivisions.value.filter((item: any) => item.name.toLowerCase() === values.divisionName.toLowerCase());
-    if (exist && exist.length > 0) {
-        store.addErrorNotification('Toks padalinys jau yra sukurtas!');
+
+    if (!isDivisionChanged() && areOfficesDifferent()) {
+        store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
+        emits('cancel-action');
         return;
     }
+
+    if (isDivisionChanged() && await divisionExist()) {
+        store.addErrorNotification('Toks padalinys jau yra!');
+        return;
+    }
+
     try {
-        await updateDivision(props.division.id, values.divisionName);
-        const offices_ids = selectedOffices.value.map((office: Office) => office.id);
-        if (offices_ids.length > 0) {
-            if (officesDivisionsId.value) {
-                await updateOfficesDivision(officesDivisionsId.value, offices_ids, props.division.id)
-            }
-            else {
-                await createOfficesDivision(offices_ids, props.division.id);
-            }
+        if (isDivisionChanged()) {
+            await updateDivision(props.division.id, values.divisionName);
         }
-        else if(officesDivisionsId.value) {
+        if (areOfficesDifferent()) {
+            const offices_ids = selectedOffices.value.map((office: Office) => office.id);
+            if (offices_ids.length > 0) {
+                if (officesDivisionsId.value) {
+                    await updateOfficesDivision(officesDivisionsId.value, offices_ids, props.division.id)
+                }
+                else {
+                    await createOfficesDivision(offices_ids, props.division.id);
+                }
+            }
+            else if (officesDivisionsId.value) {
                 await deleteOfficesDivision(officesDivisionsId.value)
+            }
         }
         officesDivisionsId.value = '';
         resetForm();
@@ -168,9 +207,9 @@ onMounted(() => {
 })
 
 watch(() => props.division, async (newDivision) => {
-
+    initialDivision.value = { ...newDivision };
     divisionName.value = newDivision.name;
     await fetchOfficesDivisions(`?filter=division_id="${newDivision.id}"&expand=office_id&fields=id,expand.office_id`);
-}, {immediate: true})
+}, { immediate: true })
 
 </script>
