@@ -86,6 +86,7 @@ const searchedOffices = ref();
 const props = defineProps(['office']);
 const emit = defineEmits(['office-submit']);
 const companiesOfficesId = ref('');
+const initialCompanies = ref();
 
 const selectCompany = (company: Company) => {
   const exist = selectedCompanies.value.find((item: any) => item.id === company.id);
@@ -177,10 +178,18 @@ const fetchCompaniesOffices = async (params?: string) => {
     } else {
       selectedCompanies.value = [];
     }
+      initialCompanies.value = JSON.parse(JSON.stringify(selectedCompanies.value));
   }
   catch (error: any) {
     store.addErrorNotification(error);
   }
+}
+
+const areCompaniesDifferent = () => {
+  if(selectedCompanies.value.length === initialCompanies.value.length) {
+    return false;
+  }
+  return true;
 }
 
 const onSubmit = handleSubmit(async (values) => {
@@ -196,7 +205,7 @@ const onSubmit = handleSubmit(async (values) => {
     item.city.toLowerCase() === values.city.toLowerCase() && 
     item.country.toLowerCase() === values.country.toLowerCase());
 
-  if (exist && exist.length > 0) {
+  if (exist && exist.length > 0 && !areCompaniesDifferent()) {
     store.addErrorNotification('Toks ofisas jau egizstuoja')
     return;
   }
