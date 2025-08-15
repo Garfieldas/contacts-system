@@ -56,7 +56,7 @@ const onSubmit = handleSubmit(async (values) => {
         return;
     }
     if (values.companyName.toLowerCase() === originalCompanyName.value.toLowerCase()){
-        store.addSuccessNotification('Įmonė sėkmingai atnaujinta')
+        store.addSuccessNotification('Pakeitimai nebuvo atlikti!')
         emit('company-updated');
         return;
     }
