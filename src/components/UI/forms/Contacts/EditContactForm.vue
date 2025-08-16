@@ -143,7 +143,7 @@
           </div>
           <span class="text-gray-500 text-sm" :class="{ 'break-all': selectedAvatar || employee.photo }" v-else>{{
             displayAvatar
-            }}</span>
+          }}</span>
         </div>
       </div>
     </div>
@@ -189,9 +189,10 @@ const displayDepartment = ref();
 const displayGroup = ref();
 const displayAvatar = ref("Nuotrauka nėra įkėlta");
 const store = useNotificationStore();
-const emits = defineEmits(['employee-updated']);
+const emits = defineEmits(['employee-updated', 'cancel-action']);
 const props = defineProps(['employee']);
 const auth = useAuthenticationStore();
+const initialContact = ref();
 
 const handleCompanyChange = async () => {
   selectedOffice.value = "";
@@ -377,18 +378,38 @@ const [selectedDepartment] = defineField("selectedDepartment");
 const [selectedGroup] = defineField("selectedGroup");
 const [selectedAvatar] = defineField("selectedAvatar");
 
+const hasContactChanged = () => {
+  const selected = [
+    name.value, surname.value, position.value,
+    email.value, phone_number.value, selectedCompany.value,
+    selectedOffice.value, selectedDivision.value, selectedDepartment.value,
+    selectedGroup.value, selectedAvatar.value, displayAvatar.value
+  ];
+  const hasChanged = selected.every((item: any, index: any) => item === initialContact.value[index]);
+  return !hasChanged;
+}
+
+const contactExist = async () => {
+  const searchTerm = phone_number.value ? `(email?~"${email.value}") || phone_number?~"${phone_number.value}"` : `(email?~"${email.value}")`;
+  await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
+
+  const existingList = employees.value.filter((item: any) => item.id !== props.employee.id && item.email === email.value || item.id !== props.employee.id && item.phone_number === phone_number.value);
+
+  return existingList.length > 0;
+}
+
 const onSubmit = handleSubmit(async (values) => {
   if (!auth.isLoggedIn && !auth.user_permissions.edit_employees) {
     store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
     return;
   }
-  const searchTerm = values.phone_number ? `(email?~"${values.email}") || phone_number?~"${values.phone_number}"` : `(email?~"${values.email}")`;
-  await fetchRequest('&filter=' + encodeURIComponent(searchTerm));
-
-  const existingList = employees.value.filter((item: any) => item.email === values.email || item.phone_number === values.phone_number);
-
-  if (existingList.length > 1) {
-    store.addErrorNotification('Toks kontaktas jau egzistuoja');
+  if (!hasContactChanged()) {
+    store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
+    emits('cancel-action');
+    return;
+  }
+  if (await contactExist()) {
+    store.addErrorNotification('Toks kontaktaus jau egzistuoja!');
     return;
   }
 
@@ -444,6 +465,12 @@ watch(() => props.employee, (newEmployee) => {
   else {
     displayAvatar.value = 'Nuotrauka nėra įkėlta'
   }
+  initialContact.value = [
+    name.value, surname.value, position.value,
+    email.value, phone_number.value, selectedCompany.value,
+    selectedOffice.value, selectedDivision.value, selectedDepartment.value,
+    selectedGroup.value, selectedAvatar.value, displayAvatar.value
+  ];
 
 }, { immediate: true })
 </script>

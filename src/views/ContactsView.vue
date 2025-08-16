@@ -2,7 +2,7 @@
   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
   :hide-close-button="currentForm === DeleteContactForm">
     <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
-    @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
+    @cancel-action="toggleModal" @employee-deleted="handleSubmit"/>
   </BaseModal>
   <BaseLayout title="Kontaktų sistema">
     <div class="flex flex-row items-center mb-6">
