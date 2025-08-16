@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="flex flex-row justify-end gap-5 mt-10 text-[#0054A6]">
-            <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-delete')">Ne</a>
+            <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-action')">Ne</a>
             <button type="submit" class="cursor-pointer uppercase hover:text-sky-400">Taip</button>
         </div>
     </form>
@@ -24,7 +24,7 @@ const props = defineProps(['office']);
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const { employees, fetchRequest } = useEmployees();
-const emits = defineEmits(['cancel-delete', 'office-submit']);
+const emits = defineEmits(['cancel-action', 'office-submit']);
 const companiesOffices = ref();
 
 const fetchCompaniesOffices = async (params?: string) => {
@@ -51,13 +51,13 @@ const onSubmit = async () => {
     await fetchRequest(`&filter=office_id="${props.office.id}"`);
     if (employees.value.length > 0) {
         store.addErrorNotification('Šis ofisas turi priskirtus kontaktus');
-        emits('cancel-delete');
+        emits('cancel-action');
         return;
     }
     await fetchCompaniesOffices(`?filter=office_id="${props.office.id}"&expand=company_id&fields=id,expand.company_id`);
     if (companiesOffices.value.length > 0) {
         store.addErrorNotification('Šis ofisas turi priskirtas įmonės');
-        emits('cancel-delete');
+        emits('cancel-action');
         return;
     }
     try {

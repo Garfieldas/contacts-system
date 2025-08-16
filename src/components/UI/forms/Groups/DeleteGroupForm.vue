@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="flex flex-row justify-end gap-5 mt-10 text-[#0054A6]">
-            <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-delete')">Ne</a>
+            <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-action')">Ne</a>
             <button type="submit" class="cursor-pointer uppercase hover:text-sky-400">Taip</button>
         </div>
     </form>
@@ -23,7 +23,7 @@ import { deleteGroup } from '@/services/groupsService';
 const props = defineProps(['group']);
 const auth = useAuthenticationStore();
 const store = useNotificationStore();
-const emits = defineEmits(['cancel-delete', 'group-submit']);
+const emits = defineEmits(['cancel-action', 'group-submit']);
 const { employees, fetchRequest } = useEmployees();
 const departmentsGroup = ref();
 
@@ -52,13 +52,13 @@ const onSubmit = async () => {
     await fetchRequest(`&filter=group_id="${props.group.id}"`);
     if (employees.value.length > 0) {
         store.addErrorNotification('Šį grupė turi priskirtus kontaktus');
-        emits('cancel-delete');
+        emits('cancel-action');
         return;
     }
     await fetchDepartmensGroup(`?filter=group_id="${props.group.id}"&expand=department_id&fields=id,expand.department_id`);
     if (departmentsGroup.value && departmentsGroup.value.length > 0) {
         store.addErrorNotification('Ši grupė turi priskirtus skyrius');
-        emits('cancel-delete');
+        emits('cancel-action');
         return;
     }
     try {

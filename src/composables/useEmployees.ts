@@ -9,7 +9,6 @@ export const useEmployees = () => {
     const totalItems = ref();
     const totalPages = ref();
     const store = useNotificationStore();
-    const isFirstLoad = ref(false);
     
     const fetchRequest = async (params? : string) => {
         let url = params? `?page=${page.value}&perPage=${perPage.value}${params}` :`?page=${page.value}&perPage=${perPage.value}`;
@@ -18,13 +17,11 @@ export const useEmployees = () => {
             employees.value = response.items;
             totalItems.value = response.totalItems;
             totalPages.value = response.totalPages;
-            if (isFirstLoad.value === false){
-                store.addSuccessNotification('Kontaktai gauti sėkmingai!');
-                isFirstLoad.value = true;
-            }
+            return true;
         }
         catch (error: any) {
             store.addErrorNotification(error);
+            return false;
         }
     }
     return {

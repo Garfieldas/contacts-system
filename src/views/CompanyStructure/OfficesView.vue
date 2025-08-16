@@ -12,7 +12,7 @@
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
     <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditOffices || showDeleteOffices"
         :hide-close-button="currentForm === DeleteOfficeForm">
-        <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice" @cancel-delete="toggleModal"/>
+        <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice" @cancel-action="toggleModal"/>
     </BaseModal>
 </template>
 <script setup lang="ts">

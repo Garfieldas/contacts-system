@@ -4,60 +4,31 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
         <div class="mb-4">
-          <label for="name" class="block text-sm font-normal text-gray-700"
-            >Vardas:</label
-          >
-          <input
-            type="text"
-            id="name"
-            v-model.trim="name"
-            placeholder="Įveskite padalinio pavadinimą..."
-            class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
+          <label for="name" class="block text-sm font-normal text-gray-700">Vardas:</label>
+          <input type="text" id="name" v-model.trim="name" placeholder="Įveskite padalinio pavadinimą..."
+            class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
           <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
         </div>
         <div class="mb-4">
-          <label for="email" class="block text-sm font-normal text-gray-700"
-            >Elektroninis paštas:</label
-          >
-          <input
-            type="text"
-            id="email"
-            v-model.trim="email"
-            placeholder="Įveskite padalinio pavadinimą..."
-            class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
+          <label for="email" class="block text-sm font-normal text-gray-700">Elektroninis paštas:</label>
+          <input type="text" id="email" v-model.trim="email" placeholder="Įveskite padalinio pavadinimą..."
+            class="mt-1 block w-full px-4 py-4 bg-gray-200 rounded-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
           <div v-if="errors.email" class="error-message">
             {{ errors.email }}
           </div>
         </div>
         <div class="flex flex-col mb-4 mt-20">
-          <label
-            v-if="!selectedAvatar"
-            for="avatar"
-            class="cursor-pointer inline-block px-4 py-1 self-start bg-[#0054A6] text-white text-sm rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
+          <label v-if="!selectedAvatar" for="avatar"
+            class="cursor-pointer inline-block px-4 py-1 self-start bg-[#0054A6] text-white text-sm rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             Įkelti nuotrauką
           </label>
-          <label
-            v-else
-            class="cursor-pointer inline-block px-10 py-1 self-start bg-red-500 text-white text-sm rounded"
-            @click="handleFileCancelation"
-          >
+          <label v-else class="cursor-pointer inline-block px-10 py-1 self-start bg-red-500 text-white text-sm rounded"
+            @click="handleFileCancelation">
             Atšaukti
           </label>
-          <input
-            type="file"
-            id="avatar"
-            class="hidden"
-            accept="image/png, image/jpeg, image/svg+xml, image/webp"
-            @change="handleFileChange"
-          />
-          <span
-            class="text-gray-500 text-sm"
-            :class="{ 'break-all': selectedAvatar }"
-            >{{ displayAvatar }}</span
-          >
+          <input type="file" id="avatar" class="hidden" accept="image/png, image/jpeg, image/svg+xml, image/webp"
+            @change="handleFileChange" />
+          <span class="text-gray-500 text-sm" :class="{ 'break-all': selectedAvatar }">{{ displayAvatar }}</span>
           <div v-if="errors.selectedAvatar" class="error-message">
             {{ errors.selectedAvatar }}
           </div>
@@ -67,8 +38,7 @@
 
     <div class="flex justify-end pt-4">
       <button
-        class="ps-20 pe-20 py-2 bg-[#0054A6] text-white rounded-xs text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
+        class="ps-20 pe-20 py-2 bg-[#0054A6] text-white rounded-xs text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
         Atnaujinti
       </button>
     </div>
@@ -181,13 +151,14 @@ const onSubmit = handleSubmit(async (values) => {
     values.email === intitialUser.value.email &&
     displayAvatar.value === intitialUser.value.avatar
   ) {
-    store.addSuccessNotification("Vartotojas atnaujintas sėkmingai!");
+    store.addSuccessNotification("Pakeitimai nebuvo atlikti!");
     emit('cancel-action');
     return;
   }
   await fetchUsers(values.email);
   const exist = searchedUsers.value.filter(
-    (item: any) => item.email.toLowerCase() === values.email.toLowerCase()
+    (item: any) => item.id !== props.user.id &&
+      item.email.toLowerCase() === values.email.toLowerCase()
   );
   if (exist && exist.length > 0) {
     store.addErrorNotification("Toks vartotojas jau egzistuoja");

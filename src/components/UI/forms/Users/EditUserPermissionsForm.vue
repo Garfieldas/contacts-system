@@ -38,13 +38,22 @@ const permissions = ref({
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
 const selectedPermissions: any = ref({});
-const emit = defineEmits(['user-submit']);
+const emits = defineEmits(['user-submit', 'cancel-action']);
 const props = defineProps(['user']);
+const initialPermissions = ref();
+
+const hasPermissionsChanged = () => {
+  const initialValues = Object.values(initialPermissions.value);
+  const selectedValues = Object.values(selectedPermissions.value);
+  const isEqual = initialValues.every((item: any, index: any) => item === selectedValues[index]);
+  return !isEqual;
+}
 
 const fetchPermissions = async(id: string) => {
     try {
         const response = await getUserPermissions(id);
         selectedPermissions.value = response;
+        initialPermissions.value = JSON.parse(JSON.stringify(selectedPermissions.value));
     }
     catch(error: any) {
         store.addErrorNotification(error);
@@ -56,10 +65,15 @@ const onSubmit = async () => {
     store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
     return;
   }
+  if (!hasPermissionsChanged()) {
+    store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
+    emits('cancel-action');
+    return;
+  }
   try {
     await updateUserPermissions(props.user.permissions_id, selectedPermissions.value);
     store.addSuccessNotification('Teisės sėkmingai atnaujintos!');
-    emit('user-submit');
+    emits('user-submit');
   }
   catch(error: any) {
     store.addErrorNotification(error);
