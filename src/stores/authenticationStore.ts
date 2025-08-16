@@ -20,11 +20,6 @@ export const useAuthenticationStore = defineStore('auth', () => {
         }
     }
 
-    if (isLoggedIn.value && user.value) {
-        refreshToken();
-        fetchPermissions()
-    }
-
     const Login = (token: string, userData: any) => {
         isLoggedIn.value = true;
         localStorage.setItem('token', token);
@@ -40,5 +35,17 @@ export const useAuthenticationStore = defineStore('auth', () => {
         router.replace({name: 'contacts'})
     }
 
-    return { isLoggedIn, user, Login, Logout, user_permissions }
+    const initializeAuth = async () => {
+        if (isLoggedIn.value && user.value) {
+            try {
+                await refreshToken();
+                await fetchPermissions();
+            }
+            catch(eror: any) {
+                Logout();
+            }
+        }
+    }
+
+    return { isLoggedIn, user, Login, Logout, user_permissions, initializeAuth }
 })

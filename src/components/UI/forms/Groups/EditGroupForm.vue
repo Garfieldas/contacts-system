@@ -15,10 +15,11 @@
       <div>
         <h3 class="text-lg font-medium mb-4">Skyriai:</h3>
         <div class="relative overflow-y-auto rounded-sm" style="max-height: 250px;">
-          <div v-for="(department, index) in departments" :key="department.id" @click="selectDepartment(department)" :class="{
-            'bg-[#0054A6] text-white': selectedDepartments.find((item: any)  => item.id === department.id),
-            'bg-gray-200 text-gray-800': !selectedDepartments.find((item: any) => item.id === department.id)
-          }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
+          <div v-for="(department, index) in departments" :key="department.id" @click="selectDepartment(department)"
+            :class="{
+              'bg-[#0054A6] text-white': selectedDepartments.find((item: any) => item.id === department.id),
+              'bg-gray-200 text-gray-800': !selectedDepartments.find((item: any) => item.id === department.id)
+            }" class="px-4 py-3 mb-2 cursor-pointer hover:bg-[#0054A6] hover:text-white transition-colors duration-200">
             {{ department.name }}
           </div>
           <div v-if="errors.selectedDepartments" class="error-message">{{ errors.selectedDepartments }}</div>
@@ -69,43 +70,44 @@ const fetchGroups = async (name: string) => {
 }
 
 const fetchDepartmentsGroup = async (params?: string) => {
-    const url = params ? `${params}` : '';
-    try {
-        const response = await getDepartmentsGroups(url);
-        if (response.items.length > 0) {
-            departmentsGroupId.value = response.items[0].id;
-            const associatedDepartments = response.items[0].expand.department_id;
-            selectedDepartments.value = associatedDepartments;
-        }
-        else {
-            selectedDepartments.value = [];
-        }
+  const url = params ? `${params}` : '';
+  try {
+    const response = await getDepartmentsGroups(url);
+    if (response.items.length > 0) {
+      departmentsGroupId.value = response.items[0].id;
+      const associatedDepartments = response.items[0].expand.department_id;
+      selectedDepartments.value = associatedDepartments;
     }
-    catch (error: any) {
-        store.addErrorNotification(error);
+    else {
+      selectedDepartments.value = [];
     }
+    initialDepartments.value = JSON.parse(JSON.stringify(selectedDepartments.value));
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 }
 
 const groupSchema = z.object({
-    groupName: z
-        .string()
-        .trim()
-        .min(1, 'Grupės pavadinimas yra privalomas')
-        .min(2, 'Grupės pavadinimas privalo būti bent 2 simbolių')
-        .max(50, 'Grupės pavadinimas negali viršyti 50 simbolių')
-        .regex(/^[\p{L}\s]+$/gu, "Grupės pavadinimas gali turėti tik raides arba tarpus"),
+  groupName: z
+    .string()
+    .trim()
+    .min(1, 'Grupės pavadinimas yra privalomas')
+    .min(2, 'Grupės pavadinimas privalo būti bent 2 simbolių')
+    .max(50, 'Grupės pavadinimas negali viršyti 50 simbolių')
+    .regex(/^[\p{L}\s]+$/gu, "Grupės pavadinimas gali turėti tik raides arba tarpus"),
 
-    selectedDepartments: z.any()
-        .optional()
+  selectedDepartments: z.any()
+    .optional()
 });
 
 const { handleSubmit, defineField, errors, resetForm } = useForm({
-    validationSchema: toTypedSchema(groupSchema),
+  validationSchema: toTypedSchema(groupSchema),
 
-    initialValues: {
-        groupName: "",
-        selectedDepartments: []
-    },
+  initialValues: {
+    groupName: "",
+    selectedDepartments: []
+  },
 });
 
 const [groupName] = defineField("groupName");
@@ -114,9 +116,11 @@ const auth = useAuthenticationStore();
 const store = useNotificationStore();
 const departments = ref();
 const searchedGroups = ref();
-const emits = defineEmits(['group-submit']);
+const emits = defineEmits(['group-submit', 'cancel-action']);
 const props = defineProps(['group']);
 const departmentsGroupId = ref();
+const initialGroup = ref();
+const initialDepartments = ref();
 
 const selectDepartment = (department: Department) => {
   const exist = selectedDepartments.value.find((item: any) => item.id === department.id);
@@ -127,49 +131,83 @@ const selectDepartment = (department: Department) => {
   selectedDepartments.value.push(department);
 };
 
+const isGroupChanged = () => {
+  if (initialGroup.value.name === groupName.value) {
+    return false;
+  }
+  return true;
+}
+
+const hasDepartmentsChanged = () => {
+  if (selectedDepartments.value.length !== initialDepartments.value.length) {
+    return true;
+  }
+  const initialIds = new Set(initialDepartments.value.map((item: any) => item.id));
+  const selectedIs = new Set(selectedDepartments.value.map((item: any) => item.id));
+  return ![...selectedIs].every(id => initialIds.has(id));
+}
+
+const groupExist = async () => {
+  await fetchGroups(groupName.value!);
+  const exist = searchedGroups.value.filter((item: any) =>
+    item.name.toLowerCase() === groupName.value!.toLowerCase());
+  if (exist.length > 0) {
+    return true;
+  }
+  return false;
+}
+
 const onSubmit = handleSubmit(async (values) => {
-    if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
-        store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
-        return;
+  if (!auth.isLoggedIn && !auth.user_permissions.edit_structure) {
+    store.addErrorNotification('Nepakanka teisių šiai operacijai atlikti.');
+    return;
+  }
+  if (!isGroupChanged() && !hasDepartmentsChanged()) {
+    store.addSuccessNotification('Pakeitimai nebuvo atlikti!');
+    emits('cancel-action');
+    return;
+  }
+
+  if (isGroupChanged() && await groupExist()) {
+    store.addErrorNotification('Tokia grupė jau yra!');
+    return;
+  }
+  try {
+    if (isGroupChanged()) {
+      await updateGroup(props.group.id, values.groupName);
     }
-    await fetchGroups(values.groupName);
-    const exist = searchedGroups.value.filter((item: any) => item.name.toLowerCase() === values.groupName.toLowerCase());
-    if (exist && exist.length > 0) {
-        store.addErrorNotification('Tokia grupė jau sukurta!');
-        return;
-    }
-    try {
-        await updateGroup(props.group.id, values.groupName);
-        const departmentsIds = selectedDepartments.value.map((item: any) => item.id);
-        if (departmentsIds.length > 0) {
-          if (departmentsGroupId.value) {
-              await updateDepartmentsGroup(departmentsGroupId.value ,departmentsIds, props.group.id);
-          }
-          else {
-              await createDepartmentsGroup(departmentsIds, props.group.id);
-          }
+    if (hasDepartmentsChanged()) {
+      const departmentsIds = selectedDepartments.value.map((item: any) => item.id);
+      if (departmentsIds.length > 0) {
+        if (departmentsGroupId.value) {
+          await updateDepartmentsGroup(departmentsGroupId.value, departmentsIds, props.group.id);
         }
-        else if(departmentsGroupId.value) {
-              await deleteDepartmentsGroup(departmentsGroupId.value);
+        else {
+          await createDepartmentsGroup(departmentsIds, props.group.id);
         }
-        departmentsGroupId.value = '';
-        store.addSuccessNotification('Grupė atnaujinta sėkmingai!');
-        resetForm();
-        emits('group-submit');
+      }
+      else if (departmentsGroupId.value) {
+        await deleteDepartmentsGroup(departmentsGroupId.value);
+      }
     }
-    catch (error: any) {
-        store.addErrorNotification(error);
-    }
+    departmentsGroupId.value = '';
+    store.addSuccessNotification('Grupė atnaujinta sėkmingai!');
+    resetForm();
+    emits('group-submit');
+  }
+  catch (error: any) {
+    store.addErrorNotification(error);
+  }
 });
 
 onMounted(() => {
-    fetchDepartments();
+  fetchDepartments();
 })
 
 watch(() => props.group, async (newGroup) => {
-
-    groupName.value = newGroup.name;
-    await fetchDepartmentsGroup(`?filter=group_id="${newGroup.id}"&expand=department_id&fields=id,expand.department_id`);
-}, {immediate: true})
+  initialGroup.value = { ...newGroup };
+  groupName.value = newGroup.name;
+  await fetchDepartmentsGroup(`?filter=group_id="${newGroup.id}"&expand=department_id&fields=id,expand.department_id`);
+}, { immediate: true })
 
 </script>

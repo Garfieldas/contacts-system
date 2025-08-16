@@ -2,7 +2,7 @@
   <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
   :hide-close-button="currentForm === DeleteContactForm">
     <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
-    @cancel-delete="toggleModal" @employee-deleted="handleSubmit"/>
+    @cancel-action="toggleModal" @employee-deleted="handleSubmit"/>
   </BaseModal>
   <BaseLayout title="Kontaktų sistema">
     <div class="flex flex-row items-center mb-6">
@@ -48,8 +48,11 @@ import EditContactForm from "@/components/UI/forms/Contacts/EditContactForm.vue"
 import type { Employee } from "@/types/employeeType";
 import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.vue";
 import { useActions } from "@/composables/useActions";
+import { useNotificationStore } from "@/stores/notificationstore";
 
 const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
+
+const store = useNotificationStore();
 
 const currentDisplay = shallowRef(ContactList);
 const currentForm = shallowRef<typeof CreateContactForm | typeof EditContactForm | typeof DeleteContactForm>(CreateContactForm);;
@@ -157,8 +160,11 @@ watch(totalPages, (newTotalPages) => {
   }
 });
 
-onMounted(() => {
-  fetchRequest(fullQuery.value);
+onMounted(async () => {
+  const isSuccess = await fetchRequest(fullQuery.value);
+  if (isSuccess) {
+    store.addSuccessNotification('Kontaktai gauti sėkmingai');
+  }
 })
 
 </script>

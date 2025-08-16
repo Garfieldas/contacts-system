@@ -11,7 +11,7 @@
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditStructure || showDeleteStructure"
    :hide-close-button="currentForm === DeleteDepartmentForm">
-        <component :is="currentForm" @department-submit="handleSubmit" :department="selectedDepartment" @cancel-delete="toggleModal"/>
+        <component :is="currentForm" @department-submit="handleSubmit" :department="selectedDepartment" @cancel-action="toggleModal"/>
     </BaseModal>
 </template>
 <script setup lang="ts">

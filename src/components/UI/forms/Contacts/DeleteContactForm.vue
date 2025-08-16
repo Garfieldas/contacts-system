@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="flex flex-row justify-end gap-5 mt-10 text-[#0054A6]">
-        <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-delete')">Ne</a>
+        <a class="cursor-pointer uppercase hover:text-red-600" @click="emits('cancel-action')">Ne</a>
         <button type="submit" class="cursor-pointer uppercase hover:text-sky-400">Taip</button>
     </div>
     </form>
@@ -22,7 +22,7 @@ import { deleteEmployee } from '@/services/employeesService';
 import { useAuthenticationStore } from '@/stores/authenticationStore';
 import { useNotificationStore } from '@/stores/notificationstore';
 const props = defineProps(['employee']);
-const emits = defineEmits(['employee-deleted', 'cancel-delete'])
+const emits = defineEmits(['employee-deleted', 'cancel-action'])
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
 const onSubmit = async () => {

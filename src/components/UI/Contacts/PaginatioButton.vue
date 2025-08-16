@@ -1,8 +1,7 @@
 <template>
-  <div class="relative inline-block">
+  <div class="relative inline-block" @mouseenter="isOpen = true" @mouseleave="isOpen = false">
     <button
       class="text-white px-2 py-3 rounded-md flex items-center"
-      @click="toggleDropdown"
     >
       <img src="../../../assets/icons/FilterButton1.png" class="w-20 h-18" />
     </button>
@@ -44,6 +43,6 @@ const selectValue = (value: string) => {
   }
   perPage.value = value;
   toggleDropdown();
-}
+};
 
 </script>
