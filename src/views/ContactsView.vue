@@ -1,9 +1,4 @@
 <template>
-  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
-  :hide-close-button="currentForm === DeleteContactForm">
-    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
-    @cancel-action="toggleModal" @employee-deleted="handleSubmit"/>
-  </BaseModal>
   <BaseLayout title="Kontaktų sistema">
     <div class="flex flex-row items-center mb-6">
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
@@ -28,6 +23,11 @@
       handleEmit(employee); switchComponent(DeleteContactForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages" />
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
+    :hide-close-button="currentForm === DeleteContactForm">
+    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
+    @cancel-action="toggleModal" @employee-deleted="handleSubmit"/>
+  </BaseModal>
     </div>
   </BaseLayout>
 </template>
