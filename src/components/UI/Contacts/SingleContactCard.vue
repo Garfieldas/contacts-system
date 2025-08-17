@@ -1,10 +1,5 @@
 <template>
-    <div v-if="!employee" class="flex flex-col items-center justify-center w-full py-16 px-4 bg-gray-50 rounded-xl shadow-inner text-center">
-      <img src="../../../assets/icons/zero-results.svg" alt="No Results" class="w-24 h-24 mb-6 opacity-60"/>
-      <h1 class="text-2xl font-semibold text-gray-700 mb-2">Kontaktas nerastas</h1>
-      <p class="text-gray-500">Pabandykite iš naujo.</p>
-    </div>
-        <div class="bg-white rounded-lg shadow-md p-8 max-w-4xl mx-auto" v-else>
+        <div class="bg-white rounded-lg shadow-md p-8 max-w-4xl mx-auto" v-if="employee">
             <div class="flex items-center mb-6">
                 <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mr-6">
                     <svg class="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" v-if="!employeePhotoUrl">

@@ -3,6 +3,11 @@
         <AddButton @click="switchComponent(CreateOfficeForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!offices || offices.length === 0) && !isLoading"
+    title="Nerasta jokių ofisų"
+    />
+    <div v-else>
     <OfficesTable :offices="offices" @edit-office="(office: Office) => {
       handleEmit(office); switchComponent(EditOfficeForm);
     }"
@@ -14,6 +19,7 @@
         :hide-close-button="currentForm === DeleteOfficeForm">
         <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice" @cancel-action="toggleModal"/>
     </BaseModal>
+    </div>
 </template>
 <script setup lang="ts">
 import Pagination from '@/components/Layout/Pagination.vue';
@@ -28,6 +34,8 @@ import { useNotificationStore } from '@/stores/notificationstore';
 import type { Office } from '@/types/officeType';
 import { ref, onMounted, watch, shallowRef } from 'vue';
 import { useActions } from '@/composables/useActions';
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 
 const offices = ref();
 const page = ref(1);
@@ -36,6 +44,7 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
+const isLoading = ref(true);
 
 const { showEditOffices, showDeleteOffices } = useActions();
 
@@ -54,6 +63,7 @@ const handleEmit = (office: Office) => selectedOffice.value = office;
 
 const fetchOffices = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
+    isLoading.value = true;
     try {
         const response = await getOffices(url);
         offices.value = response.items;
@@ -66,6 +76,9 @@ const fetchOffices = async (params?:string) => {
     }
     catch (error: any) {
         store.addErrorNotification(error);
+    }
+    finally {
+        isLoading.value = false;
     }
 }
 

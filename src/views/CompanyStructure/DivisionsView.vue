@@ -3,6 +3,11 @@
         <AddButton @click="switchComponent(CreateDivisionForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!divisions || divisions.length === 0) && !isLoading"
+        title="Nerasta jokių padalinių"
+     />
+     <div v-else>
     <DivisionsTable :divisions="divisions" @edit-division="(division: Division) => {
         selectDivision(division); switchComponent(EditDivisionForm);
     }" @delete-division="(division: Division) => {
@@ -13,6 +18,7 @@
         :hide-close-button="currentForm === DeleteDivisionForm">
         <component :is="currentForm" @division-submit="handleSubmit" :division="selectedDivision" @cancel-action="toggleModal"/>
     </BaseModal>
+    </div>
 </template>
 <script setup lang="ts">
 import AddButton from '@/components/UI/AddButton.vue';
@@ -27,6 +33,8 @@ import type { Division } from '@/types/divisionType';
 import EditDivisionForm from '@/components/UI/forms/Divisions/EditDivisionForm.vue';
 import DeleteDivisionForm from '@/components/UI/forms/Divisions/DeleteDivisionForm.vue';
 import { useActions } from '@/composables/useActions';
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 
 const divisions = ref();
 const page = ref(1);
@@ -36,6 +44,7 @@ const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
 const { showEditStructure, showDeleteStructure } = useActions();
+const isLoading = ref(true);
 
 const currentForm = shallowRef<typeof CreateDivisionForm | typeof EditDivisionForm | typeof DeleteDivisionForm>(CreateDivisionForm);
 const showModal = ref(false);
@@ -56,6 +65,7 @@ const selectDivision = (division: Division) => selectedDivision.value = division
 
 const fetchDivisions = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
+    isLoading.value = true;
     try {
         const response = await getDivisions(url);
         divisions.value = response.items;
@@ -68,6 +78,9 @@ const fetchDivisions = async (params?:string) => {
     }
     catch (error: any) {
         store.addErrorNotification(error);
+    }
+    finally {
+        isLoading.value = false;
     }
 }
 

@@ -1,9 +1,4 @@
 <template>
-  <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
-  :hide-close-button="currentForm === DeleteContactForm">
-    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
-    @cancel-action="toggleModal" @employee-deleted="handleSubmit"/>
-  </BaseModal>
   <BaseLayout title="Kontaktų sistema">
     <div class="flex flex-row items-center mb-6">
     <SearchBar v-model:total-items="totalItems" v-model:search-param="searchParam" />
@@ -15,19 +10,25 @@
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
     </div>
     <Filters @filter-changed="handleFilters"/>
-    <div v-if="employees.length === 0" class="flex flex-col items-center justify-center w-full py-16 px-4 bg-gray-50 rounded-xl shadow-inner text-center">
-      <img src="../assets/icons/zero-results.svg" alt="No Results" class="w-24 h-24 mb-6 opacity-60"/>
-      <h1 class="text-2xl font-semibold text-gray-700 mb-2">Nerasta jokių kontaktų</h1>
-      <p class="text-gray-500">Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus.</p>
-    </div>
+    <Spinner v-if="isLoading"/>
+    
+    <NoResultsDisplay v-else-if="(!employees || employees.length === 0) && !isLoading" 
+    title="Nerasta jokių kontaktų"
+    details="Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus."/>
+    <div v-else>
     <component :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
       handleEmit(employee); switchComponent(EditContactForm);
     }"
     @delete-contact="(employee) => {
       handleEmit(employee); switchComponent(DeleteContactForm);
-    }"
-     v-else/>
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages" />
+    <BaseModal :show-modal="showModal" @toggle-modal="toggleModal" v-if="showEditContacts || showDeleteContacts"
+    :hide-close-button="currentForm === DeleteContactForm">
+    <component :is="currentForm" @employee-created="handleSubmit" @employee-updated="handleSubmit" :employee="selectedEmployee"
+    @cancel-action="toggleModal" @employee-deleted="handleSubmit"/>
+  </BaseModal>
+    </div>
   </BaseLayout>
 </template>
 <script setup lang="ts">
@@ -49,8 +50,10 @@ import type { Employee } from "@/types/employeeType";
 import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.vue";
 import { useActions } from "@/composables/useActions";
 import { useNotificationStore } from "@/stores/notificationstore";
+import Spinner from "@/components/UI/Spinner.vue";
+import NoResultsDisplay from "@/components/UI/NoResultsDisplay.vue";
 
-const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
+const { employees, totalItems, page, totalPages, perPage, fetchRequest, isLoading } = useEmployees();
 
 const store = useNotificationStore();
 

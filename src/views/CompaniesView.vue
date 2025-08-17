@@ -15,6 +15,11 @@
     <div class="text-sm text-gray-600 mb-15">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} įmonių</span>
     </div>
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!companies || companies.length === 0) && !isLoading"
+        title="Nerasta jokių įmonių"
+     />
+     <div v-else>
     <CompanyTable :companies="companies" @edit-company="(company) => {
       handleEmit(company); switchComponent(EditCompanyForm);
     }"
@@ -22,6 +27,7 @@
         handleEmit(company); switchComponent(DeleteCompanyForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
+    </div>
     </BaseLayout>
 </template>
 <script setup lang="ts">
@@ -37,7 +43,9 @@ import type { Company } from '@/types/companyType';
 import DeleteCompanyForm from '@/components/UI/forms/Companies/DeleteCompanyForm.vue';
 import { useActions } from '@/composables/useActions';
 import { useNotificationStore } from '@/stores/notificationstore';
-const { companies, fetchCompanies, page, totalPages, totalItems } = useCompanies();
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
+const { companies, fetchCompanies, page, totalPages, totalItems, isLoading } = useCompanies();
 const store = useNotificationStore();
 const { showEditCompanies, showDeleteCompanies } = useActions();
 const currentForm = shallowRef<typeof CreateCompanyForm | typeof EditCompanyForm | typeof DeleteCompanyForm>(CreateCompanyForm);
