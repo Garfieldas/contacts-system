@@ -3,7 +3,10 @@
         <AddButton @click="switchComponent(CreateDivisionForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <DivisionsTable :divisions="divisions" @edit-division="(division: Division) => {
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!divisions || divisions.length === 0) && !isLoading"
+     />
+    <DivisionsTable v-else :divisions="divisions" @edit-division="(division: Division) => {
         selectDivision(division); switchComponent(EditDivisionForm);
     }" @delete-division="(division: Division) => {
         selectDivision(division); switchComponent(DeleteDivisionForm);
@@ -27,6 +30,8 @@ import type { Division } from '@/types/divisionType';
 import EditDivisionForm from '@/components/UI/forms/Divisions/EditDivisionForm.vue';
 import DeleteDivisionForm from '@/components/UI/forms/Divisions/DeleteDivisionForm.vue';
 import { useActions } from '@/composables/useActions';
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 
 const divisions = ref();
 const page = ref(1);
@@ -36,6 +41,7 @@ const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
 const { showEditStructure, showDeleteStructure } = useActions();
+const isLoading = ref(true);
 
 const currentForm = shallowRef<typeof CreateDivisionForm | typeof EditDivisionForm | typeof DeleteDivisionForm>(CreateDivisionForm);
 const showModal = ref(false);
@@ -68,6 +74,9 @@ const fetchDivisions = async (params?:string) => {
     }
     catch (error: any) {
         store.addErrorNotification(error);
+    }
+    finally {
+        isLoading.value = false;
     }
 }
 
