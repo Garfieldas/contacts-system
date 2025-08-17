@@ -16,6 +16,9 @@
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} įmonių</span>
     </div>
     <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!companies || companies.length === 0) && !isLoading"
+        title="Nerasta jokių įmonių"
+     />
     <CompanyTable v-else :companies="companies" @edit-company="(company) => {
       handleEmit(company); switchComponent(EditCompanyForm);
     }"
@@ -39,6 +42,7 @@ import DeleteCompanyForm from '@/components/UI/forms/Companies/DeleteCompanyForm
 import { useActions } from '@/composables/useActions';
 import { useNotificationStore } from '@/stores/notificationstore';
 import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 const { companies, fetchCompanies, page, totalPages, totalItems, isLoading } = useCompanies();
 const store = useNotificationStore();
 const { showEditCompanies, showDeleteCompanies } = useActions();

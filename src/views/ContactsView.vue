@@ -17,17 +17,16 @@
     <Filters @filter-changed="handleFilters"/>
     <Spinner v-if="isLoading"/>
     
-    <NoResultsDisplay v-if="(!employees || employees.length === 0) && !isLoading" 
+    <NoResultsDisplay v-else-if="(!employees || employees.length === 0) && !isLoading" 
     title="Nerasta jokių kontaktų"
     details="Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus."/>
 
-    <component :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
+    <component v-else :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
       handleEmit(employee); switchComponent(EditContactForm);
     }"
     @delete-contact="(employee) => {
       handleEmit(employee); switchComponent(DeleteContactForm);
-    }"
-     v-else/>
+    }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages" />
   </BaseLayout>
 </template>
