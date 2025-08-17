@@ -9,9 +9,11 @@ export const useEmployees = () => {
     const totalItems = ref();
     const totalPages = ref();
     const store = useNotificationStore();
+    const isLoading = ref(true);
     
     const fetchRequest = async (params? : string) => {
         let url = params? `?page=${page.value}&perPage=${perPage.value}${params}` :`?page=${page.value}&perPage=${perPage.value}`;
+        isLoading.value = true;
         try {
             const response = await getEmployees(url);
             employees.value = response.items;
@@ -23,9 +25,13 @@ export const useEmployees = () => {
             store.addErrorNotification(error);
             return false;
         }
+        finally {
+            isLoading.value = false;
+        }
     }
     return {
         employees, page, perPage,
-        totalItems, totalPages, fetchRequest
+        totalItems, totalPages, fetchRequest,
+        isLoading
     }
 }
