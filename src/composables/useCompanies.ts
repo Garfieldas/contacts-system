@@ -10,6 +10,7 @@ export const useCompanies = () => {
     const perPage = ref(25);
     const totalItems = ref();
     const totalPages = ref();
+    const isLoading = ref(true);
 
     const fetchCompanies = async (params?: string) => {
         let url = params? `${params}` : `?page=${page.value}&perPage=${perPage.value}`;
@@ -24,9 +25,12 @@ export const useCompanies = () => {
             store.addErrorNotification(error);
             return false;
         }
+        finally {
+            isLoading.value = false;
+        }
     }
     return {
         companies, fetchCompanies, page, perPage,
-        totalItems, totalPages
+        totalItems, totalPages, isLoading
     }
 }

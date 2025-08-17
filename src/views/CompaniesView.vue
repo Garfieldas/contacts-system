@@ -15,7 +15,8 @@
     <div class="text-sm text-gray-600 mb-15">
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} įmonių</span>
     </div>
-    <CompanyTable :companies="companies" @edit-company="(company) => {
+    <Spinner v-if="isLoading"/>
+    <CompanyTable v-else :companies="companies" @edit-company="(company) => {
       handleEmit(company); switchComponent(EditCompanyForm);
     }"
     @delete-company="(company) => {
@@ -37,7 +38,8 @@ import type { Company } from '@/types/companyType';
 import DeleteCompanyForm from '@/components/UI/forms/Companies/DeleteCompanyForm.vue';
 import { useActions } from '@/composables/useActions';
 import { useNotificationStore } from '@/stores/notificationstore';
-const { companies, fetchCompanies, page, totalPages, totalItems } = useCompanies();
+import Spinner from '@/components/UI/Spinner.vue';
+const { companies, fetchCompanies, page, totalPages, totalItems, isLoading } = useCompanies();
 const store = useNotificationStore();
 const { showEditCompanies, showDeleteCompanies } = useActions();
 const currentForm = shallowRef<typeof CreateCompanyForm | typeof EditCompanyForm | typeof DeleteCompanyForm>(CreateCompanyForm);
