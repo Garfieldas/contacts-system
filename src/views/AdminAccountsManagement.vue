@@ -4,6 +4,11 @@
         <AddButton v-if="hideActions" @click="switchComponent(CreateUserForm)"/>
         <h2>Sukūrti naują admin paskyrą:</h2>
     </div>
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!users || users.length === 0) && isLoading"
+        title="Nerasta jokių paskyrų"
+    />
+    <div v-else>
     <UsersTable :users="users" @edit-user="(user: User) => {
         selectUser(user); switchComponent(EditUserForm);
     }" @edit-permissions="(user: User) => {
@@ -16,6 +21,7 @@
     :hide-close-button="currentForm === DeleteUserForm">
         <component :is="currentForm" @user-submit="handleSubmit" :user="selectedUser" @cancel-action="toggleModal"/>
     </BaseModal>
+    </div>
     </BaseLayout>
 </template>
 <script setup lang="ts">
@@ -33,6 +39,8 @@ import type { User } from '@/types/userType';
 import EditUserForm from '@/components/UI/forms/Users/EditUserForm.vue';
 import EditUserPermissionsForm from '@/components/UI/forms/Users/EditUserPermissionsForm.vue';
 import DeleteUserForm from '@/components/UI/forms/Users/DeleteUserForm.vue';
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 const users = ref();
 const page = ref(1);
 const perPage=ref(25);
@@ -41,6 +49,7 @@ const totalPages = ref();
 const store = useNotificationStore();
 const auth = useAuthenticationStore();
 const isFirstLoad = ref(true);
+const isLoading = ref(true);
 const selectedUser = ref();
 
 const currentForm = shallowRef<typeof CreateUserForm>(CreateUserForm);
@@ -82,6 +91,9 @@ const fetchUsers = async (params?:string) => {
     }
     catch (error: any) {
         store.addErrorNotification(error);
+    }
+    finally {
+        isLoading.value = false
     }
 }
 watch(page, () => {
