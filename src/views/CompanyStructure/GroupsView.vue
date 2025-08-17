@@ -3,7 +3,11 @@
         <AddButton @click="switchComponent(CreateGroupForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <GroupsTable :groups="groups" @edit-group="(group: Group) => {
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!groups || groups.length === 0) && !isLoading"
+        title="Nerasta jokių grupių"
+    />
+    <GroupsTable v-else :groups="groups" @edit-group="(group: Group) => {
         selectGroup(group); switchComponent(EditGroupForm);
     }" @delete-group="(group: Group) => {
         selectGroup(group); switchComponent(DeleteGroupForm);
@@ -27,6 +31,8 @@ import type { Group } from '@/types/groupType';
 import EditGroupForm from '@/components/UI/forms/Groups/EditGroupForm.vue';
 import DeleteGroupForm from '@/components/UI/forms/Groups/DeleteGroupForm.vue';
 import { useActions } from '@/composables/useActions';
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 
 const groups = ref();
 const page = ref(1);
@@ -35,6 +41,7 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
+const isLoading = ref(true);
 const currentForm = shallowRef<typeof CreateGroupForm | typeof EditGroupForm | typeof DeleteGroupForm>(CreateGroupForm);
 const showModal = ref(false);
 const toggleModal = () => {
@@ -70,6 +77,9 @@ const fetchGroups = async (params?:string) => {
     }
     catch (error: any) {
         store.addErrorNotification(error);
+    }
+    finally {
+        isLoading.value = false;
     }
 }
 
