@@ -67,6 +67,7 @@ const { showEditStructure, showDeleteStructure } = useActions();
 
 const fetchDepartments = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
+    isLoading.value = true;
     try {
         const response = await getDepartments(url);
         departments.value = response.items;

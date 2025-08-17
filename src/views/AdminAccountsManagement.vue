@@ -79,6 +79,7 @@ const handleSubmit = () => {
 
 const fetchUsers = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
+    isLoading.value = true;
     try {
         const response = await getUsers(url);
         users.value = response.items;

@@ -65,6 +65,7 @@ const selectDivision = (division: Division) => selectedDivision.value = division
 
 const fetchDivisions = async (params?:string) => {
     const url = params? `?page=${page.value}&perPage=${perPage.value}${params}` : `?page=${page.value}&perPage=${perPage.value}`;
+    isLoading.value = true;
     try {
         const response = await getDivisions(url);
         divisions.value = response.items;
