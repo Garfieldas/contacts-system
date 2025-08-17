@@ -3,7 +3,11 @@
         <AddButton @click="switchComponent(CreateDepartmentForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <DepartmentsTable :departments="departments" @edit-department="(department: Department) => {
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!departments || departments.length === 0) && !isLoading"
+        title="Nerasta jokių skyrių"
+    />
+    <DepartmentsTable v-else :departments="departments" @edit-department="(department: Department) => {
         selectDepartment(department); switchComponent(EditDepartmentForm);
     }" @delete-department="(department: Department) => {
         selectDepartment(department); switchComponent(DeleteDepartmentForm);
@@ -27,6 +31,8 @@ import type { Department } from '@/types/departmentType';
 import EditDepartmentForm from '@/components/UI/forms/Departments/EditDepartmentForm.vue';
 import DeleteDepartmentForm from '@/components/UI/forms/Departments/DeleteDepartmentForm.vue';
 import { useActions } from '@/composables/useActions';
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 const departments = ref();
 const page = ref(1);
 const perPage = ref(25);
@@ -34,6 +40,7 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
+const isLoading = ref(true)
 
 const currentForm = shallowRef<typeof CreateDepartmentForm | typeof EditDepartmentForm | typeof DeleteDepartmentForm>(CreateDepartmentForm);
 const showModal = ref(false);
@@ -70,6 +77,9 @@ const fetchDepartments = async (params?:string) => {
     }
     catch (error: any) {
         store.addErrorNotification(error);
+    }
+    finally {
+        isLoading.value = false;
     }
 }
 watch(page, () => {

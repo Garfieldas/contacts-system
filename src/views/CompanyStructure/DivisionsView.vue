@@ -5,6 +5,7 @@
     </teleport>
     <Spinner v-if="isLoading"/>
     <NoResultsDisplay v-else-if="(!divisions || divisions.length === 0) && !isLoading"
+        title="Nerasta jokių padalinių"
      />
     <DivisionsTable v-else :divisions="divisions" @edit-division="(division: Division) => {
         selectDivision(division); switchComponent(EditDivisionForm);
