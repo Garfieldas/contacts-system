@@ -15,7 +15,8 @@
         Iš viso rasta: <span class="font-semibold text-[#1F3F77]">{{ totalItems }} kontaktų</span>
     </div>
     <Filters @filter-changed="handleFilters"/>
-    <div v-if="employees.length === 0 || !employees" class="flex flex-col items-center justify-center w-full py-16 px-4 bg-gray-50 rounded-xl shadow-inner text-center">
+    <Spinner v-if="isLoading"/>
+    <div v-if="(!employees || employees.length === 0) && !isLoading" class="flex flex-col items-center justify-center w-full py-16 px-4 bg-gray-50 rounded-xl shadow-inner text-center">
       <img src="../assets/icons/zero-results.svg" alt="No Results" class="w-24 h-24 mb-6 opacity-60"/>
       <h1 class="text-2xl font-semibold text-gray-700 mb-2">Nerasta jokių kontaktų</h1>
       <p class="text-gray-500">Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus.</p>
@@ -49,8 +50,9 @@ import type { Employee } from "@/types/employeeType";
 import DeleteContactForm from "@/components/UI/forms/Contacts/DeleteContactForm.vue";
 import { useActions } from "@/composables/useActions";
 import { useNotificationStore } from "@/stores/notificationstore";
+import Spinner from "@/components/UI/Spinner.vue";
 
-const { employees, totalItems, page, totalPages, perPage, fetchRequest } = useEmployees();
+const { employees, totalItems, page, totalPages, perPage, fetchRequest, isLoading } = useEmployees();
 
 const store = useNotificationStore();
 
