@@ -7,7 +7,8 @@
     <NoResultsDisplay v-else-if="(!departments || departments.length === 0) && !isLoading"
         title="Nerasta jokių skyrių"
     />
-    <DepartmentsTable v-else :departments="departments" @edit-department="(department: Department) => {
+    <div v-else>
+    <DepartmentsTable :departments="departments" @edit-department="(department: Department) => {
         selectDepartment(department); switchComponent(EditDepartmentForm);
     }" @delete-department="(department: Department) => {
         selectDepartment(department); switchComponent(DeleteDepartmentForm);
@@ -17,6 +18,7 @@
    :hide-close-button="currentForm === DeleteDepartmentForm">
         <component :is="currentForm" @department-submit="handleSubmit" :department="selectedDepartment" @cancel-action="toggleModal"/>
     </BaseModal>
+    </div>
 </template>
 <script setup lang="ts">
 import DepartmentsTable from '@/components/UI/Departments/DepartmentsTable.vue';

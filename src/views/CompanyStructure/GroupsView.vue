@@ -7,7 +7,8 @@
     <NoResultsDisplay v-else-if="(!groups || groups.length === 0) && !isLoading"
         title="Nerasta jokių grupių"
     />
-    <GroupsTable v-else :groups="groups" @edit-group="(group: Group) => {
+    <div v-else>
+    <GroupsTable :groups="groups" @edit-group="(group: Group) => {
         selectGroup(group); switchComponent(EditGroupForm);
     }" @delete-group="(group: Group) => {
         selectGroup(group); switchComponent(DeleteGroupForm);
@@ -17,6 +18,7 @@
    :hide-close-button="currentForm === DeleteGroupForm">
         <component :is="currentForm" @group-submit="handleSubmit" :group="selectedGroup" @cancel-action="toggleModal"/>
     </BaseModal>
+    </div>
 </template>
 <script setup lang="ts">
 import GroupsTable from '@/components/UI/Groups/GroupsTable.vue';

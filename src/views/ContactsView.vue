@@ -20,14 +20,15 @@
     <NoResultsDisplay v-else-if="(!employees || employees.length === 0) && !isLoading" 
     title="Nerasta jokių kontaktų"
     details="Pabandykite pakeisti paieškos kriterijus arba išvalyti filtrus."/>
-
-    <component v-else :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
+    <div v-else>
+    <component :is="currentDisplay" :employees="employees" @edit-contact="(employee) => {
       handleEmit(employee); switchComponent(EditContactForm);
     }"
     @delete-contact="(employee) => {
       handleEmit(employee); switchComponent(DeleteContactForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages" />
+    </div>
   </BaseLayout>
 </template>
 <script setup lang="ts">

@@ -19,13 +19,15 @@
     <NoResultsDisplay v-else-if="(!companies || companies.length === 0) && !isLoading"
         title="Nerasta jokių įmonių"
      />
-    <CompanyTable v-else :companies="companies" @edit-company="(company) => {
+     <div v-else>
+    <CompanyTable :companies="companies" @edit-company="(company) => {
       handleEmit(company); switchComponent(EditCompanyForm);
     }"
     @delete-company="(company) => {
         handleEmit(company); switchComponent(DeleteCompanyForm);
     }"/>
     <Pagination v-model:page="page" v-model:total-pages="totalPages"/>
+    </div>
     </BaseLayout>
 </template>
 <script setup lang="ts">

@@ -7,7 +7,8 @@
     <NoResultsDisplay v-else-if="(!divisions || divisions.length === 0) && !isLoading"
         title="Nerasta jokių padalinių"
      />
-    <DivisionsTable v-else :divisions="divisions" @edit-division="(division: Division) => {
+     <div v-else>
+    <DivisionsTable :divisions="divisions" @edit-division="(division: Division) => {
         selectDivision(division); switchComponent(EditDivisionForm);
     }" @delete-division="(division: Division) => {
         selectDivision(division); switchComponent(DeleteDivisionForm);
@@ -17,6 +18,7 @@
         :hide-close-button="currentForm === DeleteDivisionForm">
         <component :is="currentForm" @division-submit="handleSubmit" :division="selectedDivision" @cancel-action="toggleModal"/>
     </BaseModal>
+    </div>
 </template>
 <script setup lang="ts">
 import AddButton from '@/components/UI/AddButton.vue';

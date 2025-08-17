@@ -7,7 +7,8 @@
     <NoResultsDisplay v-else-if="(!offices || offices.length === 0) && !isLoading"
     title="Nerasta jokių ofisų"
     />
-    <OfficesTable v-else :offices="offices" @edit-office="(office: Office) => {
+    <div v-else>
+    <OfficesTable :offices="offices" @edit-office="(office: Office) => {
       handleEmit(office); switchComponent(EditOfficeForm);
     }"
     @delete-office="(office: Office) => {
@@ -18,6 +19,7 @@
         :hide-close-button="currentForm === DeleteOfficeForm">
         <component :is="currentForm" @office-submit="handleSubmit" :office="selectedOffice" @cancel-action="toggleModal"/>
     </BaseModal>
+    </div>
 </template>
 <script setup lang="ts">
 import Pagination from '@/components/Layout/Pagination.vue';
