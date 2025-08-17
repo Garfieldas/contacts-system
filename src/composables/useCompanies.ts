@@ -14,6 +14,7 @@ export const useCompanies = () => {
 
     const fetchCompanies = async (params?: string) => {
         let url = params? `${params}` : `?page=${page.value}&perPage=${perPage.value}`;
+        isLoading.value = true;
         try {
             const response = await getCompanies(url);
             companies.value = response.items;
