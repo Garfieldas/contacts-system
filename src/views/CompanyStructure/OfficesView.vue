@@ -3,7 +3,11 @@
         <AddButton @click="switchComponent(CreateOfficeForm)"/>
         <h2>Pridėti naują struktūrą:</h2>
     </teleport>
-    <OfficesTable :offices="offices" @edit-office="(office: Office) => {
+    <Spinner v-if="isLoading"/>
+    <NoResultsDisplay v-else-if="(!offices || offices.length === 0) && !isLoading"
+    title="Nerasta jokių ofisų"
+    />
+    <OfficesTable v-else :offices="offices" @edit-office="(office: Office) => {
       handleEmit(office); switchComponent(EditOfficeForm);
     }"
     @delete-office="(office: Office) => {
@@ -28,6 +32,8 @@ import { useNotificationStore } from '@/stores/notificationstore';
 import type { Office } from '@/types/officeType';
 import { ref, onMounted, watch, shallowRef } from 'vue';
 import { useActions } from '@/composables/useActions';
+import Spinner from '@/components/UI/Spinner.vue';
+import NoResultsDisplay from '@/components/UI/NoResultsDisplay.vue';
 
 const offices = ref();
 const page = ref(1);
@@ -36,6 +42,7 @@ const totalItems = ref();
 const totalPages = ref();
 const store = useNotificationStore();
 const isFirstLoad = ref(true);
+const isLoading = ref(true);
 
 const { showEditOffices, showDeleteOffices } = useActions();
 
@@ -66,6 +73,9 @@ const fetchOffices = async (params?:string) => {
     }
     catch (error: any) {
         store.addErrorNotification(error);
+    }
+    finally {
+        isLoading.value = false;
     }
 }
 
